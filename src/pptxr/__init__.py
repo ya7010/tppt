@@ -1,11 +1,46 @@
 from pptx import Presentation
-from typing import List, Optional, Dict, Any, Union
+from typing import List, Optional, Dict, Any, Union, NewType, TypeVar, Union
 from dataclasses import dataclass
 from enum import Enum
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.util import Inches, Pt
 from pptx.chart.data import ChartData
 from pptx.enum.chart import XL_CHART_TYPE
+
+# Type definitions for units
+Inch = NewType('Inch', float)
+Point = NewType('Point', int)
+Length = Union[Inch, Point]
+
+# Constants for unit conversion
+INCHES_PER_POINT = 1/72  # 1 point = 1/72 inches
+POINTS_PER_INCH = 72     # 1 inch = 72 points
+
+def to_inches(length: Length) -> Inch:
+    """Convert any length to inches
+
+    Args:
+        length (Length): Length in any unit
+
+    Returns:
+        Inch: Length in inches
+    """
+    if isinstance(length, Point):
+        return Inch(float(length) * INCHES_PER_POINT)
+    return length
+
+def to_points(length: Length) -> Point:
+    """Convert any length to points
+
+    Args:
+        length (Length): Length in any unit
+
+    Returns:
+        Point: Length in points
+    """
+    if isinstance(length, Inch):
+        return Point(int(float(length) * POINTS_PER_INCH))
+    return length
 
 class SlideLayout(Enum):
     """Enumeration defining slide layout types"""
@@ -68,8 +103,8 @@ class Text:
     """Data class representing text element"""
     text: str
     """Text content"""
-    size: Optional[int] = None
-    """Font size [pt]"""
+    size: Optional[Length] = None
+    """Font size"""
     bold: bool = False
     """Whether text is bold"""
     italic: bool = False
@@ -82,14 +117,14 @@ class Shape:
     """Data class representing shape"""
     type: str
     """Shape type"""
-    left: int
-    """Position from left edge [in]"""
-    top: int
-    """Position from top edge [in]"""
-    width: int
-    """Width [in]"""
-    height: int
-    """Height [in]"""
+    left: Length
+    """Position from left edge"""
+    top: Length
+    """Position from top edge"""
+    width: Length
+    """Width"""
+    height: Length
+    """Height"""
     text: Optional[Text] = None
     """Text within shape"""
 
@@ -104,24 +139,24 @@ class Layout:
     """Element alignment"""
     justify: Justify = Justify.START
     """Element justification"""
-    gap: float = 0.1
-    """Gap between elements [in]"""
-    padding: Dict[str, float] = None
-    """Padding [in] (top, right, bottom, left)"""
-    width: Optional[float] = None
-    """Width [in]"""
-    height: Optional[float] = None
-    """Height [in]"""
+    gap: Length = Inch(0.1)
+    """Gap between elements"""
+    padding: Dict[str, Length] = None
+    """Padding (top, right, bottom, left)"""
+    width: Optional[Length] = None
+    """Width"""
+    height: Optional[Length] = None
+    """Height"""
 
 @dataclass
 class Image:
     """Data class representing image element"""
     path: str
     """Path to image file"""
-    width: Optional[float] = None
-    """Width [in]"""
-    height: Optional[float] = None
-    """Height [in]"""
+    width: Optional[Length] = None
+    """Width"""
+    height: Optional[Length] = None
+    """Height"""
     layout: Optional[Layout] = None
     """Layout settings"""
 
@@ -132,10 +167,10 @@ class Chart:
     """Chart type ("bar", "line", "pie", etc.)"""
     data: List[Dict[str, Any]]
     """Chart data"""
-    width: Optional[float] = None
-    """Width [in]"""
-    height: Optional[float] = None
-    """Height [in]"""
+    width: Optional[Length] = None
+    """Width"""
+    height: Optional[Length] = None
+    """Height"""
     layout: Optional[Layout] = None
     """Layout settings"""
 
@@ -194,30 +229,30 @@ class PresentationBuilder:
             layout (Layout): Layout settings to apply
         """
         if layout.width:
-            shape.width = Inches(layout.width)
+            shape.width = Inches(float(to_inches(layout.width)))
         if layout.height:
-            shape.height = Inches(layout.height)
+            shape.height = Inches(float(to_inches(layout.height)))
 
-    def _add_component(self, slide_obj, component: Component, left: float, top: float):
+    def _add_component(self, slide_obj, component: Component, left: Length, top: Length):
         """Add a component to a slide
 
         Args:
             slide_obj: Target slide
             component (Component): Component to add
-            left (float): Position from left edge [in]
-            top (float): Position from top edge [in]
+            left (Length): Position from left edge
+            top (Length): Position from top edge
         """
         if component.type == "text":
             shape = slide_obj.shapes.add_textbox(
-                Inches(left),
-                Inches(top),
-                Inches(component.layout.width) if component.layout and component.layout.width else Inches(3),
-                Inches(component.layout.height) if component.layout and component.layout.height else Inches(1)
+                Inches(float(to_inches(left))),
+                Inches(float(to_inches(top))),
+                Inches(float(to_inches(component.layout.width))) if component.layout and component.layout.width else Inches(3),
+                Inches(float(to_inches(component.layout.height))) if component.layout and component.layout.height else Inches(1)
             )
             text_frame = shape.text_frame
             text_frame.text = component.content.text
             if component.content.size:
-                text_frame.paragraphs[0].font.size = Pt(component.content.size)
+                text_frame.paragraphs[0].font.size = Pt(int(to_points(component.content.size)))
             if component.content.bold:
                 text_frame.paragraphs[0].font.bold = True
             if component.content.italic:
@@ -226,10 +261,10 @@ class PresentationBuilder:
         elif component.type == "image":
             shape = slide_obj.shapes.add_picture(
                 component.content.path,
-                Inches(left),
-                Inches(top),
-                Inches(component.content.width) if component.content.width else None,
-                Inches(component.content.height) if component.content.height else None
+                Inches(float(to_inches(left))),
+                Inches(float(to_inches(top))),
+                Inches(float(to_inches(component.content.width))) if component.content.width else None,
+                Inches(float(to_inches(component.content.height))) if component.content.height else None
             )
 
         elif component.type == "chart":
@@ -237,9 +272,9 @@ class PresentationBuilder:
             chart_data.categories = [item["category"] for item in component.content.data]
             chart_data.add_series('Series 1', [item["value"] for item in component.content.data])
 
-            x, y = Inches(left), Inches(top)
-            cx = Inches(component.layout.width) if component.layout and component.layout.width else Inches(6)
-            cy = Inches(component.layout.height) if component.layout and component.layout.height else Inches(4)
+            x, y = Inches(float(to_inches(left))), Inches(float(to_inches(top)))
+            cx = Inches(float(to_inches(component.layout.width))) if component.layout and component.layout.width else Inches(6)
+            cy = Inches(float(to_inches(component.layout.height))) if component.layout and component.layout.height else Inches(4)
 
             shape = slide_obj.shapes.add_chart(
                 XL_CHART_TYPE.BAR_CLUSTERED if component.content.type == "bar" else XL_CHART_TYPE.LINE,
@@ -250,14 +285,14 @@ class PresentationBuilder:
         if component.layout:
             self._apply_layout(shape, component.layout)
 
-    def _add_container(self, slide_obj, container: Container, left: float, top: float):
+    def _add_container(self, slide_obj, container: Container, left: Length, top: Length):
         """Add a container to a slide
 
         Args:
             slide_obj: Target slide
             container (Container): Container to add
-            left (float): Position from left edge [in]
-            top (float): Position from top edge [in]
+            left (Length): Position from left edge
+            top (Length): Position from top edge
         """
         current_left = left
         current_top = top
@@ -267,9 +302,13 @@ class PresentationBuilder:
             
             if container.layout.type == LayoutType.FLEX:
                 if container.layout.direction == "row":
-                    current_left += (component.layout.width if component.layout and component.layout.width else 3) + container.layout.gap
+                    current_left = Inch(float(to_inches(current_left)) + 
+                                     (float(to_inches(component.layout.width)) if component.layout and component.layout.width else 3) + 
+                                     float(to_inches(container.layout.gap)))
                 else:
-                    current_top += (component.layout.height if component.layout and component.layout.height else 1) + container.layout.gap
+                    current_top = Inch(float(to_inches(current_top)) + 
+                                    (float(to_inches(component.layout.height)) if component.layout and component.layout.height else 1) + 
+                                    float(to_inches(container.layout.gap)))
 
     def build(self) -> Presentation:
         """Build the presentation
@@ -285,7 +324,7 @@ class PresentationBuilder:
                 title_shape = slide_obj.shapes.title
                 title_shape.text = slide.title.text
                 if slide.title.size:
-                    title_shape.text_frame.paragraphs[0].font.size = Pt(slide.title.size)
+                    title_shape.text_frame.paragraphs[0].font.size = Pt(int(to_points(slide.title.size)))
                 if slide.title.bold:
                     title_shape.text_frame.paragraphs[0].font.bold = True
                 if slide.title.italic:
@@ -293,7 +332,7 @@ class PresentationBuilder:
 
             if slide.containers:
                 for container in slide.containers:
-                    self._add_container(slide_obj, container, 1, 2)  # Default position [in]
+                    self._add_container(slide_obj, container, Inch(1), Inch(2))  # Default position
 
         return self.presentation
 
