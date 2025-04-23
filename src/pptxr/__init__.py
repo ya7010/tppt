@@ -69,7 +69,7 @@ class Text:
     text: str
     """Text content"""
     size: Optional[int] = None
-    """Font size in points"""
+    """Font size [pt]"""
     bold: bool = False
     """Whether text is bold"""
     italic: bool = False
@@ -83,13 +83,13 @@ class Shape:
     type: str
     """Shape type"""
     left: int
-    """Position from left edge in inches"""
+    """Position from left edge [in]"""
     top: int
-    """Position from top edge in inches"""
+    """Position from top edge [in]"""
     width: int
-    """Width in inches"""
+    """Width [in]"""
     height: int
-    """Height in inches"""
+    """Height [in]"""
     text: Optional[Text] = None
     """Text within shape"""
 
@@ -105,13 +105,13 @@ class Layout:
     justify: Justify = Justify.START
     """Element justification"""
     gap: float = 0.1
-    """Gap between elements in inches"""
+    """Gap between elements [in]"""
     padding: Dict[str, float] = None
-    """Padding in inches (top, right, bottom, left)"""
+    """Padding [in] (top, right, bottom, left)"""
     width: Optional[float] = None
-    """Width in inches"""
+    """Width [in]"""
     height: Optional[float] = None
-    """Height in inches"""
+    """Height [in]"""
 
 @dataclass
 class Image:
@@ -119,9 +119,9 @@ class Image:
     path: str
     """Path to image file"""
     width: Optional[float] = None
-    """Width in inches"""
+    """Width [in]"""
     height: Optional[float] = None
-    """Height in inches"""
+    """Height [in]"""
     layout: Optional[Layout] = None
     """Layout settings"""
 
@@ -133,9 +133,9 @@ class Chart:
     data: List[Dict[str, Any]]
     """Chart data"""
     width: Optional[float] = None
-    """Width in inches"""
+    """Width [in]"""
     height: Optional[float] = None
-    """Height in inches"""
+    """Height [in]"""
     layout: Optional[Layout] = None
     """Layout settings"""
 
@@ -204,8 +204,8 @@ class PresentationBuilder:
         Args:
             slide_obj: Target slide
             component (Component): Component to add
-            left (float): Position from left edge in inches
-            top (float): Position from top edge in inches
+            left (float): Position from left edge [in]
+            top (float): Position from top edge [in]
         """
         if component.type == "text":
             shape = slide_obj.shapes.add_textbox(
@@ -256,8 +256,8 @@ class PresentationBuilder:
         Args:
             slide_obj: Target slide
             container (Container): Container to add
-            left (float): Position from left edge in inches
-            top (float): Position from top edge in inches
+            left (float): Position from left edge [in]
+            top (float): Position from top edge [in]
         """
         current_left = left
         current_top = top
@@ -293,7 +293,7 @@ class PresentationBuilder:
 
             if slide.containers:
                 for container in slide.containers:
-                    self._add_container(slide_obj, container, 1, 2)  # Default position
+                    self._add_container(slide_obj, container, 1, 2)  # Default position [in]
 
         return self.presentation
 
