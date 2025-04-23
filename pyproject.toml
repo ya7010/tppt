@@ -1,9 +1,16 @@
 [project]
 name = "pptxr"
 version = "0.1.0"
-description = "Reactive PPTX"
+description = "Add your description here"
 readme = "README.md"
+authors = [
+    { name = "yassun7010", email = "yassun7010@outlook.com" }
+]
 requires-python = ">=3.11.9"
 dependencies = [
     "python-pptx>=1.0.2",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
