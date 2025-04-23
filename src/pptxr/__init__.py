@@ -173,40 +173,6 @@ class Justify(Enum):
 
 
 @dataclass
-class Text:
-    """Data class representing text element"""
-
-    text: str
-    """Text content"""
-    size: Optional[Length] = None
-    """Font size"""
-    bold: bool = False
-    """Whether text is bold"""
-    italic: bool = False
-    """Whether text is italic"""
-    color: Optional[str] = None
-    """Text color"""
-
-
-@dataclass
-class Shape:
-    """Data class representing shape"""
-
-    type: str
-    """Shape type"""
-    left: Length
-    """Position from left edge"""
-    top: Length
-    """Position from top edge"""
-    width: Length
-    """Width"""
-    height: Length
-    """Height"""
-    text: Optional[Text] = None
-    """Text within shape"""
-
-
-@dataclass
 class Layout:
     """Data class representing layout settings"""
 
@@ -226,6 +192,42 @@ class Layout:
     """Width"""
     height: Optional[Length] = None
     """Height"""
+
+
+@dataclass
+class Text:
+    """Data class representing text element"""
+
+    text: str
+    """Text content"""
+    size: Optional[Length] = None
+    """Font size"""
+    bold: bool = False
+    """Whether text is bold"""
+    italic: bool = False
+    """Whether text is italic"""
+    color: Optional[str] = None
+    """Text color"""
+    layout: Optional[Layout] = None
+    """Layout settings"""
+
+
+@dataclass
+class Shape:
+    """Data class representing shape"""
+
+    type: str
+    """Shape type"""
+    left: Length
+    """Position from left edge"""
+    top: Length
+    """Position from top edge"""
+    width: Length
+    """Width"""
+    height: Length
+    """Height"""
+    text: Optional[Text] = None
+    """Text within shape"""
 
 
 @dataclass
@@ -296,16 +298,8 @@ class Table:
     """Layout settings"""
 
 
-@dataclass
-class Component:
-    """Data class representing component"""
-
-    type: str
-    """Component type ("text", "image", "chart", "table")"""
-    content: Union[Text, Image, Chart, Table]
-    """Component content"""
-    layout: Optional[Layout] = None
-    """Layout settings"""
+Component = Union[Text, Image, Chart, Table]
+"""Union type representing any component type"""
 
 
 @dataclass
@@ -408,7 +402,7 @@ class _PresentationBuilder:
             left (Length): Position from left edge
             top (Length): Position from top edge
         """
-        if component.type == "text":
+        if isinstance(component, Text):
             shape = slide_obj.shapes.add_textbox(
                 Inches(float(to_inche(left))),
                 Inches(float(to_inche(top))),
@@ -420,36 +414,28 @@ class _PresentationBuilder:
                 else Inches(1),
             )
             text_frame = shape.text_frame
-            text_frame.text = component.content.text
-            if component.content.size:
-                text_frame.paragraphs[0].font.size = Pt(
-                    int(to_point(component.content.size))
-                )
-            if component.content.bold:
+            text_frame.text = component.text
+            if component.size:
+                text_frame.paragraphs[0].font.size = Pt(int(to_point(component.size)))
+            if component.bold:
                 text_frame.paragraphs[0].font.bold = True
-            if component.content.italic:
+            if component.italic:
                 text_frame.paragraphs[0].font.italic = True
 
-        elif component.type == "image":
+        elif isinstance(component, Image):
             shape = slide_obj.shapes.add_picture(
-                component.content.path,
+                component.path,
                 Inches(float(to_inche(left))),
                 Inches(float(to_inche(top))),
-                Inches(float(to_inche(component.content.width)))
-                if component.content.width
-                else None,
-                Inches(float(to_inche(component.content.height)))
-                if component.content.height
-                else None,
+                Inches(float(to_inche(component.width))) if component.width else None,
+                Inches(float(to_inche(component.height))) if component.height else None,
             )
 
-        elif component.type == "chart":
+        elif isinstance(component, Chart):
             chart_data = ChartData()
-            chart_data.categories = [
-                item["category"] for item in component.content.data
-            ]
+            chart_data.categories = [item["category"] for item in component.data]
             chart_data.add_series(
-                "Series 1", [item["value"] for item in component.content.data]
+                "Series 1", [item["value"] for item in component.data]
             )
 
             x, y = Inches(float(to_inche(left))), Inches(float(to_inche(top)))
@@ -466,7 +452,7 @@ class _PresentationBuilder:
 
             shape = slide_obj.shapes.add_chart(
                 XL_CHART_TYPE.BAR_CLUSTERED
-                if component.content.type == "bar"
+                if component.type == "bar"
                 else XL_CHART_TYPE.LINE,
                 x,
                 y,
@@ -475,10 +461,10 @@ class _PresentationBuilder:
                 chart_data,
             )
 
-        elif component.type == "table":
+        elif isinstance(component, Table):
             table = slide_obj.shapes.add_table(
-                component.content.rows,
-                component.content.cols,
+                component.rows,
+                component.cols,
                 Inches(float(to_inche(left))),
                 Inches(float(to_inche(top))),
                 Inches(float(to_inche(component.layout.width)))
@@ -489,7 +475,7 @@ class _PresentationBuilder:
                 else Inches(2),
             ).table
 
-            for i, row in enumerate(component.content.data):
+            for i, row in enumerate(component.data):
                 for j, cell in enumerate(row):
                     table_cell = table.cell(i, j)
                     table_cell.text = cell.text

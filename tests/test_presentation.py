@@ -5,7 +5,6 @@ from pathlib import Path
 from pptxr import (
     Align,
     Chart,
-    Component,
     Container,
     Image,
     Inch,
@@ -39,11 +38,9 @@ class TestPresentation(unittest.TestCase):
                     containers=[
                         Container(
                             components=[
-                                Component(
-                                    type="text",
-                                    content=Text(
-                                        "これはテストテキストです", size=Point(24)
-                                    ),
+                                Text(
+                                    "これはテストテキストです",
+                                    size=Point(24),
                                     layout=Layout(width=Inch(4), height=Inch(1)),
                                 )
                             ],
@@ -75,14 +72,14 @@ class TestPresentation(unittest.TestCase):
                         # 横並びのコンテナ
                         Container(
                             components=[
-                                Component(
-                                    type="text",
-                                    content=Text("左側のテキスト", size=Point(20)),
+                                Text(
+                                    "左側のテキスト",
+                                    size=Point(20),
                                     layout=Layout(width=Inch(3), height=Inch(1)),
                                 ),
-                                Component(
-                                    type="text",
-                                    content=Text("右側のテキスト", size=Point(20)),
+                                Text(
+                                    "右側のテキスト",
+                                    size=Point(20),
                                     layout=Layout(width=Inch(3), height=Inch(1)),
                                 ),
                             ],
@@ -96,14 +93,14 @@ class TestPresentation(unittest.TestCase):
                         # 縦並びのコンテナ
                         Container(
                             components=[
-                                Component(
-                                    type="text",
-                                    content=Text("上段のテキスト", size=Point(20)),
+                                Text(
+                                    "上段のテキスト",
+                                    size=Point(20),
                                     layout=Layout(width=Inch(6), height=Inch(1)),
                                 ),
-                                Component(
-                                    type="text",
-                                    content=Text("下段のテキスト", size=Point(20)),
+                                Text(
+                                    "下段のテキスト",
+                                    size=Point(20),
                                     layout=Layout(width=Inch(6), height=Inch(1)),
                                 ),
                             ],
@@ -144,18 +141,15 @@ class TestPresentation(unittest.TestCase):
                     containers=[
                         Container(
                             components=[
-                                Component(
-                                    type="image",
-                                    content=Image(
-                                        path=str(test_image_path),
-                                        width=Inch(4),
-                                        height=Inch(3),
-                                    ),
+                                Image(
+                                    path=str(test_image_path),
+                                    width=Inch(4),
+                                    height=Inch(3),
                                     layout=Layout(width=Inch(4), height=Inch(3)),
                                 ),
-                                Component(
-                                    type="text",
-                                    content=Text("画像の説明", size=Point(20)),
+                                Text(
+                                    "画像の説明",
+                                    size=Point(20),
                                     layout=Layout(width=Inch(4), height=Inch(1)),
                                 ),
                             ],
@@ -187,18 +181,15 @@ class TestPresentation(unittest.TestCase):
                     containers=[
                         Container(
                             components=[
-                                Component(
-                                    type="chart",
-                                    content=Chart(
-                                        type="bar",
-                                        data=[
-                                            {"category": "A", "value": 10},
-                                            {"category": "B", "value": 20},
-                                            {"category": "C", "value": 30},
-                                        ],
-                                        width=Inch(6),
-                                        height=Inch(4),
-                                    ),
+                                Chart(
+                                    type="bar",
+                                    data=[
+                                        {"category": "A", "value": 10},
+                                        {"category": "B", "value": 20},
+                                        {"category": "C", "value": 30},
+                                    ],
+                                    width=Inch(6),
+                                    height=Inch(4),
                                     layout=Layout(width=Inch(6), height=Inch(4)),
                                 )
                             ],
