@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, NewType, Optional, TypeVar, Union
+from typing import Any, Dict, List, NewType, Optional, Union
 
 from pptx import Presentation
 from pptx.chart.data import ChartData
