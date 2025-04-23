@@ -1,5 +1,7 @@
 {
     "recommendations": [
-        "tombi-toml.tombi"
+        "tombi-toml.tombi",
+        "anysphere.pyright",
+        "charliermarsh.ruff"
     ]
 }

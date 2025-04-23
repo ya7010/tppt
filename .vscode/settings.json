@@ -3,6 +3,12 @@
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
     "editor.formatOnType": true,
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "always",
+            "source.organizeImports.ruff": "explicit",
+        },
+    },
     "[toml]": {
         "editor.defaultFormatter": "tombi-toml.tombi"
     }

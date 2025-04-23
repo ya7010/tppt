@@ -27,7 +27,9 @@ python_files = ["test_*.py"]
 testpaths = ["tests"]
 
 [tool.taskipy.tasks]
-ci = "lint && test"
+ci = "task format-check && task lint && task test"
 format = "ruff format"
+format-check = "ruff format --check"
 lint = "ruff check"
+lint-check = "ruff check --fix"
 test = "pytest"

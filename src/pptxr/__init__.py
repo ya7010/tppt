@@ -1,11 +1,13 @@
-from pptx import Presentation
-from typing import List, Optional, Dict, Any, Union, NewType, TypeVar, Union
 from dataclasses import dataclass
 from enum import Enum
-from pptx.enum.shapes import MSO_SHAPE
-from pptx.util import Inches, Pt
+from typing import Any, Dict, List, NewType, Optional, TypeVar, Union
+
+from pptx import Presentation
 from pptx.chart.data import ChartData
+from pptx.dml.color import RGBColor
 from pptx.enum.chart import XL_CHART_TYPE
+from pptx.enum.text import PP_ALIGN
+from pptx.util import Inches, Pt
 
 # Type definitions for units
 Inch = NewType('Inch', float)
@@ -175,11 +177,49 @@ class Chart:
     """Layout settings"""
 
 @dataclass
+class TableCell:
+    """Data class representing table cell"""
+
+    text: str
+    """Cell text content"""
+    size: Optional[Length] = None
+    """Font size"""
+    bold: bool = False
+    """Whether text is bold"""
+    italic: bool = False
+    """Whether text is italic"""
+    color: Optional[str] = None
+    """Text color"""
+    background: Optional[str] = None
+    """Background color"""
+    align: PP_ALIGN = PP_ALIGN.LEFT
+    """Text alignment"""
+
+
+@dataclass
+class Table:
+    """Data class representing table element"""
+
+    rows: int
+    """Number of rows"""
+    cols: int
+    """Number of columns"""
+    data: List[List[TableCell]]
+    """Table data"""
+    width: Optional[Length] = None
+    """Width"""
+    height: Optional[Length] = None
+    """Height"""
+    layout: Optional[Layout] = None
+    """Layout settings"""
+
+
+@dataclass
 class Component:
     """Data class representing component"""
     type: str
-    """Component type ("text", "image", "chart")"""
-    content: Union[Text, Image, Chart]
+    """Component type ("text", "image", "chart", "table")"""
+    content: Union[Text, Image, Chart, Table]
     """Component content"""
     layout: Optional[Layout] = None
     """Layout settings"""
@@ -281,6 +321,45 @@ class PresentationBuilder:
                 x, y, cx, cy,
                 chart_data
             )
+
+        elif component.type == "table":
+            table = slide_obj.shapes.add_table(
+                component.content.rows,
+                component.content.cols,
+                Inches(float(to_inches(left))),
+                Inches(float(to_inches(top))),
+                Inches(float(to_inches(component.layout.width)))
+                if component.layout and component.layout.width
+                else Inches(6),
+                Inches(float(to_inches(component.layout.height)))
+                if component.layout and component.layout.height
+                else Inches(2),
+            ).table
+
+            for i, row in enumerate(component.content.data):
+                for j, cell in enumerate(row):
+                    table_cell = table.cell(i, j)
+                    table_cell.text = cell.text
+
+                    if cell.size:
+                        table_cell.text_frame.paragraphs[0].font.size = Pt(
+                            int(to_points(cell.size))
+                        )
+                    if cell.bold:
+                        table_cell.text_frame.paragraphs[0].font.bold = True
+                    if cell.italic:
+                        table_cell.text_frame.paragraphs[0].font.italic = True
+                    if cell.color:
+                        table_cell.text_frame.paragraphs[
+                            0
+                        ].font.color.rgb = RGBColor.from_string(cell.color)
+                    if cell.background:
+                        table_cell.fill.solid()
+                        table_cell.fill.fore_color.rgb = RGBColor.from_string(
+                            cell.background
+                        )
+
+                    table_cell.text_frame.paragraphs[0].alignment = cell.align
 
         if component.layout:
             self._apply_layout(shape, component.layout)
