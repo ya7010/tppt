@@ -1,0 +1,9 @@
+{
+    "editor.formatOnSaveMode": "modificationsIfAvailable",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "[toml]": {
+        "editor.defaultFormatter": "tombi-toml.tombi"
+    }
+}
