@@ -356,16 +356,16 @@ class Presentation:
         self._presentation.save(path)
 
     @staticmethod
-    def builder() -> "PresentationBuilder":
+    def builder() -> "_PresentationBuilder":
         """Create a new presentation builder
 
         Returns:
             PresentationBuilder: Newly created presentation builder
         """
-        return PresentationBuilder()
+        return _PresentationBuilder()
 
 
-class PresentationBuilder:
+class _PresentationBuilder:
     """Builder class for creating presentations"""
 
     def __init__(self):
@@ -373,7 +373,7 @@ class PresentationBuilder:
         self.presentation = Presentation()
         self.slides: List[Slide] = []
 
-    def add_slide(self, slide: Slide) -> "PresentationBuilder":
+    def add_slide(self, slide: Slide) -> "_PresentationBuilder":
         """Add a slide to the presentation
 
         Args:
