@@ -2,6 +2,7 @@
     "recommendations": [
         "tombi-toml.tombi",
         "anysphere.pyright",
-        "charliermarsh.ruff"
+        "charliermarsh.ruff",
+        "ms-python.python"
     ]
 }

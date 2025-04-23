@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union, assert_never
+from typing import Any, Dict, List, Optional, Self, Union, assert_never
 
 from pptx import Presentation as PptxPresentation
 from pptx.chart.data import ChartData
@@ -17,12 +17,36 @@ class Inch:
     def __init__(self, value: float):
         self.value = float(value)
 
+    def __add__(self, other: "Length") -> Self:
+        return Inch(self.value + to_inche(other))
+
+    def __sub__(self, other: "Length") -> Self:
+        return Inch(self.value - to_inche(other))
+
+    def __mul__(self, other: Union[int, float]) -> Self:
+        return Inch(self.value * other)
+
+    def __truediv__(self, other: Union[int, float]) -> Self:
+        return Inch(self.value / other)
+
 
 class Point:
     """Class representing points"""
 
     def __init__(self, value: int):
         self.value = int(value)
+
+    def __add__(self, other: "Length") -> Self:
+        return Point(self.value + to_point(other))
+
+    def __sub__(self, other: "Length") -> Self:
+        return Point(self.value - to_point(other))
+
+    def __mul__(self, other: Union[int, float]) -> Self:
+        return Point(int(self.value * other))
+
+    def __truediv__(self, other: Union[int, float]) -> Self:
+        return Point(int(self.value / other))
 
 
 Length = Union[Inch, Point]
@@ -496,24 +520,24 @@ class PresentationBuilder:
 
             if container.layout.type == LayoutType.FLEX:
                 if container.layout.direction == "row":
-                    current_left = Inch(
-                        float(to_inche(current_left))
+                    current_left = (
+                        current_left
                         + (
-                            float(to_inche(component.layout.width))
+                            component.layout.width
                             if component.layout and component.layout.width
-                            else 3
+                            else Inch(3)
                         )
-                        + float(to_inche(container.layout.gap))
+                        + container.layout.gap
                     )
                 else:
-                    current_top = Inch(
-                        float(to_inche(current_top))
+                    current_top = (
+                        current_top
                         + (
-                            float(to_inche(component.layout.height))
+                            component.layout.height
                             if component.layout and component.layout.height
-                            else 1
+                            else Inch(1)
                         )
-                        + float(to_inche(container.layout.gap))
+                        + container.layout.gap
                     )
 
     def build(self) -> "Presentation":
