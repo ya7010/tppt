@@ -12,6 +12,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+  "pyright>=1.1.399",
   "pytest>=8.3.5",
   "ruff>=0.11.6",
   "taskipy>=1.14.1",
@@ -27,9 +28,10 @@ python_files = ["test_*.py"]
 testpaths = ["tests"]
 
 [tool.taskipy.tasks]
-ci = "task format-check && task lint && task test"
+ci = "task format && task lint && task test"
 format = "ruff format"
 format-check = "ruff format --check"
 lint = "ruff check"
 lint-check = "ruff check --fix"
+typecheck = "pyright"
 test = "pytest"
