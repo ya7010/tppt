@@ -23,6 +23,14 @@ class Inch:
     def __sub__(self, other: "Length") -> Self:
         return Inch(self.value - to_inche(other))
 
+    def __iadd__(self, other: "Length") -> Self:
+        self.value += to_inche(other)
+        return self
+
+    def __isub__(self, other: "Length") -> Self:
+        self.value -= to_inche(other)
+        return self
+
     def __mul__(self, other: Union[int, float]) -> Self:
         return Inch(self.value * other)
 
@@ -41,6 +49,14 @@ class Point:
 
     def __sub__(self, other: "Length") -> Self:
         return Point(self.value - to_point(other))
+
+    def __iadd__(self, other: "Length") -> Self:
+        self.value += to_point(other)
+        return self
+
+    def __isub__(self, other: "Length") -> Self:
+        self.value -= to_point(other)
+        return self
 
     def __mul__(self, other: Union[int, float]) -> Self:
         return Point(int(self.value * other))
