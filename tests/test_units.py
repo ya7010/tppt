@@ -6,7 +6,7 @@ from pptxr.units import (
     Point,
     to_centimeter,
     to_inche,
-    to_internal_length,
+    to_length,
     to_literal_length,
     to_point,
 )
@@ -145,19 +145,19 @@ def test_conversion_between_units():
 def test_internal_to_public_conversion():
     """Test conversion between internal and public representations"""
     # Test inch conversion
-    assert to_internal_length((1.0, "in")) == Inch(1.0)
+    assert to_length((1.0, "in")) == Inch(1.0)
     assert to_literal_length(Inch(1.0), "in") == (1.0, "in")
     assert to_literal_length(Inch(1.0), "cm") == (2.54, "cm")
     assert to_literal_length(Inch(1.0), "pt") == (72, "pt")
 
     # Test point conversion
-    assert to_internal_length((72, "pt")) == Point(72)
+    assert to_length((72, "pt")) == Point(72)
     assert to_literal_length(Point(72), "in") == (1.0, "in")
     assert to_literal_length(Point(72), "cm") == (2.54, "cm")
     assert to_literal_length(Point(72), "pt") == (72, "pt")
 
     # Test centimeter conversion
-    assert to_internal_length((2.54, "cm")) == Centimeter(2.54)
+    assert to_length((2.54, "cm")) == Centimeter(2.54)
     assert to_literal_length(Centimeter(2.54), "in") == (1.0, "in")
     assert to_literal_length(Centimeter(2.54), "cm") == (2.54, "cm")
     assert to_literal_length(Centimeter(2.54), "pt") == (72, "pt")
@@ -166,7 +166,7 @@ def test_internal_to_public_conversion():
 def test_invalid_unit():
     """Test handling of invalid units"""
     with pytest.raises(AssertionError):
-        to_internal_length((1.0, "invalid"))  # type: ignore
+        to_length((1.0, "invalid"))  # type: ignore
 
     with pytest.raises(AssertionError):
         to_literal_length(Inch(1.0), "invalid")  # type: ignore

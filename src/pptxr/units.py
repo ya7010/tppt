@@ -23,23 +23,23 @@ class Inch:
 
     def __add__(self, other: "Length | LiteralLength") -> "Inch":
         if isinstance(other, tuple):
-            other = to_internal_length(other)
+            other = to_length(other)
         return Inch(self.value + to_inche(other).value)
 
     def __sub__(self, other: "Length | LiteralLength") -> "Inch":
         if isinstance(other, tuple):
-            other = to_internal_length(other)
+            other = to_length(other)
         return Inch(self.value - to_inche(other).value)
 
     def __iadd__(self, other: "Length | LiteralLength") -> "Inch":
         if isinstance(other, tuple):
-            other = to_internal_length(other)
+            other = to_length(other)
         self.value += to_inche(other).value
         return self
 
     def __isub__(self, other: "Length | LiteralLength") -> "Inch":
         if isinstance(other, tuple):
-            other = to_internal_length(other)
+            other = to_length(other)
         self.value -= to_inche(other).value
         return self
 
@@ -63,23 +63,23 @@ class Point:
 
     def __add__(self, other: "Length | LiteralLength") -> "Point":
         if isinstance(other, tuple):
-            other = to_internal_length(other)
+            other = to_length(other)
         return Point(self.value + to_point(other).value)
 
     def __sub__(self, other: "Length | LiteralLength") -> "Point":
         if isinstance(other, tuple):
-            other = to_internal_length(other)
+            other = to_length(other)
         return Point(self.value - to_point(other).value)
 
     def __iadd__(self, other: "Length | LiteralLength") -> "Point":
         if isinstance(other, tuple):
-            other = to_internal_length(other)
+            other = to_length(other)
         self.value += to_point(other).value
         return self
 
     def __isub__(self, other: "Length | LiteralLength") -> "Point":
         if isinstance(other, tuple):
-            other = to_internal_length(other)
+            other = to_length(other)
         self.value -= to_point(other).value
         return self
 
@@ -103,23 +103,23 @@ class Centimeter:
 
     def __add__(self, other: "Length | LiteralLength") -> "Centimeter":
         if isinstance(other, tuple):
-            other = to_internal_length(other)
+            other = to_length(other)
         return Centimeter(self.value + to_centimeter(other).value)
 
     def __sub__(self, other: "Length | LiteralLength") -> "Centimeter":
         if isinstance(other, tuple):
-            other = to_internal_length(other)
+            other = to_length(other)
         return Centimeter(self.value - to_centimeter(other).value)
 
     def __iadd__(self, other: "Length | LiteralLength") -> "Centimeter":
         if isinstance(other, tuple):
-            other = to_internal_length(other)
+            other = to_length(other)
         self.value += to_centimeter(other).value
         return self
 
     def __isub__(self, other: "Length | LiteralLength") -> "Centimeter":
         if isinstance(other, tuple):
-            other = to_internal_length(other)
+            other = to_length(other)
         self.value -= to_centimeter(other).value
         return self
 
@@ -135,7 +135,7 @@ class Centimeter:
         return self.value == other.value
 
 
-def to_internal_length(length: LiteralLength) -> Length:
+def to_length(length: LiteralLength) -> Length:
     """Convert public length representation to internal length representation
 
     Args:
@@ -187,7 +187,7 @@ def to_centimeter(length: Length | LiteralLength) -> Centimeter:
         _Centimeter: Length in centimeters
     """
     if isinstance(length, tuple):
-        return to_centimeter(to_internal_length(length))
+        return to_centimeter(to_length(length))
 
     match length:
         case Inch():
@@ -210,7 +210,7 @@ def to_inche(length: Length | LiteralLength) -> Inch:
         _Inch: Length in inches
     """
     if isinstance(length, tuple):
-        return to_inche(to_internal_length(length))
+        return to_inche(to_length(length))
 
     match length:
         case Inch():
@@ -233,7 +233,7 @@ def to_point(length: Length | LiteralLength) -> Point:
         _Point: Length in points
     """
     if isinstance(length, tuple):
-        return to_point(to_internal_length(length))
+        return to_point(to_length(length))
 
     match length:
         case Inch():

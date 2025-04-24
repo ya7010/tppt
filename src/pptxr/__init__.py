@@ -22,7 +22,7 @@ from .units import (
     Inch,
     LiteralLength,
     to_inche,
-    to_internal_length,
+    to_length,
 )
 
 SlideLayout = Literal[
@@ -342,8 +342,8 @@ class _PresentationBuilder:
             top (Length): Position from top edge
         """
         # 共通の位置計算を最適化
-        internal_left = to_internal_length(left)
-        internal_top = to_internal_length(top)
+        internal_left = to_length(left)
+        internal_top = to_length(top)
         left_inches = to_inche(internal_left).value
         top_inches = to_inche(internal_top).value
 
@@ -353,8 +353,8 @@ class _PresentationBuilder:
             width = layout.get("width")
             height = layout.get("height")
 
-            internal_width = to_internal_length(width) if width else Inch(3)
-            internal_height = to_internal_length(height) if height else Inch(1)
+            internal_width = to_length(width) if width else Inch(3)
+            internal_height = to_length(height) if height else Inch(1)
 
             shape = slide_obj.add_shape(
                 MSO_SHAPE_TYPE.TEXT_BOX,
