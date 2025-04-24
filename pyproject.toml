@@ -38,3 +38,10 @@ typecheck-pyright = "pyright"
 typecheck-mypy = "mypy"
 typecheck = "task typecheck-pyright && task typecheck-mypy"
 test = "pytest"
+
+[tool.pyright]
+include = ["src/pptxr/**", "tests/**"]
+exclude = ["src/pptxr/_pptx/**", "**/site-packages", ".venv/**"]
+
+[tool.mypy]
+exclude = ["src/pptxr/_pptx/.*", "**/site-packages", ".venv/**"]
