@@ -725,7 +725,7 @@ class _PresentationBuilder:
         return self.presentation
 
 
-def create_image(
+def image(
     path: str,
     width: Optional[Length] = None,
     height: Optional[Length] = None,
@@ -751,7 +751,7 @@ def create_image(
     }
 
 
-def create_text(
+def text(
     text: str,
     size: Optional[Length] = None,
     bold: bool = False,
@@ -783,7 +783,7 @@ def create_text(
     }
 
 
-def create_chart(
+def chart(
     chart_type: str,
     data: list[dict[str, Any]],
     width: Optional[Length] = None,
@@ -812,7 +812,7 @@ def create_chart(
     }
 
 
-def create_table(
+def table(
     rows: int,
     cols: int,
     data: list[list[TableCell]],
@@ -844,7 +844,7 @@ def create_table(
     }
 
 
-def create_layout(
+def layout(
     type: LayoutType = LayoutType.FLEX,
     direction: str = "row",
     align: Align = Align.START,
@@ -881,7 +881,7 @@ def create_layout(
     }
 
 
-def create_slide(
+def slide(
     layout: SlideLayout,
     title: Optional[Text] = None,
     containers: Optional[list[Container]] = None,

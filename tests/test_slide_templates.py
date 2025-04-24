@@ -13,10 +13,10 @@ from pptxr import (
     SlideLayout,
     SlideTemplate,
     Text,
-    create_chart,
-    create_layout,
-    create_slide,
-    create_text,
+    chart,
+    layout,
+    slide,
+    text,
 )
 
 
@@ -35,16 +35,16 @@ class TwoColumnTemplate(SlideTemplate):
         right_content: Text = None,
         **kwargs,
     ) -> Slide:
-        return create_slide(
+        return slide(
             layout=SlideLayout.TITLE_AND_CONTENT,
             title=title,
             containers=[
                 {
                     "components": [
-                        left_content or create_text("Left Column"),
-                        right_content or create_text("Right Column"),
+                        left_content or text("Left Column"),
+                        right_content or text("Right Column"),
                     ],
-                    "layout": create_layout(
+                    "layout": layout(
                         type=LayoutType.FLEX,
                         direction="row",
                         justify=Justify.SPACE_BETWEEN,
@@ -70,16 +70,16 @@ class ChartWithDescriptionTemplate(SlideTemplate):
         description: Text = None,
         **kwargs,
     ) -> Slide:
-        return create_slide(
+        return slide(
             layout=SlideLayout.TITLE_AND_CONTENT,
             title=title,
             containers=[
                 {
                     "components": [
-                        chart or create_chart("bar", []),
-                        description or create_text("Chart Description"),
+                        chart or chart("bar", []),
+                        description or text("Chart Description"),
                     ],
-                    "layout": create_layout(
+                    "layout": layout(
                         type=LayoutType.FLEX,
                         direction="column",
                         align=Align.CENTER,
@@ -104,19 +104,19 @@ class FeatureCardsTemplate(SlideTemplate):
             raise ValueError("Maximum 4 features allowed")
 
         default_features = [
-            create_text("Feature 1"),
-            create_text("Feature 2"),
-            create_text("Feature 3"),
-            create_text("Feature 4"),
+            text("Feature 1"),
+            text("Feature 2"),
+            text("Feature 3"),
+            text("Feature 4"),
         ]
 
-        return create_slide(
+        return slide(
             layout=SlideLayout.TITLE_AND_CONTENT,
             title=title,
             containers=[
                 {
                     "components": features or default_features,
-                    "layout": create_layout(type=LayoutType.GRID, gap=Inch(0.5)),
+                    "layout": layout(type=LayoutType.GRID, gap=Inch(0.5)),
                 }
             ],
         )
@@ -137,9 +137,9 @@ def test_two_column_template():
     assert slide["containers"][0]["layout"]["gap"] == Inch(0.5)
 
     # Test with custom values
-    left_content = create_text("Custom Left")
-    right_content = create_text("Custom Right")
-    title = create_text("Custom Title")
+    left_content = text("Custom Left")
+    right_content = text("Custom Right")
+    title = text("Custom Title")
 
     slide = template.build(
         title=title, left_content=left_content, right_content=right_content
@@ -165,9 +165,9 @@ def test_chart_with_description_template():
     assert slide["containers"][0]["layout"]["gap"] == Inch(0.5)
 
     # Test with custom values
-    chart = create_chart("bar", [{"value": 1}, {"value": 2}])
-    description = create_text("Custom Description")
-    title = create_text("Custom Title")
+    chart = chart("bar", [{"value": 1}, {"value": 2}])
+    description = text("Custom Description")
+    title = text("Custom Title")
 
     slide = template.build(title=title, chart=chart, description=description)
 
@@ -190,11 +190,11 @@ def test_feature_cards_template():
 
     # Test with custom values
     features = [
-        create_text("Feature 1"),
-        create_text("Feature 2"),
-        create_text("Feature 3"),
+        text("Feature 1"),
+        text("Feature 2"),
+        text("Feature 3"),
     ]
-    title = create_text("Custom Title")
+    title = text("Custom Title")
 
     slide = template.build(title=title, features=features)
 
@@ -203,7 +203,7 @@ def test_feature_cards_template():
 
     # Test with too many features
     with pytest.raises(ValueError):
-        template.build(features=[create_text(f"Feature {i}") for i in range(5)])
+        template.build(features=[text(f"Feature {i}") for i in range(5)])
 
 
 def test_template_in_presentation():
@@ -212,20 +212,20 @@ def test_template_in_presentation():
         Presentation.builder()
         .add_slide(
             TwoColumnTemplate(),
-            title=create_text("Two Column"),
-            left_content=create_text("Left"),
-            right_content=create_text("Right"),
+            title=text("Two Column"),
+            left_content=text("Left"),
+            right_content=text("Right"),
         )
         .add_slide(
             ChartWithDescriptionTemplate(),
-            title=create_text("Chart"),
-            chart=create_chart("bar", [{"value": 1}]),
-            description=create_text("Description"),
+            title=text("Chart"),
+            chart=chart("bar", [{"value": 1}]),
+            description=text("Description"),
         )
         .add_slide(
             FeatureCardsTemplate(),
-            title=create_text("Features"),
-            features=[create_text("Feature 1"), create_text("Feature 2")],
+            title=text("Features"),
+            features=[text("Feature 1"), text("Feature 2")],
         )
         .build()
     )

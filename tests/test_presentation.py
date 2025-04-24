@@ -11,11 +11,11 @@ from pptxr import (
     Point,
     Presentation,
     SlideLayout,
-    create_chart,
-    create_image,
-    create_layout,
-    create_slide,
-    create_text,
+    chart,
+    image,
+    layout,
+    slide,
+    text,
 )
 
 
@@ -35,19 +35,19 @@ class TestPresentation(unittest.TestCase):
         presentation = (
             Presentation.builder()
             .add_slide(
-                create_slide(
+                slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=create_text("Simple Slide", size=Point(44), bold=True),
+                    title=text("Simple Slide", size=Point(44), bold=True),
                     containers=[
                         Container(
                             components=[
-                                create_text(
+                                text(
                                     "This is a test text",
                                     size=Point(24),
-                                    layout=create_layout(width=Inch(4), height=Inch(1)),
+                                    layout=layout(width=Inch(4), height=Inch(1)),
                                 )
                             ],
-                            layout=create_layout(
+                            layout=layout(
                                 type=LayoutType.FLEX,
                                 direction="column",
                                 align=Align.CENTER,
@@ -68,25 +68,25 @@ class TestPresentation(unittest.TestCase):
         presentation = (
             Presentation.builder()
             .add_slide(
-                create_slide(
+                slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=create_text("Complex Layout", size=Point(44), bold=True),
+                    title=text("Complex Layout", size=Point(44), bold=True),
                     containers=[
                         # Horizontal container
                         Container(
                             components=[
-                                create_text(
+                                text(
                                     "Left text",
                                     size=Point(20),
-                                    layout=create_layout(width=Inch(3), height=Inch(1)),
+                                    layout=layout(width=Inch(3), height=Inch(1)),
                                 ),
-                                create_text(
+                                text(
                                     "Right text",
                                     size=Point(20),
-                                    layout=create_layout(width=Inch(3), height=Inch(1)),
+                                    layout=layout(width=Inch(3), height=Inch(1)),
                                 ),
                             ],
-                            layout=create_layout(
+                            layout=layout(
                                 type=LayoutType.FLEX,
                                 direction="row",
                                 justify=Justify.SPACE_BETWEEN,
@@ -96,18 +96,18 @@ class TestPresentation(unittest.TestCase):
                         # Vertical container
                         Container(
                             components=[
-                                create_text(
+                                text(
                                     "Top text",
                                     size=Point(20),
-                                    layout=create_layout(width=Inch(6), height=Inch(1)),
+                                    layout=layout(width=Inch(6), height=Inch(1)),
                                 ),
-                                create_text(
+                                text(
                                     "Bottom text",
                                     size=Point(20),
-                                    layout=create_layout(width=Inch(6), height=Inch(1)),
+                                    layout=layout(width=Inch(6), height=Inch(1)),
                                 ),
                             ],
-                            layout=create_layout(
+                            layout=layout(
                                 type=LayoutType.FLEX,
                                 direction="column",
                                 align=Align.CENTER,
@@ -137,25 +137,25 @@ class TestPresentation(unittest.TestCase):
         presentation = (
             Presentation.builder()
             .add_slide(
-                create_slide(
+                slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=create_text("Slide with Image", size=Point(44), bold=True),
+                    title=text("Slide with Image", size=Point(44), bold=True),
                     containers=[
                         Container(
                             components=[
-                                create_image(
+                                image(
                                     path=str(test_image_path),
                                     width=Inch(4),
                                     height=Inch(3),
-                                    layout=create_layout(width=Inch(4), height=Inch(3)),
+                                    layout=layout(width=Inch(4), height=Inch(3)),
                                 ),
-                                create_text(
+                                text(
                                     "Image description",
                                     size=Point(20),
-                                    layout=create_layout(width=Inch(4), height=Inch(1)),
+                                    layout=layout(width=Inch(4), height=Inch(1)),
                                 ),
                             ],
-                            layout=create_layout(
+                            layout=layout(
                                 type=LayoutType.FLEX,
                                 direction="column",
                                 align=Align.CENTER,
@@ -177,13 +177,13 @@ class TestPresentation(unittest.TestCase):
         presentation = (
             Presentation.builder()
             .add_slide(
-                create_slide(
+                slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=create_text("Slide with Chart", size=Point(44), bold=True),
+                    title=text("Slide with Chart", size=Point(44), bold=True),
                     containers=[
                         Container(
                             components=[
-                                create_chart(
+                                chart(
                                     chart_type="bar",
                                     data=[
                                         {"category": "A", "value": 10},
@@ -192,10 +192,10 @@ class TestPresentation(unittest.TestCase):
                                     ],
                                     width=Inch(6),
                                     height=Inch(4),
-                                    layout=create_layout(width=Inch(6), height=Inch(4)),
+                                    layout=layout(width=Inch(6), height=Inch(4)),
                                 )
                             ],
-                            layout=create_layout(
+                            layout=layout(
                                 type=LayoutType.FLEX,
                                 direction="column",
                                 align=Align.CENTER,
@@ -217,17 +217,17 @@ class TestPresentation(unittest.TestCase):
             Presentation.builder()
             .add_slide(
                 layout=SlideLayout.TITLE_AND_CONTENT,
-                title=create_text("Keyword Arguments Test", size=Point(44), bold=True),
+                title=text("Keyword Arguments Test", size=Point(44), bold=True),
                 containers=[
                     Container(
                         components=[
-                            create_text(
+                            text(
                                 "Slide created with keyword arguments",
                                 size=Point(24),
-                                layout=create_layout(width=Inch(4), height=Inch(1)),
+                                layout=layout(width=Inch(4), height=Inch(1)),
                             )
                         ],
-                        layout=create_layout(
+                        layout=layout(
                             type=LayoutType.FLEX,
                             direction="column",
                             align=Align.CENTER,
