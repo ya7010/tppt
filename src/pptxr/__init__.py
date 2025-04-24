@@ -189,7 +189,7 @@ class TableCell:
     """Text alignment"""
 
 
-class Table(TypedDict):
+class TableParams(TypedDict):
     """Data class representing table element."""
 
     type: Literal["table"]
@@ -212,6 +212,13 @@ class Table(TypedDict):
 
     layout: NotRequired[Layout]
     """Layout settings"""
+
+
+class Table(TableParams):
+    """Data class representing table element."""
+
+    type: Literal["table"]
+    """Type of component"""
 
 
 Component = Text | Image | Chart | Table
@@ -249,16 +256,8 @@ class SlideTemplate:
     and implementing the build method.
     """
 
-    def build(self, title: Text | None = None, **kwargs) -> Slide:
-        """Build a slide using this template.
-
-        Args:
-            title (Text | None): Slide title
-            **kwargs: Template-specific parameters
-
-        Returns:
-            Slide: Built slide
-        """
+    def build(self) -> Slide:
+        """Build a slide using this template."""
         raise NotImplementedError()
 
 

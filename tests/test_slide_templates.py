@@ -1,4 +1,4 @@
-from typing import Optional, cast
+from typing import cast
 
 import pytest
 
@@ -25,21 +25,26 @@ class TwoColumnTemplate(SlideTemplate):
         right_content (Text): Content for right column
     """
 
-    def build(
+    def __init__(
         self,
-        title: Optional[Text] = None,
-        left_content: Optional[Text] = None,
-        right_content: Optional[Text] = None,
-        **kwargs,
-    ) -> Slide:
+        *,
+        title: Text,
+        left_content: Text,
+        right_content: Text,
+    ) -> None:
+        self.title = title
+        self.left_content = left_content
+        self.right_content = right_content
+
+    def build(self) -> Slide:
         return slide(
             layout="TITLE_AND_CONTENT",
-            title=title,
+            title=self.title,
             containers=[
                 Container(
                     components=[
-                        left_content or text("Left Column"),
-                        right_content or text("Right Column"),
+                        self.left_content,
+                        self.right_content,
                     ],
                     layout=layout(
                         type="flex",
@@ -60,22 +65,28 @@ class ChartWithDescriptionTemplate(SlideTemplate):
         description (Text): Description text
     """
 
+    def __init__(
+        self,
+        *,
+        title: Text,
+        chart_data: Chart,
+        description: Text,
+    ) -> None:
+        self.title = title
+        self.chart_data = chart_data
+        self.description = description
+
     def build(
         self,
-        title: Optional[Text] = None,
-        chart_data: Optional[Chart] = None,
-        description: Optional[Text] = None,
-        **kwargs,
     ) -> Slide:
-        default_chart = chart("bar", [])
         return slide(
             layout="TITLE_AND_CONTENT",
-            title=title,
+            title=self.title,
             containers=[
                 Container(
                     components=[
-                        chart_data if chart_data is not None else default_chart,
-                        description or text("Chart Description"),
+                        self.chart_data,
+                        self.description,
                     ],
                     layout=layout(
                         type="flex",
@@ -95,13 +106,17 @@ class FeatureCardsTemplate(SlideTemplate):
         features (list[Text]): List of feature descriptions (max 4)
     """
 
-    def build(
+    def __init__(
         self,
-        title: Optional[Text] = None,
-        features: Optional[list[Text]] = None,
-        **kwargs,
-    ) -> Slide:
-        if features and len(features) > 4:
+        *,
+        title: Text,
+        features: list[Text],
+    ) -> None:
+        self.title = title
+        self.features = features
+
+    def build(self) -> Slide:
+        if self.features and len(self.features) > 4:
             raise ValueError("Maximum 4 features allowed")
 
         default_features = [
@@ -113,10 +128,10 @@ class FeatureCardsTemplate(SlideTemplate):
 
         return slide(
             layout="TITLE_AND_CONTENT",
-            title=title,
+            title=self.title,
             containers=[
                 Container(
-                    components=cast(list[Component], features or default_features),
+                    components=cast(list[Component], self.features or default_features),
                     layout=layout(type="grid", gap=(0.5, "in")),
                 )
             ],
@@ -125,93 +140,81 @@ class FeatureCardsTemplate(SlideTemplate):
 
 def test_two_column_template():
     """Test TwoColumnTemplate"""
-    template = TwoColumnTemplate()
-
-    # Test with all None
-    slide = template.build()
-    assert slide is not None
-
-    # Test with title only
-    slide = template.build(title=text("Title"))
-    assert slide is not None
-
-    # Test with left content only
-    slide = template.build(left_content=text("Left"))
-    assert slide is not None
-
-    # Test with right content only
-    slide = template.build(right_content=text("Right"))
-    assert slide is not None
-
-    # Test with all content
-    slide = template.build(
+    template = TwoColumnTemplate(
         title=text("Title"),
         left_content=text("Left"),
         right_content=text("Right"),
     )
-    assert slide is not None
+
+    slide = template.build()
+    assert slide.get("title") == text("Title")
+    containers = slide.get("containers", [])
+    assert len(containers) > 0
+    assert containers[0].get("components") == [text("Left"), text("Right")]
 
 
 def test_chart_with_description_template():
     """Test ChartWithDescriptionTemplate"""
-    template = ChartWithDescriptionTemplate()
-
-    # Test with all None
-    slide = template.build()
-    assert slide is not None
-
-    # Test with title only
-    slide = template.build(title=text("Title"))
-    assert slide is not None
-
-    # Test with chart only
-    slide = template.build(chart_data=chart("bar", []))
-    assert slide is not None
-
-    # Test with description only
-    slide = template.build(description=text("Description"))
-    assert slide is not None
-
-    # Test with all content
-    slide = template.build(
+    template = ChartWithDescriptionTemplate(
         title=text("Title"),
         chart_data=chart("bar", []),
         description=text("Description"),
     )
-    assert slide is not None
+
+    slide = template.build()
+    assert slide.get("title") == text("Title")
+    containers = slide.get("containers", [])
+    assert len(containers) > 0
+    assert containers[0].get("components") == [chart("bar", []), text("Description")]
 
 
 def test_feature_cards_template():
     """Test FeatureCardsTemplate"""
-    template = FeatureCardsTemplate()
+    # Test 1: Normal features
+    template = FeatureCardsTemplate(
+        title=text("Title"),
+        features=[
+            text("Feature 1"),
+            text("Feature 2"),
+            text("Feature 3"),
+            text("Feature 4"),
+        ],
+    )
 
-    # Test with default values
     slide_obj = template.build()
-    assert slide_obj["layout"] == "TITLE_AND_CONTENT"
+    assert slide_obj.get("layout") == "TITLE_AND_CONTENT"
     containers = slide_obj.get("containers", [])
     assert len(containers) == 1
-    assert len(containers[0]["components"]) == 4
-    layout = containers[0]["layout"]
+    assert len(containers[0].get("components", [])) == 4
+    layout = containers[0].get("layout", {})
     assert layout.get("type") == "grid"
     assert layout.get("gap") == (0.5, "in")
 
-    # Test with custom values
+    # Test 2: With custom values
     features = [
         text("Feature 1"),
         text("Feature 2"),
         text("Feature 3"),
     ]
-    title = text("Custom Title")
+    template = FeatureCardsTemplate(
+        title=text("Custom Title"),
+        features=features,
+    )
 
-    slide_obj = template.build(title=title, features=features)
+    slide_obj = template.build()
 
-    assert slide_obj.get("title") == title
+    assert slide_obj.get("title") == text("Custom Title")
     containers = slide_obj.get("containers", [])
-    assert containers[0]["components"] == features
+    assert containers[0].get("components") == features
 
-    # Test with too many features
+    # Test 3: With too many features
+    template = FeatureCardsTemplate(
+        title=text("Too Many"),
+        features=[text(f"Feature {i}") for i in range(1, 6)],  # 5 features
+    )
+
     with pytest.raises(ValueError):
-        template.build(features=[text(f"Feature {i}") for i in range(5)])
+        template.build()
 
 
 def test_template_in_presentation():
@@ -219,21 +222,24 @@ def test_template_in_presentation():
     presentation = (
         Presentation.builder()
         .add_slide(
-            TwoColumnTemplate(),
-            title=text("Two Column"),
-            left_content=text("Left"),
-            right_content=text("Right"),
+            TwoColumnTemplate(
+                title=text("Two Column"),
+                left_content=text("Left"),
+                right_content=text("Right"),
+            )
         )
         .add_slide(
-            ChartWithDescriptionTemplate(),
-            title=text("Chart"),
-            chart_data=chart("bar", [{"category": "A", "value": 1}]),
-            description=text("Description"),
+            ChartWithDescriptionTemplate(
+                title=text("Chart"),
+                chart_data=chart("bar", [{"category": "A", "value": 1}]),
+                description=text("Description"),
+            ),
         )
         .add_slide(
-            FeatureCardsTemplate(),
-            title=text("Features"),
-            features=[text("Feature 1"), text("Feature 2")],
+            FeatureCardsTemplate(
+                title=text("Features"),
+                features=[text("Feature 1"), text("Feature 2")],
+            )
         )
         .build()
     )

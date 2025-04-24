@@ -39,4 +39,7 @@ tests/resources/test_image.jpg
 
 # OS
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# TypeScript
+node_modules/
