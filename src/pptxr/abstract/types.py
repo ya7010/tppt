@@ -8,6 +8,7 @@ from pptxr.units import Length, LiteralLength
 
 FilePath: TypeAlias = str | pathlib.Path
 
+
 class Shape(ABC):
     """Abstract base class for shapes."""
 

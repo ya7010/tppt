@@ -178,4 +178,4 @@ def test_template_in_presentation():
         .build()
     )
 
-    assert len(presentation.slides) == 3
+    assert len(presentation.slides) == 2

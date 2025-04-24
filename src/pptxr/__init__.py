@@ -1,10 +1,8 @@
 """PowerPoint presentation creation library."""
 
 import os
-import pathlib
 from typing import (
     IO,
-    Any,
     Literal,
     NotRequired,
     TypeAlias,
@@ -13,17 +11,13 @@ from typing import (
     overload,
 )
 
-from pptx.enum.shapes import MSO_SHAPE_TYPE
-
 from pptxr.units import Length
 
 from ._pptx import PptxPresentationFactory
 from .abstract.types import FilePath
 from .abstract.types import Slide as AbstractSlide
 from .units import (
-    Inch,
     LiteralLength,
-    to_inche,
     to_length,
 )
 
@@ -50,6 +44,7 @@ Align = Literal["start", "center", "end"]
 
 Justify = Literal["start", "center", "end", "space-between", "space-around"]
 Padding: TypeAlias = dict[Literal["top", "right", "bottom", "left"], Length]
+
 
 class Layout(TypedDict):
     """Data class representing layout settings."""

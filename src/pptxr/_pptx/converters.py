@@ -161,6 +161,7 @@ class PptxPresentationFactory(PresentationFactory):
         """Load presentation from file."""
         return Presentation(PptxPresentation(path))
 
+
 def to_pptx_length(length: Length | LiteralLength) -> pptx.util.Length:
     """Convert pptxr length to pptx length."""
     if isinstance(length, tuple):
