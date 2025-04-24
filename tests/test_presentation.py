@@ -4,18 +4,18 @@ from pathlib import Path
 
 from pptxr import (
     Align,
-    Chart,
     Container,
-    Image,
     Inch,
     Justify,
-    Layout,
     LayoutType,
     Point,
     Presentation,
-    Slide,
     SlideLayout,
-    Text,
+    create_chart,
+    create_image,
+    create_layout,
+    create_slide,
+    create_text,
 )
 
 
@@ -32,19 +32,19 @@ class TestPresentation(unittest.TestCase):
         presentation = (
             Presentation.builder()
             .add_slide(
-                Slide(
+                create_slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=Text("シンプルなスライド", size=Point(44), bold=True),
+                    title=create_text("シンプルなスライド", size=Point(44), bold=True),
                     containers=[
                         Container(
                             components=[
-                                Text(
+                                create_text(
                                     "これはテストテキストです",
                                     size=Point(24),
-                                    layout=Layout(width=Inch(4), height=Inch(1)),
+                                    layout=create_layout(width=Inch(4), height=Inch(1)),
                                 )
                             ],
-                            layout=Layout(
+                            layout=create_layout(
                                 type=LayoutType.FLEX,
                                 direction="column",
                                 align=Align.CENTER,
@@ -65,25 +65,25 @@ class TestPresentation(unittest.TestCase):
         presentation = (
             Presentation.builder()
             .add_slide(
-                Slide(
+                create_slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=Text("複雑なレイアウト", size=Point(44), bold=True),
+                    title=create_text("複雑なレイアウト", size=Point(44), bold=True),
                     containers=[
                         # 横並びのコンテナ
                         Container(
                             components=[
-                                Text(
+                                create_text(
                                     "左側のテキスト",
                                     size=Point(20),
-                                    layout=Layout(width=Inch(3), height=Inch(1)),
+                                    layout=create_layout(width=Inch(3), height=Inch(1)),
                                 ),
-                                Text(
+                                create_text(
                                     "右側のテキスト",
                                     size=Point(20),
-                                    layout=Layout(width=Inch(3), height=Inch(1)),
+                                    layout=create_layout(width=Inch(3), height=Inch(1)),
                                 ),
                             ],
-                            layout=Layout(
+                            layout=create_layout(
                                 type=LayoutType.FLEX,
                                 direction="row",
                                 justify=Justify.SPACE_BETWEEN,
@@ -93,18 +93,18 @@ class TestPresentation(unittest.TestCase):
                         # 縦並びのコンテナ
                         Container(
                             components=[
-                                Text(
+                                create_text(
                                     "上段のテキスト",
                                     size=Point(20),
-                                    layout=Layout(width=Inch(6), height=Inch(1)),
+                                    layout=create_layout(width=Inch(6), height=Inch(1)),
                                 ),
-                                Text(
+                                create_text(
                                     "下段のテキスト",
                                     size=Point(20),
-                                    layout=Layout(width=Inch(6), height=Inch(1)),
+                                    layout=create_layout(width=Inch(6), height=Inch(1)),
                                 ),
                             ],
-                            layout=Layout(
+                            layout=create_layout(
                                 type=LayoutType.FLEX,
                                 direction="column",
                                 align=Align.CENTER,
@@ -135,25 +135,25 @@ class TestPresentation(unittest.TestCase):
         presentation = (
             Presentation.builder()
             .add_slide(
-                Slide(
+                create_slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=Text("画像付きスライド", size=Point(44), bold=True),
+                    title=create_text("画像付きスライド", size=Point(44), bold=True),
                     containers=[
                         Container(
                             components=[
-                                Image(
+                                create_image(
                                     path=str(test_image_path),
                                     width=Inch(4),
                                     height=Inch(3),
-                                    layout=Layout(width=Inch(4), height=Inch(3)),
+                                    layout=create_layout(width=Inch(4), height=Inch(3)),
                                 ),
-                                Text(
+                                create_text(
                                     "画像の説明",
                                     size=Point(20),
-                                    layout=Layout(width=Inch(4), height=Inch(1)),
+                                    layout=create_layout(width=Inch(4), height=Inch(1)),
                                 ),
                             ],
-                            layout=Layout(
+                            layout=create_layout(
                                 type=LayoutType.FLEX,
                                 direction="column",
                                 align=Align.CENTER,
@@ -175,14 +175,16 @@ class TestPresentation(unittest.TestCase):
         presentation = (
             Presentation.builder()
             .add_slide(
-                Slide(
+                create_slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=Text("チャート付きスライド", size=Point(44), bold=True),
+                    title=create_text(
+                        "チャート付きスライド", size=Point(44), bold=True
+                    ),
                     containers=[
                         Container(
                             components=[
-                                Chart(
-                                    type="bar",
+                                create_chart(
+                                    chart_type="bar",
                                     data=[
                                         {"category": "A", "value": 10},
                                         {"category": "B", "value": 20},
@@ -190,10 +192,10 @@ class TestPresentation(unittest.TestCase):
                                     ],
                                     width=Inch(6),
                                     height=Inch(4),
-                                    layout=Layout(width=Inch(6), height=Inch(4)),
+                                    layout=create_layout(width=Inch(6), height=Inch(4)),
                                 )
                             ],
-                            layout=Layout(
+                            layout=create_layout(
                                 type=LayoutType.FLEX,
                                 direction="column",
                                 align=Align.CENTER,

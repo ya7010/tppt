@@ -1,6 +1,18 @@
+import os
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Self, Union, assert_never
+from typing import (
+    Any,
+    Dict,
+    List,
+    Literal,
+    NotRequired,
+    Optional,
+    Self,
+    TypedDict,
+    Union,
+    assert_never,
+)
 
 from pptx import Presentation as PptxPresentation
 from pptx.chart.data import ChartData
@@ -172,43 +184,43 @@ class Justify(Enum):
     """Distribute space around elements"""
 
 
-@dataclass
-class Layout:
+class Layout(TypedDict):
     """Data class representing layout settings"""
 
-    type: LayoutType = LayoutType.FLEX
+    type: NotRequired[LayoutType]
     """Layout type"""
-    direction: str = "row"
+    direction: NotRequired[str]
     """Layout direction ("row" or "column")"""
-    align: Align = Align.START
+    align: NotRequired[Align]
     """Element alignment"""
-    justify: Justify = Justify.START
+    justify: NotRequired[Justify]
     """Element justification"""
-    gap: Length = Inch(0.1)
+    gap: NotRequired[Length]
     """Gap between elements"""
-    padding: Dict[str, Length] = None
+    padding: NotRequired[Dict[str, Length]]
     """Padding (top, right, bottom, left)"""
-    width: Optional[Length] = None
+    width: NotRequired[Length]
     """Width"""
-    height: Optional[Length] = None
+    height: NotRequired[Length]
     """Height"""
 
 
-@dataclass
-class Text:
+class Text(TypedDict):
     """Data class representing text element"""
 
+    type: Literal["text"]
+    """Type of component"""
     text: str
     """Text content"""
-    size: Optional[Length] = None
+    size: NotRequired[Length]
     """Font size"""
-    bold: bool = False
+    bold: NotRequired[bool]
     """Whether text is bold"""
-    italic: bool = False
+    italic: NotRequired[bool]
     """Whether text is italic"""
-    color: Optional[str] = None
+    color: NotRequired[str]
     """Text color"""
-    layout: Optional[Layout] = None
+    layout: NotRequired[Layout]
     """Layout settings"""
 
 
@@ -230,33 +242,39 @@ class Shape:
     """Text within shape"""
 
 
-@dataclass
-class Image:
+class Image(TypedDict):
     """Data class representing image element"""
+
+    type: Literal["image"]
+    """Type of component"""
 
     path: str
     """Path to image file"""
-    width: Optional[Length] = None
+
+    width: NotRequired[Length]
     """Width"""
-    height: Optional[Length] = None
+
+    height: NotRequired[Length]
     """Height"""
-    layout: Optional[Layout] = None
+
+    layout: NotRequired[Layout]
     """Layout settings"""
 
 
-@dataclass
-class Chart:
+class Chart(TypedDict):
     """Data class representing chart element"""
 
-    type: str
+    type: Literal["chart"]
+    """Type of component"""
+    chart_type: str
     """Chart type ("bar", "line", "pie", etc.)"""
     data: List[Dict[str, Any]]
     """Chart data"""
-    width: Optional[Length] = None
+    width: NotRequired[Length]
     """Width"""
-    height: Optional[Length] = None
+    height: NotRequired[Length]
     """Height"""
-    layout: Optional[Layout] = None
+    layout: NotRequired[Layout]
     """Layout settings"""
 
 
@@ -280,21 +298,22 @@ class TableCell:
     """Text alignment"""
 
 
-@dataclass
-class Table:
+class Table(TypedDict):
     """Data class representing table element"""
 
+    type: Literal["table"]
+    """Type of component"""
     rows: int
     """Number of rows"""
     cols: int
     """Number of columns"""
     data: List[List[TableCell]]
     """Table data"""
-    width: Optional[Length] = None
+    width: NotRequired[Length]
     """Width"""
-    height: Optional[Length] = None
+    height: NotRequired[Length]
     """Height"""
-    layout: Optional[Layout] = None
+    layout: NotRequired[Layout]
     """Layout settings"""
 
 
@@ -341,13 +360,13 @@ class Presentation:
         """Get slides"""
         return self._presentation.slides
 
-    def save(self, path: str):
+    def save(self, path: os.PathLike):
         """Save presentation to file
 
         Args:
             path (str): Path to save presentation
         """
-        self._presentation.save(path)
+        self._presentation.save(os.fspath(path))
 
     @staticmethod
     def builder() -> "_PresentationBuilder":
@@ -386,10 +405,22 @@ class _PresentationBuilder:
             shape: Target shape
             layout (Layout): Layout settings to apply
         """
-        if layout.width:
-            shape.width = Inches(float(to_inche(layout.width)))
-        if layout.height:
-            shape.height = Inches(float(to_inche(layout.height)))
+        if layout.get("width"):
+            shape.width = Inches(to_inche(layout["width"]))
+        if layout.get("height"):
+            shape.height = Inches(to_inche(layout["height"]))
+        if layout.get("align"):
+            if layout["align"] == Align.CENTER:
+                shape.left = (
+                    Inches(to_inche(shape.left))
+                    + (Inches(8.5) - Inches(to_inche(shape.width))) / 2
+                )
+            elif layout["align"] == Align.END:
+                shape.left = (
+                    Inches(to_inche(shape.left))
+                    + Inches(8.5)
+                    - Inches(to_inche(shape.width))
+                )
 
     def _add_component(
         self, slide_obj, component: Component, left: Length, top: Length
@@ -402,57 +433,63 @@ class _PresentationBuilder:
             left (Length): Position from left edge
             top (Length): Position from top edge
         """
-        if isinstance(component, Text):
+        if component["type"] == "text":
             shape = slide_obj.shapes.add_textbox(
                 Inches(float(to_inche(left))),
                 Inches(float(to_inche(top))),
-                Inches(float(to_inche(component.layout.width)))
-                if component.layout and component.layout.width
+                Inches(float(to_inche(component["layout"]["width"])))
+                if component.get("layout") and component["layout"].get("width")
                 else Inches(3),
-                Inches(float(to_inche(component.layout.height)))
-                if component.layout and component.layout.height
+                Inches(float(to_inche(component["layout"]["height"])))
+                if component.get("layout") and component["layout"].get("height")
                 else Inches(1),
             )
             text_frame = shape.text_frame
-            text_frame.text = component.text
-            if component.size:
-                text_frame.paragraphs[0].font.size = Pt(int(to_point(component.size)))
-            if component.bold:
-                text_frame.paragraphs[0].font.bold = True
-            if component.italic:
-                text_frame.paragraphs[0].font.italic = True
+            text_frame.text = component["text"]
+            if component.get("size"):
+                text_frame.paragraphs[0].font.size = Pt(
+                    int(to_point(component["size"]))
+                )
+            if component.get("bold"):
+                text_frame.paragraphs[0].font.bold = component["bold"]
+            if component.get("italic"):
+                text_frame.paragraphs[0].font.italic = component["italic"]
 
-        elif isinstance(component, Image):
+        elif component["type"] == "image":
             shape = slide_obj.shapes.add_picture(
-                component.path,
+                component["path"],
                 Inches(float(to_inche(left))),
                 Inches(float(to_inche(top))),
-                Inches(float(to_inche(component.width))) if component.width else None,
-                Inches(float(to_inche(component.height))) if component.height else None,
+                Inches(float(to_inche(component["width"])))
+                if component.get("width")
+                else None,
+                Inches(float(to_inche(component["height"])))
+                if component.get("height")
+                else None,
             )
 
-        elif isinstance(component, Chart):
+        elif component["type"] == "chart":
             chart_data = ChartData()
-            chart_data.categories = [item["category"] for item in component.data]
+            chart_data.categories = [item["category"] for item in component["data"]]
             chart_data.add_series(
-                "Series 1", [item["value"] for item in component.data]
+                "Series 1", [item["value"] for item in component["data"]]
             )
 
             x, y = Inches(float(to_inche(left))), Inches(float(to_inche(top)))
             cx = (
-                Inches(float(to_inche(component.layout.width)))
-                if component.layout and component.layout.width
+                Inches(float(to_inche(component["layout"]["width"])))
+                if component.get("layout") and component["layout"].get("width")
                 else Inches(6)
             )
             cy = (
-                Inches(float(to_inche(component.layout.height)))
-                if component.layout and component.layout.height
+                Inches(float(to_inche(component["layout"]["height"])))
+                if component.get("layout") and component["layout"].get("height")
                 else Inches(4)
             )
 
             shape = slide_obj.shapes.add_chart(
                 XL_CHART_TYPE.BAR_CLUSTERED
-                if component.type == "bar"
+                if component["chart_type"] == "bar"
                 else XL_CHART_TYPE.LINE,
                 x,
                 y,
@@ -461,47 +498,47 @@ class _PresentationBuilder:
                 chart_data,
             )
 
-        elif isinstance(component, Table):
+        elif component["type"] == "table":
             table = slide_obj.shapes.add_table(
-                component.rows,
-                component.cols,
+                component["rows"],
+                component["cols"],
                 Inches(float(to_inche(left))),
                 Inches(float(to_inche(top))),
-                Inches(float(to_inche(component.layout.width)))
-                if component.layout and component.layout.width
+                Inches(float(to_inche(component["layout"]["width"])))
+                if component.get("layout") and component["layout"].get("width")
                 else Inches(6),
-                Inches(float(to_inche(component.layout.height)))
-                if component.layout and component.layout.height
+                Inches(float(to_inche(component["layout"]["height"])))
+                if component.get("layout") and component["layout"].get("height")
                 else Inches(2),
             ).table
 
-            for i, row in enumerate(component.data):
+            for i, row in enumerate(component["data"]):
                 for j, cell in enumerate(row):
                     table_cell = table.cell(i, j)
                     table_cell.text = cell.text
 
-                    if cell.size:
+                    if cell.get("size"):
                         table_cell.text_frame.paragraphs[0].font.size = Pt(
-                            int(to_point(cell.size))
+                            int(to_point(cell.get("size")))
                         )
-                    if cell.bold:
+                    if cell.get("bold"):
                         table_cell.text_frame.paragraphs[0].font.bold = True
-                    if cell.italic:
+                    if cell.get("italic"):
                         table_cell.text_frame.paragraphs[0].font.italic = True
-                    if cell.color:
+                    if cell.get("color"):
                         table_cell.text_frame.paragraphs[
                             0
-                        ].font.color.rgb = RGBColor.from_string(cell.color)
-                    if cell.background:
+                        ].font.color.rgb = RGBColor.from_string(cell.get("color"))
+                    if cell.get("background"):
                         table_cell.fill.solid()
                         table_cell.fill.fore_color.rgb = RGBColor.from_string(
-                            cell.background
+                            cell.get("background")
                         )
 
-                    table_cell.text_frame.paragraphs[0].alignment = cell.align
+                    table_cell.text_frame.paragraphs[0].alignment = cell.get("align")
 
-        if component.layout:
-            self._apply_layout(shape, component.layout)
+        if component.get("layout"):
+            self._apply_layout(shape, component["layout"])
 
     def _add_container(
         self, slide_obj, container: Container, left: Length, top: Length
@@ -520,27 +557,10 @@ class _PresentationBuilder:
         for component in container.components:
             self._add_component(slide_obj, component, current_left, current_top)
 
-            if container.layout.type == LayoutType.FLEX:
-                if container.layout.direction == "row":
-                    current_left = (
-                        current_left
-                        + (
-                            component.layout.width
-                            if component.layout and component.layout.width
-                            else Inch(3)
-                        )
-                        + container.layout.gap
-                    )
-                else:
-                    current_top = (
-                        current_top
-                        + (
-                            component.layout.height
-                            if component.layout and component.layout.height
-                            else Inch(1)
-                        )
-                        + container.layout.gap
-                    )
+            if container.layout["direction"] == "row":
+                current_left += Inch(2)  # Default spacing
+            else:
+                current_top += Inch(1)  # Default spacing
 
     def build(self) -> "Presentation":
         """Build the presentation
@@ -554,15 +574,17 @@ class _PresentationBuilder:
 
             if slide.title:
                 title_shape = slide_obj.shapes.title
-                title_shape.text = slide.title.text
-                if slide.title.size:
+                title_shape.text = slide.title["text"]
+                if slide.title.get("size"):
                     title_shape.text_frame.paragraphs[0].font.size = Pt(
-                        int(to_point(slide.title.size))
+                        int(to_point(slide.title["size"]))
                     )
-                if slide.title.bold:
-                    title_shape.text_frame.paragraphs[0].font.bold = True
-                if slide.title.italic:
-                    title_shape.text_frame.paragraphs[0].font.italic = True
+                if slide.title.get("bold"):
+                    title_shape.text_frame.paragraphs[0].font.bold = slide.title["bold"]
+                if slide.title.get("italic"):
+                    title_shape.text_frame.paragraphs[0].font.italic = slide.title[
+                        "italic"
+                    ]
 
             if slide.containers:
                 for container in slide.containers:
@@ -571,3 +593,179 @@ class _PresentationBuilder:
                     )  # Default position
 
         return self.presentation
+
+
+def create_image(
+    path: str,
+    width: Optional[Length] = None,
+    height: Optional[Length] = None,
+    layout: Optional[Layout] = None,
+) -> Image:
+    """Create an image component with type field automatically set
+
+    Args:
+        path (str): Path to image file
+        width (Optional[Length], optional): Width. Defaults to None.
+        height (Optional[Length], optional): Height. Defaults to None.
+        layout (Optional[Layout], optional): Layout settings. Defaults to None.
+
+    Returns:
+        Image: Created image component
+    """
+    return {
+        "type": "image",
+        "path": path,
+        "width": width,
+        "height": height,
+        "layout": layout,
+    }
+
+
+def create_text(
+    text: str,
+    size: Optional[Length] = None,
+    bold: bool = False,
+    italic: bool = False,
+    color: Optional[str] = None,
+    layout: Optional[Layout] = None,
+) -> Text:
+    """Create a text component with type field automatically set
+
+    Args:
+        text (str): Text content
+        size (Optional[Length], optional): Font size. Defaults to None.
+        bold (bool, optional): Whether text is bold. Defaults to False.
+        italic (bool, optional): Whether text is italic. Defaults to False.
+        color (Optional[str], optional): Text color. Defaults to None.
+        layout (Optional[Layout], optional): Layout settings. Defaults to None.
+
+    Returns:
+        Text: Created text component
+    """
+    return {
+        "type": "text",
+        "text": text,
+        "size": size,
+        "bold": bold,
+        "italic": italic,
+        "color": color,
+        "layout": layout,
+    }
+
+
+def create_chart(
+    chart_type: str,
+    data: List[Dict[str, Any]],
+    width: Optional[Length] = None,
+    height: Optional[Length] = None,
+    layout: Optional[Layout] = None,
+) -> Chart:
+    """Create a chart component with type field automatically set
+
+    Args:
+        chart_type (str): Chart type ("bar", "line", "pie", etc.)
+        data (List[Dict[str, Any]]): Chart data
+        width (Optional[Length], optional): Width. Defaults to None.
+        height (Optional[Length], optional): Height. Defaults to None.
+        layout (Optional[Layout], optional): Layout settings. Defaults to None.
+
+    Returns:
+        Chart: Created chart component
+    """
+    return {
+        "type": "chart",
+        "chart_type": chart_type,
+        "data": data,
+        "width": width,
+        "height": height,
+        "layout": layout,
+    }
+
+
+def create_table(
+    rows: int,
+    cols: int,
+    data: List[List[TableCell]],
+    width: Optional[Length] = None,
+    height: Optional[Length] = None,
+    layout: Optional[Layout] = None,
+) -> Table:
+    """Create a table component with type field automatically set
+
+    Args:
+        rows (int): Number of rows
+        cols (int): Number of columns
+        data (List[List[TableCell]]): Table data
+        width (Optional[Length], optional): Width. Defaults to None.
+        height (Optional[Length], optional): Height. Defaults to None.
+        layout (Optional[Layout], optional): Layout settings. Defaults to None.
+
+    Returns:
+        Table: Created table component
+    """
+    return {
+        "type": "table",
+        "rows": rows,
+        "cols": cols,
+        "data": data,
+        "width": width,
+        "height": height,
+        "layout": layout,
+    }
+
+
+def create_layout(
+    type: LayoutType = LayoutType.FLEX,
+    direction: str = "row",
+    align: Align = Align.START,
+    justify: Justify = Justify.START,
+    gap: Length = Inch(0.1),
+    padding: Optional[Dict[str, Length]] = None,
+    width: Optional[Length] = None,
+    height: Optional[Length] = None,
+) -> Layout:
+    """Create a layout with default values
+
+    Args:
+        type (LayoutType, optional): Layout type. Defaults to LayoutType.FLEX.
+        direction (str, optional): Layout direction ("row" or "column"). Defaults to "row".
+        align (Align, optional): Element alignment. Defaults to Align.START.
+        justify (Justify, optional): Element justification. Defaults to Justify.START.
+        gap (Length, optional): Gap between elements. Defaults to Inch(0.1).
+        padding (Optional[Dict[str, Length]], optional): Padding (top, right, bottom, left). Defaults to None.
+        width (Optional[Length], optional): Width. Defaults to None.
+        height (Optional[Length], optional): Height. Defaults to None.
+
+    Returns:
+        Layout: Created layout
+    """
+    return {
+        "type": type,
+        "direction": direction,
+        "align": align,
+        "justify": justify,
+        "gap": gap,
+        "padding": padding,
+        "width": width,
+        "height": height,
+    }
+
+
+def create_slide(
+    layout: SlideLayout,
+    title: Optional[Text] = None,
+    containers: Optional[List[Container]] = None,
+) -> Slide:
+    """Create a slide with specified layout, title, and containers.
+
+    Args:
+        layout (SlideLayout): Layout type for the slide
+        title (Optional[Text], optional): Title text component. Defaults to None.
+        containers (Optional[List[Container]], optional): List of containers. Defaults to None.
+
+    Returns:
+        Slide: Created slide object
+    """
+    if containers is None:
+        containers = []
+    return Slide(layout=layout, title=title, containers=containers)
