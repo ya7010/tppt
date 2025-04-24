@@ -6,7 +6,6 @@ INCHES_PER_POINT = 1 / 72  # 1 point = 1/72 inches
 POINTS_PER_INCH = 72  # 1 inch = 72 points
 CM_PER_INCH = 2.54  # 1 inch = 2.54 cm
 
-_Length = Union["_Inch", "_Point", "_Centimeter"]
 
 Length = Union[
     tuple[int, Literal["pt"]],
@@ -133,6 +132,9 @@ class _Centimeter:
         if not isinstance(other, _Centimeter):
             raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
         return self.value == other.value
+
+
+_Length = Union["_Inch", "_Point", "_Centimeter"]
 
 
 def _to_internal_length(length: Length) -> _Length:
