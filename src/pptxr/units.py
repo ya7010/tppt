@@ -6,7 +6,6 @@ INCHES_PER_POINT = 1 / 72  # 1 point = 1/72 inches
 POINTS_PER_INCH = 72  # 1 inch = 72 points
 CM_PER_INCH = 2.54  # 1 inch = 2.54 cm
 
-Length = Literal["Inch", "Point", "Centimeter"]
 
 LiteralLength = (
     tuple[int, Literal["pt"]]
@@ -133,6 +132,9 @@ class Centimeter:
         if not isinstance(other, Centimeter):
             raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
         return self.value == other.value
+
+
+Length = Inch | Point | Centimeter
 
 
 def to_length(length: LiteralLength) -> Length:

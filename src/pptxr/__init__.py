@@ -287,16 +287,16 @@ class Presentation:
         self._presentation.save(path)
 
     @classmethod
-    def builder(cls) -> "_PresentationBuilder":
+    def builder(cls) -> "PresentationBuilder":
         """Create a new presentation builder.
 
         Returns:
             PresentationBuilder: Newly created presentation builder
         """
-        return _PresentationBuilder()
+        return PresentationBuilder()
 
 
-class _PresentationBuilder:
+class PresentationBuilder:
     """Builder class for creating presentations."""
 
     def __init__(self):
@@ -305,17 +305,17 @@ class _PresentationBuilder:
         self.slides: list[Slide] = []
 
     @overload
-    def add_slide(self, slide: Slide | SlideTemplate, /) -> "_PresentationBuilder": ...
+    def add_slide(self, slide: Slide | SlideTemplate, /) -> "PresentationBuilder": ...
 
     @overload
-    def add_slide(self, /, **kwargs: Unpack[Slide]) -> "_PresentationBuilder": ...
+    def add_slide(self, /, **kwargs: Unpack[Slide]) -> "PresentationBuilder": ...
 
     def add_slide(  # type: ignore
         self,
         slide: Slide | SlideTemplate | None = None,
         /,
         **kwargs: Unpack[Slide],
-    ) -> "_PresentationBuilder":
+    ) -> "PresentationBuilder":
         """Add a slide to the presentation."""
         if isinstance(slide, SlideTemplate):
             # Using template
