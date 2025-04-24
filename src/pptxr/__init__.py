@@ -7,23 +7,21 @@ from typing import (
     Generic,
     Literal,
     NotRequired,
+    Self,
     TypeAlias,
     TypedDict,
     Unpack,
-    overload,
 )
 
+import pptx
 from typing_extensions import TypeVar
 
+from pptxr._data import Slide
 from pptxr.units import Length
 
 from ._pptx import PptxPresentationFactory
 from .types import FilePath
-from .types import Slide as AbstractSlide
-from .units import (
-    LiteralLength,
-    to_length,
-)
+from .units import LiteralLength
 
 SlideIndex: TypeAlias = int
 
@@ -133,29 +131,6 @@ Component = Text | Image
 """Union type representing any component type"""
 
 
-class Container(TypedDict):
-    """Data class representing container."""
-
-    components: list[Component]
-    """Components within container"""
-
-    layout: Layout
-    """Layout settings"""
-
-
-class Slide(TypedDict):
-    """Data class representing slide."""
-
-    layout: SlideLayout
-    """Slide layout"""
-
-    title: NotRequired[Text]
-    """Slide title"""
-
-    containers: NotRequired[list[Container]]
-    """Containers within slide"""
-
-
 class SlideBuilder(ABC):
     """Builder class for creating slides."""
 
@@ -171,9 +146,20 @@ class SlideBuilder(ABC):
 class DefaultSlideBuilder(SlideBuilder):
     """Default slide builder."""
 
+    def __init__(self, slide: Slide):
+        self._slide = slide
+
+    def text(self, text: str, /, **kwargs: Unpack[TextParams]) -> Self:
+        self._slide.components.append(Text(type="text", text=text, **kwargs))
+        return self
+
+    def image(self, **kwargs: Unpack[ImageParams]) -> Self:
+        self._slide.components.append(Image(type="image", **kwargs))
+        return self
+
     def build(self) -> Slide:
         """Build the slide."""
-        return slide(layout="TITLE")
+        return self._slide
 
 
 _GenericSlideBuilder = TypeVar(
@@ -191,9 +177,25 @@ class SlideTemplate(Generic[_GenericSlideBuilder]):
     and implementing the build method.
     """
 
-    def build(self, builder: _GenericSlideBuilder) -> Slide:
+    @abstractmethod
+    def builder(
+        self,
+    ) -> _GenericSlideBuilder:
         """Build a slide using this template."""
         raise NotImplementedError()
+
+
+class SlideMaster(Generic[_GenericSlideBuilder]):
+    """Slide master for a presentation."""
+
+    def __init__(self, file: FilePath | IO[bytes] | None = None):
+        """Initialize slide master."""
+        if file is None:
+            self._presentation = pptx.Presentation()
+        else:
+            if isinstance(file, os.PathLike):
+                file = os.fspath(file)
+            self._presentation = pptx.Presentation(file)
 
 
 class Presentation:
@@ -205,9 +207,9 @@ class Presentation:
         self._presentation = self._factory.create_presentation()
 
     @property
-    def slides(self) -> list[AbstractSlide]:
+    def slides(self) -> list[Slide]:
         """Get slides."""
-        return self._presentation.get_slides()
+        return []
 
     def save(self, path: FilePath | IO[bytes]) -> None:
         """Save presentation to file.
@@ -223,108 +225,43 @@ class Presentation:
     @classmethod
     def builder(
         cls,
-        slide_builder: type[_GenericSlideBuilder] = DefaultSlideBuilder,  # type: ignore
+        slide_master: SlideMaster[_GenericSlideBuilder] | None = None,
     ) -> "PresentationBuilder[_GenericSlideBuilder]":
         """Create a new presentation builder.
 
         Returns:
             PresentationBuilder: Newly created presentation builder
         """
-        return PresentationBuilder(slide_builder)
+        if slide_master is None:
+            slide_master = SlideMaster()
+        return PresentationBuilder(slide_master)
 
 
 class PresentationBuilder(Generic[_GenericSlideBuilder]):
     """Builder class for creating presentations."""
 
-    def __init__(self, slide_builder: type[_GenericSlideBuilder]):
+    def __init__(self, slide_master: SlideMaster[_GenericSlideBuilder]):
         """Initialize presentation builder."""
         self._presentation = Presentation()
-        self._slide_builder = slide_builder
+        self.slide_master = slide_master
         self.slides: list[Slide] = []
-
-    @overload
-    def add_slide(
-        self, slide: Slide | SlideTemplate, /
-    ) -> "PresentationBuilder[_GenericSlideBuilder]": ...
-
-    @overload
-    def add_slide(
-        self, /, **kwargs: Unpack[Slide]
-    ) -> "PresentationBuilder[_GenericSlideBuilder]": ...
 
     def add_slide(  # type: ignore
         self,
-        slide: Slide | SlideTemplate[_GenericSlideBuilder] | None = None,
-        /,
-        **kwargs: Unpack[Slide],
+        slide: Slide | SlideTemplate[_GenericSlideBuilder] | _GenericSlideBuilder,
     ) -> "PresentationBuilder[_GenericSlideBuilder]":
         """Add a slide to the presentation."""
         if isinstance(slide, SlideTemplate):
             # Using template
-            slide = slide.build(self._slide_builder())
-        elif slide is None:
-            slide = kwargs
+            slide = slide.builder()
+
+        if isinstance(slide, SlideBuilder):
+            # Using builder
+            slide = slide.build()
 
         self.slides.append(slide)
+
         return self
-
-    def _add_component(
-        self,
-        slide_obj: AbstractSlide,
-        component: Component,
-        left: Length | LiteralLength,
-        top: Length | LiteralLength,
-    ) -> None:
-        """Add a component to a slide.
-
-        Args:
-            slide_obj (AbstractSlide): Target slide
-            component (Component): Component to add
-            left (Length): Position from left edge
-            top (Length): Position from top edge
-        """
-
-        if component["type"] == "text":
-            pass
-
-        elif component["type"] == "image":
-            # TODO: Implement image component
-            pass
-
-        elif component["type"] == "chart":
-            # TODO: Implement chart component
-            pass
-
-        elif component["type"] == "table":
-            # TODO: Implement table component
-            pass
-
-    def _add_container(
-        self,
-        slide_obj: AbstractSlide,
-        container: Container,
-        left: LiteralLength,
-        top: LiteralLength,
-    ) -> None:
-        """Add a container to a slide.
-
-        Args:
-            slide_obj (AbstractSlide): Target slide
-            container (Container): Container to add
-            left (Length): Position from left edge
-            top (Length): Position from top edge
-        """
-        current_left = to_length(left)
-        current_top = to_length(top)
-
-        for component in container["components"]:
-            self._add_component(slide_obj, component, current_left, current_top)
-
-            if layout := container["layout"]:
-                if layout.get("direction", "row") == "row":
-                    current_left = current_left + (2, "in")  # Default spacing
-                else:
-                    current_top = current_top + (1, "in")  # Default spacing
 
     def build(self) -> "Presentation":
         """Build the presentation.
@@ -332,115 +269,5 @@ class PresentationBuilder(Generic[_GenericSlideBuilder]):
         Returns:
             Presentation: Built presentation
         """
-        for slide in self.slides:
-            slide_obj = self._presentation._presentation.add_slide(slide["layout"])
-
-            if title := slide.get("title"):
-                title_shape = slide_obj.get_title()
-                if title_shape:
-                    if text := title["text"]:
-                        title_shape.set_text(text)
-
-            if containers := slide.get("containers"):
-                for container in containers:
-                    self._add_container(
-                        slide_obj, container, (1, "in"), (2, "in")
-                    )  # Default position
 
         return self._presentation
-
-
-def image(
-    **kwargs: Unpack[ImageParams],
-) -> Image:
-    """Create an image component with type field automatically set.
-
-    Args:
-        path (str | pathlib.Path): Path to image file
-        width (Length | None, optional): Width. Defaults to None.
-        height (Length | None, optional): Height. Defaults to None.
-        layout (Layout | None, optional): Layout settings. Defaults to None.
-
-    Returns:
-        Image: Created image component
-    """
-    return {
-        "type": "image",
-        **kwargs,
-    }
-
-
-def text(
-    text: str,
-    /,
-    **kwargs: Unpack[TextParams],
-) -> Text:
-    """Create a text component with type field automatically set.
-
-    Args:
-        text (str): Text content
-        size (Length | None, optional): Font size. Defaults to None.
-        bold (bool, optional): Whether text is bold. Defaults to False.
-        italic (bool, optional): Whether text is italic. Defaults to False.
-        color (str | None, optional): Text color. Defaults to None.
-        layout (Layout | None, optional): Layout settings. Defaults to None.
-
-    Returns:
-        Text: Created text component
-    """
-
-    return {
-        "type": "text",
-        "text": text,
-        **kwargs,
-    }
-
-
-def layout(
-    **kwargs: Unpack[Layout],
-) -> Layout:
-    """Create a layout with default values.
-
-    Args:
-        type (LayoutType, optional): Layout type. Defaults to "flex".
-        direction (str, optional): Layout direction ("row" or "column"). Defaults to "row".
-        align (Align, optional): Element alignment. Defaults to "start".
-        justify (Justify, optional): Element justification. Defaults to "start".
-        gap (Length, optional): Gap between elements. Defaults to (0.1, "in").
-        padding (dict[str, Length] | None, optional): Padding (top, right, bottom, left). Defaults to None.
-        width (Length | None, optional): Width. Defaults to None.
-        height (Length | None, optional): Height. Defaults to None.
-
-    Returns:
-        Layout: Created layout
-    """
-    return kwargs
-
-
-def slide(
-    layout: SlideLayout,
-    title: Text | None = None,
-    containers: list[Container] | None = None,
-) -> Slide:
-    """Create a slide with specified layout, title, and containers.
-
-    Args:
-        layout (SlideLayout): Layout type for the slide
-        title (Text | None, optional): Title text component. Defaults to None.
-        containers (list[Container] | None, optional): list of containers. Defaults to None.
-
-    Returns:
-        Slide: Created slide object
-    """
-    if containers is None:
-        containers = []
-
-    result: Slide = {
-        "layout": layout,
-        "containers": containers,
-    }
-
-    if title is not None:
-        result["title"] = title
-
-    return result

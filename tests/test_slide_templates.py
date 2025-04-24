@@ -1,21 +1,14 @@
-from typing import cast
-
 from pptxr import (
-    Component,
-    Container,
     DefaultSlideBuilder,
     Presentation,
     Slide,
     SlideBuilder,
     SlideTemplate,
     Text,
-    layout,
-    slide,
-    text,
 )
 
 
-class TwoColumnTemplate(SlideTemplate):
+class TwoColumnSlideTemplate(SlideTemplate):
     """Template for two-column layout
 
     Args:
@@ -26,36 +19,25 @@ class TwoColumnTemplate(SlideTemplate):
     def __init__(
         self,
         *,
-        title: Text,
-        left_content: Text,
-        right_content: Text,
+        title: Text | str,
+        left_content: Text | str,
+        right_content: Text | str,
     ) -> None:
         self.title = title
         self.left_content = left_content
         self.right_content = right_content
 
-    def build(self, builder: SlideBuilder) -> Slide:
-        return slide(
-            layout="TITLE_AND_CONTENT",
-            title=self.title,
-            containers=[
-                Container(
-                    components=[
-                        self.left_content,
-                        self.right_content,
-                    ],
-                    layout=layout(
-                        type="flex",
-                        direction="row",
-                        justify="space-between",
-                        gap=(0.5, "in"),
-                    ),
-                )
-            ],
+    def builder(self) -> DefaultSlideBuilder:
+        return DefaultSlideBuilder(
+            slide=Slide(
+                layout=1,
+                placeholders=[],
+                components=[],
+            )
         )
 
 
-class FeatureCardsTemplate(SlideTemplate):
+class FeatureCardsTemplate(SlideBuilder):
     """Template for 2x2 feature cards
 
     Args:
@@ -71,26 +53,13 @@ class FeatureCardsTemplate(SlideTemplate):
         self.title = title
         self.features = features
 
-    def build(self, builder: SlideBuilder) -> Slide:
-        if self.features and len(self.features) > 4:
-            raise ValueError("Maximum 4 features allowed")
-
-        default_features = [
-            text("Feature 1"),
-            text("Feature 2"),
-            text("Feature 3"),
-            text("Feature 4"),
-        ]
-
-        return slide(
-            layout="TITLE_AND_CONTENT",
-            title=self.title,
-            containers=[
-                Container(
-                    components=cast(list[Component], self.features or default_features),
-                    layout=layout(type="grid", gap=(0.5, "in")),
-                )
-            ],
+    def buildr(self) -> DefaultSlideBuilder:
+        return DefaultSlideBuilder(
+            slide=Slide(
+                layout=2,
+                placeholders=[],
+                components=[],
+            )
         )
 
 
@@ -98,12 +67,12 @@ def test_two_column_template():
     """Test TwoColumnTemplate"""
 
     presentation = (
-        Presentation.builder(DefaultSlideBuilder)
+        Presentation.builder()
         .add_slide(
-            TwoColumnTemplate(
-                title=text("Title"),
-                left_content=text("Left"),
-                right_content=text("Right"),
+            TwoColumnSlideTemplate(
+                title="Title",
+                left_content="Left",
+                right_content="Right",
             )
         )
         .build()
@@ -116,16 +85,31 @@ def test_two_column_template():
 def test_feature_cards_template():
     """Test FeatureCardsTemplate"""
 
-    presentation = Presentation.builder(DefaultSlideBuilder).add_slide(
-        FeatureCardsTemplate(
-            title=text("Title"),
-            features=[
-                text("Feature 1"),
-                text("Feature 2"),
-                text("Feature 3"),
-                text("Feature 4"),
-            ],
+    presentation = (
+        Presentation.builder()
+        .add_slide(
+            FeatureCardsTemplate(
+                title=text("Title"),
+                features=[
+                    text("Feature 1"),
+                    text("Feature 2"),
+                    text("Feature 3"),
+                    text("Feature 4"),
+                ],
+            )
         )
+        .add_slide(
+            FeatureCardsTemplate(
+                title=text("Title"),
+                features=[
+                    text("Feature 1"),
+                    text("Feature 2"),
+                    text("Feature 3"),
+                    text("Feature 4"),
+                ],
+            )
+        )
+        .build()
     )
 
     slide = presentation.slides[0]
@@ -137,7 +121,7 @@ def test_template_in_presentation():
     presentation = (
         Presentation.builder()
         .add_slide(
-            TwoColumnTemplate(
+            TwoColumnSlideTemplate(
                 title=text("Two Column"),
                 left_content=text("Left"),
                 right_content=text("Right"),
