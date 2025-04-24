@@ -1,30 +1,30 @@
 import pytest
 
 from pptxr.units import (
+    _Centimeter,
     _Inch,
-    _Millimeter,
     _Point,
     _to_internal_length,
     _to_public_length,
+    to_centimeter,
     to_inche,
-    to_millimeter,
     to_point,
 )
 
 
-def test_to_millimeter():
-    """Test conversion to millimeters"""
+def test_to_centimeter():
+    """Test conversion to centimeters"""
     # Test from inches
-    assert to_millimeter(_Inch(1)).value == 25.4
-    assert to_millimeter((1.0, "in")).value == 25.4
+    assert to_centimeter(_Inch(1)).value == 2.54
+    assert to_centimeter((1.0, "in")).value == 2.54
 
     # Test from points
-    assert to_millimeter(_Point(72)).value == 25.4
-    assert to_millimeter((72, "pt")).value == 25.4
+    assert to_centimeter(_Point(72)).value == 2.54
+    assert to_centimeter((72, "pt")).value == 2.54
 
-    # Test from millimeters
-    assert to_millimeter(_Millimeter(25.4)).value == 25.4
-    assert to_millimeter((25.4, "mm")).value == 25.4
+    # Test from centimeters
+    assert to_centimeter(_Centimeter(2.54)).value == 2.54
+    assert to_centimeter((2.54, "cm")).value == 2.54
 
 
 def test_to_inche():
@@ -37,9 +37,9 @@ def test_to_inche():
     assert to_inche(_Point(72)).value == 1.0
     assert to_inche((72, "pt")).value == 1.0
 
-    # Test from millimeters
-    assert to_inche(_Millimeter(25.4)).value == 1.0
-    assert to_inche((25.4, "mm")).value == 1.0
+    # Test from centimeters
+    assert to_inche(_Centimeter(2.54)).value == 1.0
+    assert to_inche((2.54, "cm")).value == 1.0
 
 
 def test_to_point():
@@ -52,9 +52,9 @@ def test_to_point():
     assert to_point(_Point(72)).value == 72
     assert to_point((72, "pt")).value == 72
 
-    # Test from millimeters
-    assert to_point(_Millimeter(25.4)).value == 72
-    assert to_point((25.4, "mm")).value == 72
+    # Test from centimeters
+    assert to_point(_Centimeter(2.54)).value == 72
+    assert to_point((2.54, "cm")).value == 72
 
 
 def test_internal_length_operations():
@@ -62,22 +62,22 @@ def test_internal_length_operations():
     # Test addition
     assert (_Inch(1) + _Inch(1)).value == 2.0
     assert (_Point(72) + _Point(72)).value == 144
-    assert (_Millimeter(25.4) + _Millimeter(25.4)).value == 50.8
+    assert (_Centimeter(2.54) + _Centimeter(2.54)).value == 5.08
 
     # Test subtraction
     assert (_Inch(2) - _Inch(1)).value == 1.0
     assert (_Point(144) - _Point(72)).value == 72
-    assert (_Millimeter(50.8) - _Millimeter(25.4)).value == 25.4
+    assert (_Centimeter(5.08) - _Centimeter(2.54)).value == 2.54
 
     # Test multiplication
     assert (_Inch(1) * 2).value == 2.0
     assert (_Point(72) * 2).value == 144
-    assert (_Millimeter(25.4) * 2).value == 50.8
+    assert (_Centimeter(2.54) * 2).value == 5.08
 
     # Test division
     assert (_Inch(2) / 2).value == 1.0
     assert (_Point(144) / 2).value == 72
-    assert (_Millimeter(50.8) / 2).value == 25.4
+    assert (_Centimeter(5.08) / 2).value == 2.54
 
 
 def test_conversion_between_units():
@@ -86,25 +86,25 @@ def test_conversion_between_units():
     assert to_point(_Inch(1)).value == 72
     assert to_point((1.0, "in")).value == 72
 
-    # Test inch to millimeter
-    assert to_millimeter(_Inch(1)).value == 25.4
-    assert to_millimeter((1.0, "in")).value == 25.4
+    # Test inch to centimeter
+    assert to_centimeter(_Inch(1)).value == 2.54
+    assert to_centimeter((1.0, "in")).value == 2.54
 
     # Test point to inch
     assert to_inche(_Point(72)).value == 1.0
     assert to_inche((72, "pt")).value == 1.0
 
-    # Test point to millimeter
-    assert to_millimeter(_Point(72)).value == 25.4
-    assert to_millimeter((72, "pt")).value == 25.4
+    # Test point to centimeter
+    assert to_centimeter(_Point(72)).value == 2.54
+    assert to_centimeter((72, "pt")).value == 2.54
 
-    # Test millimeter to inch
-    assert to_inche(_Millimeter(25.4)).value == 1.0
-    assert to_inche((25.4, "mm")).value == 1.0
+    # Test centimeter to inch
+    assert to_inche(_Centimeter(2.54)).value == 1.0
+    assert to_inche((2.54, "cm")).value == 1.0
 
-    # Test millimeter to point
-    assert to_point(_Millimeter(25.4)).value == 72
-    assert to_point((25.4, "mm")).value == 72
+    # Test centimeter to point
+    assert to_point(_Centimeter(2.54)).value == 72
+    assert to_point((2.54, "cm")).value == 72
 
 
 def test_internal_to_public_conversion():
@@ -112,20 +112,20 @@ def test_internal_to_public_conversion():
     # Test inch conversion
     assert _to_internal_length((1.0, "in")) == _Inch(1.0)
     assert _to_public_length(_Inch(1.0), "in") == (1.0, "in")
-    assert _to_public_length(_Inch(1.0), "mm") == (25.4, "mm")
+    assert _to_public_length(_Inch(1.0), "cm") == (2.54, "cm")
     assert _to_public_length(_Inch(1.0), "pt") == (72, "pt")
 
     # Test point conversion
     assert _to_internal_length((72, "pt")) == _Point(72)
     assert _to_public_length(_Point(72), "in") == (1.0, "in")
-    assert _to_public_length(_Point(72), "mm") == (25.4, "mm")
+    assert _to_public_length(_Point(72), "cm") == (2.54, "cm")
     assert _to_public_length(_Point(72), "pt") == (72, "pt")
 
-    # Test millimeter conversion
-    assert _to_internal_length((25.4, "mm")) == _Millimeter(25.4)
-    assert _to_public_length(_Millimeter(25.4), "in") == (1.0, "in")
-    assert _to_public_length(_Millimeter(25.4), "mm") == (25.4, "mm")
-    assert _to_public_length(_Millimeter(25.4), "pt") == (72, "pt")
+    # Test centimeter conversion
+    assert _to_internal_length((2.54, "cm")) == _Centimeter(2.54)
+    assert _to_public_length(_Centimeter(2.54), "in") == (1.0, "in")
+    assert _to_public_length(_Centimeter(2.54), "cm") == (2.54, "cm")
+    assert _to_public_length(_Centimeter(2.54), "pt") == (72, "pt")
 
 
 def test_invalid_unit():

@@ -4,7 +4,7 @@ from typing import Literal, Union, assert_never
 # Constants for unit conversion
 INCHES_PER_POINT = 1 / 72  # 1 point = 1/72 inches
 POINTS_PER_INCH = 72  # 1 inch = 72 points
-MM_PER_INCH = 25.4  # 1 inch = 25.4 mm
+CM_PER_INCH = 2.54  # 1 inch = 2.54 cm
 
 
 @dataclass
@@ -72,43 +72,43 @@ class _Point:
 
 
 @dataclass
-class _Millimeter:
-    """Class representing millimeters"""
+class _Centimeter:
+    """Class representing centimeters"""
 
     value: float
 
-    def __add__(self, other: "_Length") -> "_Millimeter":
-        return _Millimeter(self.value + to_millimeter(other).value)
+    def __add__(self, other: "_Length") -> "_Centimeter":
+        return _Centimeter(self.value + to_centimeter(other).value)
 
-    def __sub__(self, other: "_Length") -> "_Millimeter":
-        return _Millimeter(self.value - to_millimeter(other).value)
+    def __sub__(self, other: "_Length") -> "_Centimeter":
+        return _Centimeter(self.value - to_centimeter(other).value)
 
-    def __iadd__(self, other: "_Length") -> "_Millimeter":
-        self.value += to_millimeter(other).value
+    def __iadd__(self, other: "_Length") -> "_Centimeter":
+        self.value += to_centimeter(other).value
         return self
 
-    def __isub__(self, other: "_Length") -> "_Millimeter":
-        self.value -= to_millimeter(other).value
+    def __isub__(self, other: "_Length") -> "_Centimeter":
+        self.value -= to_centimeter(other).value
         return self
 
-    def __mul__(self, other: Union[int, float]) -> "_Millimeter":
-        return _Millimeter(self.value * other)
+    def __mul__(self, other: Union[int, float]) -> "_Centimeter":
+        return _Centimeter(self.value * other)
 
-    def __truediv__(self, other: Union[int, float]) -> "_Millimeter":
-        return _Millimeter(self.value / other)
+    def __truediv__(self, other: Union[int, float]) -> "_Centimeter":
+        return _Centimeter(self.value / other)
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, _Millimeter):
+        if not isinstance(other, _Centimeter):
             raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
         return self.value == other.value
 
 
-_Length = Union[_Inch, _Point, _Millimeter]
+_Length = Union[_Inch, _Point, _Centimeter]
 
 Length = Union[
     tuple[int, Literal["pt"]],
     tuple[float, Literal["in"]],
-    tuple[float, Literal["mm"]],
+    tuple[float, Literal["cm"]],
 ]
 
 
@@ -125,20 +125,20 @@ def _to_internal_length(length: Length) -> _Length:
     match unit:
         case "in":
             return _Inch(value)
-        case "mm":
-            return _Millimeter(value)
+        case "cm":
+            return _Centimeter(value)
         case "pt":
             return _Point(int(value))
         case _:
             assert_never(unit)
 
 
-def _to_public_length(length: _Length, unit: Literal["in", "mm", "pt"]) -> Length:
+def _to_public_length(length: _Length, unit: Literal["in", "cm", "pt"]) -> Length:
     """Convert internal length representation to public length representation
 
     Args:
         length (_Length): Internal length representation
-        unit (Literal["in", "mm", "pt"]): Desired unit
+        unit (Literal["in", "cm", "pt"]): Desired unit
 
     Returns:
         Length: Public length representation
@@ -146,32 +146,32 @@ def _to_public_length(length: _Length, unit: Literal["in", "mm", "pt"]) -> Lengt
     match unit:
         case "in":
             return (to_inche(length).value, "in")
-        case "mm":
-            return (to_millimeter(length).value, "mm")
+        case "cm":
+            return (to_centimeter(length).value, "cm")
         case "pt":
             return (to_point(length).value, "pt")
         case _:
             assert_never(unit)
 
 
-def to_millimeter(length: Union[_Length, Length]) -> _Millimeter:
-    """Convert any length to millimeters
+def to_centimeter(length: Union[_Length, Length]) -> _Centimeter:
+    """Convert any length to centimeters
 
     Args:
         length (Union[_Length, Length]): Length in any unit
 
     Returns:
-        _Millimeter: Length in millimeters
+        _Centimeter: Length in centimeters
     """
     if isinstance(length, tuple):
-        return to_millimeter(_to_internal_length(length))
+        return to_centimeter(_to_internal_length(length))
 
     match length:
         case _Inch():
-            return _Millimeter(length.value * MM_PER_INCH)
+            return _Centimeter(length.value * CM_PER_INCH)
         case _Point():
-            return _Millimeter(length.value * INCHES_PER_POINT * MM_PER_INCH)
-        case _Millimeter():
+            return _Centimeter(length.value * INCHES_PER_POINT * CM_PER_INCH)
+        case _Centimeter():
             return length
         case _:
             assert_never(length)
@@ -194,8 +194,8 @@ def to_inche(length: Union[_Length, Length]) -> _Inch:
             return length
         case _Point():
             return _Inch(float(length.value) * INCHES_PER_POINT)
-        case _Millimeter():
-            return _Inch(length.value / MM_PER_INCH)
+        case _Centimeter():
+            return _Inch(length.value / CM_PER_INCH)
         case _:
             assert_never(length)
 
@@ -217,7 +217,7 @@ def to_point(length: Union[_Length, Length]) -> _Point:
             return _Point(int(length.value * POINTS_PER_INCH))
         case _Point():
             return length
-        case _Millimeter():
-            return _Point(int(length.value / MM_PER_INCH * POINTS_PER_INCH))
+        case _Centimeter():
+            return _Point(int(length.value / CM_PER_INCH * POINTS_PER_INCH))
         case _:
             assert_never(length)
