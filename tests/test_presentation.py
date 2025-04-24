@@ -5,7 +5,6 @@ from pathlib import Path
 from pptxr import (
     Container,
     Presentation,
-    chart,
     image,
     layout,
     slide,
@@ -163,45 +162,6 @@ class TestPresentation(unittest.TestCase):
         )
 
         output_path = self.output_dir / "with_image.pptx"
-        presentation.save(output_path)
-        self.assertTrue(output_path.exists())
-
-    def test_create_presentation_with_chart(self):
-        """Test creating a presentation with chart"""
-        presentation = (
-            Presentation.builder()
-            .add_slide(
-                slide(
-                    layout="TITLE_AND_CONTENT",
-                    title=text("Slide with Chart", size=(44, "pt"), bold=True),
-                    containers=[
-                        Container(
-                            components=[
-                                chart(
-                                    chart_type="bar",
-                                    data=[
-                                        {"category": "A", "value": 10},
-                                        {"category": "B", "value": 20},
-                                        {"category": "C", "value": 30},
-                                    ],
-                                    width=(6, "in"),
-                                    height=(4, "in"),
-                                    layout=layout(width=(6, "in"), height=(4, "in")),
-                                )
-                            ],
-                            layout=layout(
-                                type="flex",
-                                direction="column",
-                                align="center",
-                            ),
-                        )
-                    ],
-                )
-            )
-            .build()
-        )
-
-        output_path = self.output_dir / "with_chart.pptx"
         presentation.save(output_path)
         self.assertTrue(output_path.exists())
 

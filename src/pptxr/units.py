@@ -137,7 +137,7 @@ class Centimeter:
 Length = Inch | Point | Centimeter
 
 
-def to_length(length: LiteralLength) -> Length:
+def to_length(length: LiteralLength | Length) -> Length:
     """Convert public length representation to internal length representation
 
     Args:
@@ -146,19 +146,25 @@ def to_length(length: LiteralLength) -> Length:
     Returns:
         _Length: Internal length representation
     """
-    value, unit = length
-    match unit:
-        case "in":
-            return Inch(value)
-        case "cm":
-            return Centimeter(value)
-        case "pt":
-            return Point(int(value))
-        case _:
-            assert_never(unit)
+
+    if isinstance(length, tuple):
+        value, unit = length
+        match unit:
+            case "in":
+                return Inch(value)
+            case "cm":
+                return Centimeter(value)
+            case "pt":
+                return Point(int(value))
+            case _:
+                assert_never(unit)
+    else:
+        return length
 
 
-def to_literal_length(length: Length, unit: Literal["in", "cm", "pt"]) -> LiteralLength:
+def to_literal_length(
+    length: LiteralLength | Length, unit: Literal["in", "cm", "pt"]
+) -> LiteralLength:
     """Convert internal length representation to public length representation
 
     Args:
@@ -168,6 +174,9 @@ def to_literal_length(length: Length, unit: Literal["in", "cm", "pt"]) -> Litera
     Returns:
         Length: Public length representation
     """
+    if isinstance(length, tuple):
+        return length
+
     match unit:
         case "in":
             return (to_inche(length).value, "in")

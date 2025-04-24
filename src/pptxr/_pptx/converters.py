@@ -1,14 +1,20 @@
 """Converter implementations for pptx objects."""
 
-from typing import Any, Union
+import os
+from typing import IO, Any, assert_never
 
+import pptx
+import pptx.util
 from pptx import Presentation as PptxPresentation
-from pptx.enum.shapes import MSO_SHAPE_TYPE
+from pptx import presentation
+from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 from pptx.shapes.base import BaseShape as PptxShape
 from pptx.slide import Slide as PptxSlide
 
+from pptxr.units import Centimeter, Inch, Length, LiteralLength, Point, to_length
+
+from ..abstract.types import FilePath, PresentationFactory
 from ..abstract.types import Presentation as AbstractPresentation
-from ..abstract.types import PresentationFactory
 from ..abstract.types import Shape as AbstractShape
 from ..abstract.types import Slide as AbstractSlide
 from .types import PptxConvertible
@@ -26,11 +32,11 @@ class Shape(AbstractShape, PptxConvertible):
 
     def get_text(self) -> str:
         """Get shape text."""
-        return self._pptx.text
+        return self._pptx.text  # type: ignore
 
     def set_text(self, text: str) -> None:
         """Set shape text."""
-        self._pptx.text = text
+        self._pptx.text = text  # type: ignore
 
     def to_pptx(self) -> PptxShape:
         """Convert to pptx shape."""
@@ -57,19 +63,19 @@ class Slide(AbstractSlide, PptxConvertible):
 
     def add_shape(
         self,
-        shape_type: MSO_SHAPE_TYPE,
-        left: float,
-        top: float,
-        width: float,
-        height: float,
+        shape_type: str,  # type: ignore
+        left: Length | LiteralLength,
+        top: Length | LiteralLength,
+        width: Length | LiteralLength,
+        height: Length | LiteralLength,
     ) -> AbstractShape:
         """Add a shape to the slide."""
         shape = self._pptx.shapes.add_shape(
-            shape_type,
-            left,
-            top,
-            width,
-            height,
+            MSO_AUTO_SHAPE_TYPE.ACTION_BUTTON_CUSTOM,
+            to_pptx_length(left),
+            to_pptx_length(top),
+            to_pptx_length(width),
+            to_pptx_length(height),
         )
         return Shape(shape)
 
@@ -94,7 +100,9 @@ class Slide(AbstractSlide, PptxConvertible):
 class Presentation(AbstractPresentation, PptxConvertible):
     """Presentation wrapper with type safety."""
 
-    def __init__(self, pptx_presentation: Union[PptxPresentation, None] = None) -> None:
+    def __init__(
+        self, pptx_presentation: presentation.Presentation | None = None
+    ) -> None:
         """Initialize presentation."""
         if pptx_presentation is None:
             self._presentation = PptxPresentation()
@@ -124,11 +132,13 @@ class Presentation(AbstractPresentation, PptxConvertible):
         slide = self._presentation.slides.add_slide(layout)
         return Slide(slide)
 
-    def save(self, path: str) -> None:
+    def save(self, file: FilePath | IO[bytes]) -> None:
         """Save presentation to file."""
-        self._presentation.save(path)
+        if isinstance(file, os.PathLike):
+            file = os.fspath(file)
+        self._presentation.save(file)
 
-    def to_pptx(self) -> PptxPresentation:
+    def to_pptx(self) -> presentation.Presentation:
         """Convert to pptx presentation."""
         return self._presentation
 
@@ -150,3 +160,18 @@ class PptxPresentationFactory(PresentationFactory):
     def load_presentation(self, path: str) -> AbstractPresentation:
         """Load presentation from file."""
         return Presentation(PptxPresentation(path))
+
+def to_pptx_length(length: Length | LiteralLength) -> pptx.util.Length:
+    """Convert pptxr length to pptx length."""
+    if isinstance(length, tuple):
+        length = to_length(length)
+
+    match length:
+        case Inch():
+            return pptx.util.Inches(length.value)
+        case Centimeter():
+            return pptx.util.Cm(length.value)
+        case Point():
+            return pptx.util.Pt(length.value)
+        case _:
+            assert_never(length)

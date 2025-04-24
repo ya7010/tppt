@@ -64,6 +64,7 @@ def test_shape_wrapper_init(tmp_path):
     pptx = PptxPresentation(tmp_path / "test.pptx")
     slide = pptx.slides.add_slide(pptx.slide_layouts[0])
     shape = slide.shapes.title
+    assert shape
     wrapper = ShapeWrapper(shape)
     assert wrapper.to_pptx() is shape
 

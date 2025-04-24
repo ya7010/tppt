@@ -29,8 +29,3 @@ class PptxConverter:
     def to_pptx(obj: PptxConvertible) -> Any:
         """Convert object to pptx format."""
         return obj.to_pptx()
-
-    @staticmethod
-    def from_pptx(pptx_obj: Any, target_cls: type[T]) -> T:
-        """Convert pptx object to target class."""
-        return target_cls.from_pptx(pptx_obj)

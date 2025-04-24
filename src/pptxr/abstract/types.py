@@ -1,8 +1,12 @@
 """Abstract types for presentation objects."""
 
+import pathlib
 from abc import ABC, abstractmethod
-from typing import TypeVar
+from typing import IO, TypeAlias, TypeVar
 
+from pptxr.units import Length, LiteralLength
+
+FilePath: TypeAlias = str | pathlib.Path
 
 class Shape(ABC):
     """Abstract base class for shapes."""
@@ -28,7 +32,12 @@ class Slide(ABC):
 
     @abstractmethod
     def add_shape(
-        self, shape_type: str, left: float, top: float, width: float, height: float
+        self,
+        shape_type: str,
+        left: Length | LiteralLength,
+        top: Length | LiteralLength,
+        width: Length | LiteralLength,
+        height: Length | LiteralLength,
     ) -> Shape:
         """Add a shape to the slide."""
         pass
@@ -45,17 +54,17 @@ class Presentation(ABC):
     @abstractmethod
     def get_slides(self) -> list[Slide]:
         """Get all slides in the presentation."""
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def add_slide(self, layout_type: str) -> Slide:
         """Add a slide with specified layout."""
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
-    def save(self, path: str) -> None:
+    def save(self, file: FilePath | IO[bytes]) -> None:
         """Save presentation to file."""
-        pass
+        raise NotImplementedError()
 
 
 T = TypeVar("T", bound=Presentation)

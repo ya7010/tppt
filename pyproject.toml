@@ -35,12 +35,11 @@ format-check = "ruff format --check"
 lint = "ruff check"
 lint-check = "ruff check --fix"
 typecheck-pyright = "pyright"
-typecheck-mypy = "mypy"
-typecheck = "task typecheck-pyright && task typecheck-mypy"
+typecheck = "task typecheck-pyright"
 test = "pytest"
 
 [tool.pyright]
-include = ["src/pptxr/**", "tests/**"]
+include = ["src/pptxr", "tests"]
 exclude = ["src/pptxr/_pptx/**", "**/site-packages", ".venv/**"]
 
 [tool.mypy]

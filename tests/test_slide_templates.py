@@ -3,14 +3,12 @@ from typing import cast
 import pytest
 
 from pptxr import (
-    Chart,
     Component,
     Container,
     Presentation,
     Slide,
     SlideTemplate,
     Text,
-    chart,
     layout,
     slide,
     text,
@@ -50,48 +48,6 @@ class TwoColumnTemplate(SlideTemplate):
                         type="flex",
                         direction="row",
                         justify="space-between",
-                        gap=(0.5, "in"),
-                    ),
-                )
-            ],
-        )
-
-
-class ChartWithDescriptionTemplate(SlideTemplate):
-    """Template for chart with description
-
-    Args:
-        chart (Chart): Chart component
-        description (Text): Description text
-    """
-
-    def __init__(
-        self,
-        *,
-        title: Text,
-        chart_data: Chart,
-        description: Text,
-    ) -> None:
-        self.title = title
-        self.chart_data = chart_data
-        self.description = description
-
-    def build(
-        self,
-    ) -> Slide:
-        return slide(
-            layout="TITLE_AND_CONTENT",
-            title=self.title,
-            containers=[
-                Container(
-                    components=[
-                        self.chart_data,
-                        self.description,
-                    ],
-                    layout=layout(
-                        type="flex",
-                        direction="column",
-                        align="center",
                         gap=(0.5, "in"),
                     ),
                 )
@@ -153,21 +109,6 @@ def test_two_column_template():
     assert containers[0].get("components") == [text("Left"), text("Right")]
 
 
-def test_chart_with_description_template():
-    """Test ChartWithDescriptionTemplate"""
-    template = ChartWithDescriptionTemplate(
-        title=text("Title"),
-        chart_data=chart("bar", []),
-        description=text("Description"),
-    )
-
-    slide = template.build()
-    assert slide.get("title") == text("Title")
-    containers = slide.get("containers", [])
-    assert len(containers) > 0
-    assert containers[0].get("components") == [chart("bar", []), text("Description")]
-
-
 def test_feature_cards_template():
     """Test FeatureCardsTemplate"""
     # Test 1: Normal features
@@ -227,13 +168,6 @@ def test_template_in_presentation():
                 left_content=text("Left"),
                 right_content=text("Right"),
             )
-        )
-        .add_slide(
-            ChartWithDescriptionTemplate(
-                title=text("Chart"),
-                chart_data=chart("bar", [{"category": "A", "value": 1}]),
-                description=text("Description"),
-            ),
         )
         .add_slide(
             FeatureCardsTemplate(

@@ -2,21 +2,23 @@
 
 import os
 import pathlib
-from dataclasses import dataclass
 from typing import (
     IO,
     Any,
     Literal,
     NotRequired,
+    TypeAlias,
     TypedDict,
     Unpack,
     overload,
 )
 
 from pptx.enum.shapes import MSO_SHAPE_TYPE
-from pptx.enum.text import PP_ALIGN
+
+from pptxr.units import Length
 
 from ._pptx import PptxPresentationFactory
+from .abstract.types import FilePath
 from .abstract.types import Slide as AbstractSlide
 from .units import (
     Inch,
@@ -24,6 +26,8 @@ from .units import (
     to_inche,
     to_length,
 )
+
+SlideIndex: TypeAlias = int
 
 SlideLayout = Literal[
     "TITLE",
@@ -41,10 +45,11 @@ SlideLayout = Literal[
 
 LayoutType = Literal["flex", "grid", "absolute"]
 
+Direction = Literal["row", "column"]
 Align = Literal["start", "center", "end"]
 
 Justify = Literal["start", "center", "end", "space-between", "space-around"]
-
+Padding: TypeAlias = dict[Literal["top", "right", "bottom", "left"], Length]
 
 class Layout(TypedDict):
     """Data class representing layout settings."""
@@ -52,7 +57,7 @@ class Layout(TypedDict):
     type: NotRequired[LayoutType]
     """Layout type"""
 
-    direction: NotRequired[str]
+    direction: NotRequired[Direction]
     """Layout direction ("row" or "column")"""
 
     align: NotRequired[Align]
@@ -61,29 +66,23 @@ class Layout(TypedDict):
     justify: NotRequired[Justify]
     """Element justification"""
 
-    gap: NotRequired[LiteralLength]
+    gap: NotRequired[Length | LiteralLength]
     """Gap between elements"""
 
-    padding: NotRequired[dict[str, LiteralLength]]
+    padding: NotRequired[Padding]
     """Padding (top, right, bottom, left)"""
 
-    width: NotRequired[LiteralLength]
+    width: NotRequired[Length | LiteralLength]
     """Width"""
 
-    height: NotRequired[LiteralLength]
+    height: NotRequired[Length | LiteralLength]
     """Height"""
 
 
-class Text(TypedDict):
+class TextParams(TypedDict):
     """Data class representing text element."""
 
-    type: Literal["text"]
-    """Type of component"""
-
-    text: str | None
-    """Text content"""
-
-    size: LiteralLength | None
+    size: NotRequired[LiteralLength]
     """Font size"""
 
     bold: NotRequired[bool]
@@ -92,43 +91,26 @@ class Text(TypedDict):
     italic: NotRequired[bool]
     """Whether text is italic"""
 
-    color: str | None
+    color: NotRequired[str]
     """Text color"""
 
     layout: NotRequired[Layout]
     """Layout settings"""
 
 
-@dataclass
-class Shape:
-    """Data class representing shape."""
+class Text(TextParams):
+    """Data class representing text element."""
 
-    type: str
-    """Shape type"""
-
-    left: LiteralLength
-    """Position from left edge"""
-
-    top: LiteralLength
-    """Position from top edge"""
-
-    width: LiteralLength
-    """Width"""
-
-    height: LiteralLength
-    """Height"""
-
-    text: Text | None = None
-    """Text within shape"""
-
-
-class Image(TypedDict):
-    """Data class representing image element."""
-
-    type: Literal["image"]
+    type: Literal["text"]
     """Type of component"""
 
-    path: str
+    text: str
+
+
+class ImageParams(TypedDict):
+    """Data class representing image element."""
+
+    path: FilePath
     """Path to image file"""
 
     width: NotRequired[LiteralLength]
@@ -141,87 +123,14 @@ class Image(TypedDict):
     """Layout settings"""
 
 
-class Chart(TypedDict):
-    """Data class representing chart element."""
+class Image(ImageParams):
+    """Data class representing image element."""
 
-    type: Literal["chart"]
-    """Type of component"""
-
-    chart_type: str
-    """Chart type ("bar", "line", "pie", etc.)"""
-
-    data: list[dict[str, Any]]
-    """Chart data"""
-
-    width: NotRequired[LiteralLength]
-    """Width"""
-
-    height: NotRequired[LiteralLength]
-    """Height"""
-
-    layout: NotRequired[Layout]
-    """Layout settings"""
-
-
-@dataclass
-class TableCell:
-    """Data class representing table cell."""
-
-    text: str
-    """Cell text content"""
-
-    size: LiteralLength | None = None
-    """Font size"""
-
-    bold: bool = False
-    """Whether text is bold"""
-
-    italic: bool = False
-    """Whether text is italic"""
-
-    color: str | None = None
-    """Text color"""
-
-    background: str | None = None
-    """Background color"""
-
-    align: PP_ALIGN = PP_ALIGN.LEFT
-    """Text alignment"""
-
-
-class TableParams(TypedDict):
-    """Data class representing table element."""
-
-    type: Literal["table"]
-    """Type of component"""
-
-    rows: int
-    """Number of rows"""
-
-    cols: int
-    """Number of columns"""
-
-    data: list[list[TableCell]]
-    """Table data"""
-
-    width: NotRequired[LiteralLength]
-    """Width"""
-
-    height: NotRequired[LiteralLength]
-    """Height"""
-
-    layout: NotRequired[Layout]
-    """Layout settings"""
-
-
-class Table(TableParams):
-    """Data class representing table element."""
-
-    type: Literal["table"]
+    type: Literal["image"]
     """Type of component"""
 
 
-Component = Text | Image | Chart | Table
+Component = Text | Image
 """Union type representing any component type"""
 
 
@@ -274,7 +183,7 @@ class Presentation:
         """Get slides."""
         return self._presentation.get_slides()
 
-    def save(self, path: str | pathlib.Path | IO[bytes]) -> None:
+    def save(self, path: FilePath | IO[bytes]) -> None:
         """Save presentation to file.
 
         Args:
@@ -318,7 +227,7 @@ class PresentationBuilder:
         """Add a slide to the presentation."""
         if isinstance(slide, SlideTemplate):
             # Using template
-            slide = slide.build(**kwargs)
+            slide = slide.build()
         elif slide is None:
             slide = kwargs
 
@@ -329,8 +238,8 @@ class PresentationBuilder:
         self,
         slide_obj: AbstractSlide,
         component: Component,
-        left: LiteralLength,
-        top: LiteralLength,
+        left: Length | LiteralLength,
+        top: Length | LiteralLength,
     ) -> None:
         """Add a component to a slide.
 
@@ -340,30 +249,9 @@ class PresentationBuilder:
             left (Length): Position from left edge
             top (Length): Position from top edge
         """
-        # 共通の位置計算を最適化
-        internal_left = to_length(left)
-        internal_top = to_length(top)
-        left_inches = to_inche(internal_left).value
-        top_inches = to_inche(internal_top).value
 
         if component["type"] == "text":
-            # レイアウト情報を一度だけ取得
-            layout = component.get("layout", {}) or {}
-            width = layout.get("width")
-            height = layout.get("height")
-
-            internal_width = to_length(width) if width else Inch(3)
-            internal_height = to_length(height) if height else Inch(1)
-
-            shape = slide_obj.add_shape(
-                MSO_SHAPE_TYPE.TEXT_BOX,
-                left_inches,
-                top_inches,
-                to_inche(internal_width).value,
-                to_inche(internal_height).value,
-            )
-            shape.set_text(component["text"])
-            # TODO: Apply text formatting
+            pass
 
         elif component["type"] == "image":
             # TODO: Implement image component
@@ -392,16 +280,17 @@ class PresentationBuilder:
             left (Length): Position from left edge
             top (Length): Position from top edge
         """
-        current_left = left
-        current_top = top
+        current_left = to_length(left)
+        current_top = to_length(top)
 
         for component in container["components"]:
             self._add_component(slide_obj, component, current_left, current_top)
 
-            if container["layout"]["direction"] == "row":
-                current_left = (current_left[0] + 2, current_left[1])  # Default spacing
-            else:
-                current_top = (current_top[0] + 1, current_top[1])  # Default spacing
+            if layout := container["layout"]:
+                if layout.get("direction", "row") == "row":
+                    current_left = current_left + (2, "in")  # Default spacing
+                else:
+                    current_top = current_top + (1, "in")  # Default spacing
 
     def build(self) -> "Presentation":
         """Build the presentation.
@@ -415,8 +304,8 @@ class PresentationBuilder:
             if title := slide.get("title"):
                 title_shape = slide_obj.get_title()
                 if title_shape:
-                    title_shape.set_text(title["text"])
-                    # TODO: Apply title formatting
+                    if text := title["text"]:
+                        title_shape.set_text(text)
 
             if containers := slide.get("containers"):
                 for container in containers:
@@ -428,10 +317,7 @@ class PresentationBuilder:
 
 
 def image(
-    path: str | pathlib.Path,
-    width: LiteralLength | None = None,
-    height: LiteralLength | None = None,
-    layout: Layout | None = None,
+    **kwargs: Unpack[ImageParams],
 ) -> Image:
     """Create an image component with type field automatically set.
 
@@ -446,20 +332,14 @@ def image(
     """
     return {
         "type": "image",
-        "path": path,
-        "width": width,
-        "height": height,
-        "layout": layout,
+        **kwargs,
     }
 
 
 def text(
     text: str,
-    size: LiteralLength | None = None,
-    bold: bool = False,
-    italic: bool = False,
-    color: str | None = None,
-    layout: Layout | None = None,
+    /,
+    **kwargs: Unpack[TextParams],
 ) -> Text:
     """Create a text component with type field automatically set.
 
@@ -474,87 +354,16 @@ def text(
     Returns:
         Text: Created text component
     """
+
     return {
         "type": "text",
         "text": text,
-        "size": size,
-        "bold": bold,
-        "italic": italic,
-        "color": color,
-        "layout": layout,
-    }
-
-
-def chart(
-    chart_type: str,
-    data: list[dict[str, Any]],
-    width: LiteralLength | None = None,
-    height: LiteralLength | None = None,
-    layout: Layout | None = None,
-) -> Chart:
-    """Create a chart component with type field automatically set.
-
-    Args:
-        chart_type (str): Chart type ("bar", "line", "pie", etc.)
-        data (list[dict[str, Any]]): Chart data
-        width (Length | None, optional): Width. Defaults to None.
-        height (Length | None, optional): Height. Defaults to None.
-        layout (Layout | None, optional): Layout settings. Defaults to None.
-
-    Returns:
-        Chart: Created chart component
-    """
-    return {
-        "type": "chart",
-        "chart_type": chart_type,
-        "data": data,
-        "width": width,
-        "height": height,
-        "layout": layout,
-    }
-
-
-def table(
-    rows: int,
-    cols: int,
-    data: list[list[TableCell]],
-    width: LiteralLength | None = None,
-    height: LiteralLength | None = None,
-    layout: Layout | None = None,
-) -> Table:
-    """Create a table component with type field automatically set.
-
-    Args:
-        rows (int): Number of rows
-        cols (int): Number of columns
-        data (list[list[TableCell]]): Table data
-        width (Length | None, optional): Width. Defaults to None.
-        height (Length | None, optional): Height. Defaults to None.
-        layout (Layout | None, optional): Layout settings. Defaults to None.
-
-    Returns:
-        Table: Created table component
-    """
-    return {
-        "type": "table",
-        "rows": rows,
-        "cols": cols,
-        "data": data,
-        "width": width,
-        "height": height,
-        "layout": layout,
+        **kwargs,
     }
 
 
 def layout(
-    type: LayoutType = "flex",
-    direction: str = "row",
-    align: Align = "start",
-    justify: Justify = "start",
-    gap: LiteralLength = (0.1, "in"),
-    padding: dict[str, LiteralLength] | None = None,
-    width: LiteralLength | None = None,
-    height: LiteralLength | None = None,
+    **kwargs: Unpack[Layout],
 ) -> Layout:
     """Create a layout with default values.
 
@@ -571,16 +380,7 @@ def layout(
     Returns:
         Layout: Created layout
     """
-    return {
-        "type": type,
-        "direction": direction,
-        "align": align,
-        "justify": justify,
-        "gap": gap,
-        "padding": padding,
-        "width": width,
-        "height": height,
-    }
+    return kwargs
 
 
 def slide(
@@ -602,6 +402,5 @@ def slide(
         containers = []
     return {
         "layout": layout,
-        "title": title,
         "containers": containers,
     }
