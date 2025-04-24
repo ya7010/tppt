@@ -130,8 +130,8 @@ def test_internal_to_public_conversion():
 
 def test_invalid_unit():
     """Test handling of invalid units"""
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         _to_internal_length((1.0, "invalid"))  # type: ignore
 
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         _to_public_length(_Inch(1.0), "invalid")  # type: ignore

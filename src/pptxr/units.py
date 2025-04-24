@@ -35,7 +35,7 @@ class _Inch:
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, _Inch):
-            return NotImplemented
+            raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
         return self.value == other.value
 
 
@@ -64,6 +64,11 @@ class _Point:
 
     def __truediv__(self, other: Union[int, float]) -> "_Point":
         return _Point(int(self.value / other))
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, _Point):
+            raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
+        return self.value == other.value
 
 
 @dataclass
@@ -94,7 +99,7 @@ class _Millimeter:
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, _Millimeter):
-            return NotImplemented
+            raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
         return self.value == other.value
 
 
@@ -125,7 +130,7 @@ def _to_internal_length(length: Length) -> _Length:
         case "pt":
             return _Point(int(value))
         case _:
-            raise ValueError(f"Invalid unit: {unit}")
+            assert_never(unit)
 
 
 def _to_public_length(length: _Length, unit: Literal["in", "mm", "pt"]) -> Length:
@@ -146,7 +151,7 @@ def _to_public_length(length: _Length, unit: Literal["in", "mm", "pt"]) -> Lengt
         case "pt":
             return (to_point(length).value, "pt")
         case _:
-            raise ValueError(f"Invalid unit: {unit}")
+            assert_never(unit)
 
 
 def to_millimeter(length: Union[_Length, Length]) -> _Millimeter:
