@@ -29,17 +29,17 @@ class Inch:
         self.value = float(value)
 
     def __add__(self, other: "Length") -> Self:
-        return Inch(self.value + to_inche(other))
+        return Inch(self.value + to_inche(other).value)
 
     def __sub__(self, other: "Length") -> Self:
-        return Inch(self.value - to_inche(other))
+        return Inch(self.value - to_inche(other).value)
 
     def __iadd__(self, other: "Length") -> Self:
-        self.value += to_inche(other)
+        self.value += to_inche(other).value
         return self
 
     def __isub__(self, other: "Length") -> Self:
-        self.value -= to_inche(other)
+        self.value -= to_inche(other).value
         return self
 
     def __mul__(self, other: Union[int, float]) -> Self:
@@ -56,17 +56,17 @@ class Point:
         self.value = int(value)
 
     def __add__(self, other: "Length") -> Self:
-        return Point(self.value + to_point(other))
+        return Point(self.value + to_point(other).value)
 
     def __sub__(self, other: "Length") -> Self:
-        return Point(self.value - to_point(other))
+        return Point(self.value - to_point(other).value)
 
     def __iadd__(self, other: "Length") -> Self:
-        self.value += to_point(other)
+        self.value += to_point(other).value
         return self
 
     def __isub__(self, other: "Length") -> Self:
-        self.value -= to_point(other)
+        self.value -= to_point(other).value
         return self
 
     def __mul__(self, other: Union[int, float]) -> Self:
@@ -90,11 +90,11 @@ def to_inche(length: Length) -> Inch:
         length (Length): Length in any unit
 
     Returns:
-        float: Length in inches
+        Inch: Length in inches
     """
     match length:
         case Inch():
-            return length.value
+            return length
         case Point():
             return Inch(float(length.value) * INCHES_PER_POINT)
         case _:
@@ -108,13 +108,13 @@ def to_point(length: Length) -> Point:
         length (Length): Length in any unit
 
     Returns:
-        int: Length in points
+        Point: Length in points
     """
     match length:
         case Inch():
-            return int(length.value * POINTS_PER_INCH)
+            return Point(int(length.value * POINTS_PER_INCH))
         case Point():
-            return length.value
+            return length
         case _:
             assert_never(length)
 
@@ -468,22 +468,30 @@ class _PresentationBuilder:
             shape: Target shape
             layout (Layout): Layout settings to apply
         """
-        if layout.get("width"):
-            shape.width = pptx.util.Inches(to_inche(layout["width"]))
-        if layout.get("height"):
-            shape.height = pptx.util.Inches(to_inche(layout["height"]))
-        if layout.get("align"):
-            if layout["align"] == Align.CENTER:
+        # レイアウト情報を一度だけ取得
+        width = layout.get("width")
+        height = layout.get("height")
+        align = layout.get("align")
+
+        if width:
+            shape.width = pptx.util.Inches(to_inche(width).value)
+        if height:
+            shape.height = pptx.util.Inches(to_inche(height).value)
+        if align:
+            if align == Align.CENTER:
                 shape.left = (
-                    pptx.util.Inches(to_inche(shape.left))
-                    + (pptx.util.Inches(8.5) - pptx.util.Inches(to_inche(shape.width)))
+                    pptx.util.Inches(to_inche(shape.left).value)
+                    + (
+                        pptx.util.Inches(8.5)
+                        - pptx.util.Inches(to_inche(shape.width).value)
+                    )
                     / 2
                 )
-            elif layout["align"] == Align.END:
+            elif align == Align.END:
                 shape.left = (
-                    pptx.util.Inches(to_inche(shape.left))
+                    pptx.util.Inches(to_inche(shape.left).value)
                     + pptx.util.Inches(8.5)
-                    - pptx.util.Inches(to_inche(shape.width))
+                    - pptx.util.Inches(to_inche(shape.width).value)
                 )
 
     def _add_component(
@@ -497,22 +505,31 @@ class _PresentationBuilder:
             left (Length): Position from left edge
             top (Length): Position from top edge
         """
+        # 共通の位置計算を最適化
+        left_inches = to_inche(left).value
+        top_inches = to_inche(top).value
+
         if component["type"] == "text":
+            # レイアウト情報を一度だけ取得
+            layout = component.get("layout", {})
+            width = layout.get("width")
+            height = layout.get("height")
+
             shape = slide_obj.shapes.add_textbox(
-                pptx.util.Inches(to_inche(left).value),
-                pptx.util.Inches(to_inche(top).value),
-                pptx.util.Inches(to_inche(component["layout"]["width"]).value)
-                if component.get("layout") and component["layout"].get("width")
+                pptx.util.Inches(left_inches),
+                pptx.util.Inches(top_inches),
+                pptx.util.Inches(to_inche(width).value)
+                if width
                 else pptx.util.Inches(3),
-                pptx.util.Inches(to_inche(component["layout"]["height"]).value)
-                if component.get("layout") and component["layout"].get("height")
+                pptx.util.Inches(to_inche(height).value)
+                if height
                 else pptx.util.Inches(1),
             )
             text_frame = shape.text_frame
             text_frame.text = component["text"]
             if component.get("size"):
                 text_frame.paragraphs[0].font.size = pptx.util.Pt(
-                    int(to_point(component["size"]))
+                    to_point(component["size"]).value
                 )
             if component.get("bold"):
                 text_frame.paragraphs[0].font.bold = component["bold"]
@@ -520,16 +537,16 @@ class _PresentationBuilder:
                 text_frame.paragraphs[0].font.italic = component["italic"]
 
         elif component["type"] == "image":
+            # 画像のサイズ情報を一度だけ取得
+            width = component.get("width")
+            height = component.get("height")
+
             shape = slide_obj.shapes.add_picture(
                 component["path"],
-                pptx.util.Inches(to_inche(left).value),
-                pptx.util.Inches(to_inche(top).value),
-                pptx.util.Inches(to_inche(component["width"]).value)
-                if component.get("width")
-                else None,
-                pptx.util.Inches(to_inche(component["height"]).value)
-                if component.get("height")
-                else None,
+                pptx.util.Inches(left_inches),
+                pptx.util.Inches(top_inches),
+                pptx.util.Inches(to_inche(width).value) if width else None,
+                pptx.util.Inches(to_inche(height).value) if height else None,
             )
 
         elif component["type"] == "chart":
@@ -539,18 +556,20 @@ class _PresentationBuilder:
                 "Series 1", [item["value"] for item in component["data"]]
             )
 
-            x, y = (
-                pptx.util.Inches(to_inche(left).value),
-                pptx.util.Inches(to_inche(top).value),
-            )
+            # レイアウト情報を一度だけ取得
+            layout = component.get("layout", {})
+            width = layout.get("width")
+            height = layout.get("height")
+
+            x, y = pptx.util.Inches(left_inches), pptx.util.Inches(top_inches)
             cx = (
-                pptx.util.Inches(to_inche(component["layout"]["width"]).value)
-                if component.get("layout") and component["layout"].get("width")
+                pptx.util.Inches(to_inche(width).value)
+                if width
                 else pptx.util.Inches(6)
             )
             cy = (
-                pptx.util.Inches(to_inche(component["layout"]["height"]).value)
-                if component.get("layout") and component["layout"].get("height")
+                pptx.util.Inches(to_inche(height).value)
+                if height
                 else pptx.util.Inches(4)
             )
 
@@ -566,16 +585,21 @@ class _PresentationBuilder:
             )
 
         elif component["type"] == "table":
+            # レイアウト情報を一度だけ取得
+            layout = component.get("layout", {})
+            width = layout.get("width")
+            height = layout.get("height")
+
             table = slide_obj.shapes.add_table(
                 component["rows"],
                 component["cols"],
-                pptx.util.Inches(to_inche(left).value),
-                pptx.util.Inches(to_inche(top).value),
-                pptx.util.Inches(to_inche(component["layout"]["width"]).value)
-                if component.get("layout") and component["layout"].get("width")
+                pptx.util.Inches(left_inches),
+                pptx.util.Inches(top_inches),
+                pptx.util.Inches(to_inche(width).value)
+                if width
                 else pptx.util.Inches(6),
-                pptx.util.Inches(to_inche(component["layout"]["height"]).value)
-                if component.get("layout") and component["layout"].get("height")
+                pptx.util.Inches(to_inche(height).value)
+                if height
                 else pptx.util.Inches(2),
             ).table
 
@@ -586,7 +610,7 @@ class _PresentationBuilder:
 
                     if cell.get("size"):
                         table_cell.text_frame.paragraphs[0].font.size = pptx.util.Pt(
-                            int(to_point(cell.get("size")))
+                            to_point(cell.get("size")).value
                         )
                     if cell.get("bold"):
                         table_cell.text_frame.paragraphs[0].font.bold = True
@@ -644,7 +668,7 @@ class _PresentationBuilder:
                 title_shape.text = slide["title"]["text"]
                 if slide["title"].get("size"):
                     title_shape.text_frame.paragraphs[0].font.size = pptx.util.Pt(
-                        int(to_point(slide["title"]["size"]))
+                        to_point(slide["title"]["size"]).value
                     )
                 if slide["title"].get("bold"):
                     title_shape.text_frame.paragraphs[0].font.bold = slide["title"][
