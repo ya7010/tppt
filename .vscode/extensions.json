@@ -3,6 +3,7 @@
         "tombi-toml.tombi",
         "anysphere.pyright",
         "charliermarsh.ruff",
-        "ms-python.python"
+        "ms-python.python",
+        "ms-pyright.pyright"
     ]
 }

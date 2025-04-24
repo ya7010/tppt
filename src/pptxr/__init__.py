@@ -22,104 +22,217 @@ from pptx.enum.chart import XL_CHART_TYPE
 from pptx.enum.text import PP_ALIGN
 
 
-class Inch:
+class _Inch:
     """Class representing inches"""
 
     def __init__(self, value: float):
         self.value = float(value)
 
-    def __add__(self, other: "Length") -> Self:
-        return Inch(self.value + to_inche(other).value)
+    def __add__(self, other: "_Length") -> Self:
+        return _Inch(self.value + to_inche(other).value)
 
-    def __sub__(self, other: "Length") -> Self:
-        return Inch(self.value - to_inche(other).value)
+    def __sub__(self, other: "_Length") -> Self:
+        return _Inch(self.value - to_inche(other).value)
 
-    def __iadd__(self, other: "Length") -> Self:
+    def __iadd__(self, other: "_Length") -> Self:
         self.value += to_inche(other).value
         return self
 
-    def __isub__(self, other: "Length") -> Self:
+    def __isub__(self, other: "_Length") -> Self:
         self.value -= to_inche(other).value
         return self
 
     def __mul__(self, other: Union[int, float]) -> Self:
-        return Inch(self.value * other)
+        return _Inch(self.value * other)
 
     def __truediv__(self, other: Union[int, float]) -> Self:
-        return Inch(self.value / other)
+        return _Inch(self.value / other)
 
     def __eq__(self, other: Self) -> bool:
         return self.value == other.value
 
 
-class Point:
+class _Point:
     """Class representing points"""
 
     def __init__(self, value: int):
         self.value = int(value)
 
-    def __add__(self, other: "Length") -> Self:
-        return Point(self.value + to_point(other).value)
+    def __add__(self, other: "_Length") -> Self:
+        return _Point(self.value + to_point(other).value)
 
-    def __sub__(self, other: "Length") -> Self:
-        return Point(self.value - to_point(other).value)
+    def __sub__(self, other: "_Length") -> Self:
+        return _Point(self.value - to_point(other).value)
 
-    def __iadd__(self, other: "Length") -> Self:
+    def __iadd__(self, other: "_Length") -> Self:
         self.value += to_point(other).value
         return self
 
-    def __isub__(self, other: "Length") -> Self:
+    def __isub__(self, other: "_Length") -> Self:
         self.value -= to_point(other).value
         return self
 
     def __mul__(self, other: Union[int, float]) -> Self:
-        return Point(int(self.value * other))
+        return _Point(int(self.value * other))
 
     def __truediv__(self, other: Union[int, float]) -> Self:
-        return Point(int(self.value / other))
+        return _Point(int(self.value / other))
 
 
-Length = Union[Inch, Point]
+class _Millimeter:
+    """Class representing millimeters"""
+
+    def __init__(self, value: float):
+        self.value = float(value)
+
+    def __add__(self, other: "_Length") -> Self:
+        return _Millimeter(self.value + to_millimeter(other).value)
+
+    def __sub__(self, other: "_Length") -> Self:
+        return _Millimeter(self.value - to_millimeter(other).value)
+
+    def __iadd__(self, other: "_Length") -> Self:
+        self.value += to_millimeter(other).value
+        return self
+
+    def __isub__(self, other: "_Length") -> Self:
+        self.value -= to_millimeter(other).value
+        return self
+
+    def __mul__(self, other: Union[int, float]) -> Self:
+        return _Millimeter(self.value * other)
+
+    def __truediv__(self, other: Union[int, float]) -> Self:
+        return _Millimeter(self.value / other)
+
+    def __eq__(self, other: Self) -> bool:
+        return self.value == other.value
+
+
+_Length = Union[_Inch, _Point, _Millimeter]
 
 # Constants for unit conversion
 INCHES_PER_POINT = 1 / 72  # 1 point = 1/72 inches
 POINTS_PER_INCH = 72  # 1 inch = 72 points
+MM_PER_INCH = 25.4  # 1 inch = 25.4 mm
 
 
-def to_inche(length: Length) -> Inch:
+def to_millimeter(length: Union[_Length, "Length"]) -> _Millimeter:
+    """Convert any length to millimeters
+
+    Args:
+        length (Union[_Length, Length]): Length in any unit
+
+    Returns:
+        _Millimeter: Length in millimeters
+    """
+    if isinstance(length, tuple):
+        return to_millimeter(_to_internal_length(length))
+
+    match length:
+        case _Inch():
+            return _Millimeter(length.value * MM_PER_INCH)
+        case _Point():
+            return _Millimeter(length.value * INCHES_PER_POINT * MM_PER_INCH)
+        case _Millimeter():
+            return length
+        case _:
+            assert_never(length)
+
+
+def to_inche(length: Union[_Length, "Length"]) -> _Inch:
     """Convert any length to inches
 
     Args:
-        length (Length): Length in any unit
+        length (Union[_Length, Length]): Length in any unit
 
     Returns:
-        Inch: Length in inches
+        _Inch: Length in inches
     """
+    if isinstance(length, tuple):
+        return to_inche(_to_internal_length(length))
+
     match length:
-        case Inch():
+        case _Inch():
             return length
-        case Point():
-            return Inch(float(length.value) * INCHES_PER_POINT)
+        case _Point():
+            return _Inch(float(length.value) * INCHES_PER_POINT)
+        case _Millimeter():
+            return _Inch(length.value / MM_PER_INCH)
         case _:
             assert_never(length)
 
 
-def to_point(length: Length) -> Point:
+def to_point(length: Union[_Length, "Length"]) -> _Point:
     """Convert any length to points
 
     Args:
-        length (Length): Length in any unit
+        length (Union[_Length, Length]): Length in any unit
 
     Returns:
-        Point: Length in points
+        _Point: Length in points
     """
+    if isinstance(length, tuple):
+        return to_point(_to_internal_length(length))
+
     match length:
-        case Inch():
-            return Point(int(length.value * POINTS_PER_INCH))
-        case Point():
+        case _Inch():
+            return _Point(int(length.value * POINTS_PER_INCH))
+        case _Point():
             return length
+        case _Millimeter():
+            return _Point(int(length.value / MM_PER_INCH * POINTS_PER_INCH))
         case _:
             assert_never(length)
+
+
+Length = Union[
+    tuple[int, Literal["pt"]],
+    tuple[float, Literal["in"]],
+    tuple[float, Literal["mm"]],
+]
+
+
+def _to_internal_length(length: Length) -> _Length:
+    """Convert public length representation to internal length representation
+
+    Args:
+        length (Length): Public length representation
+
+    Returns:
+        _Length: Internal length representation
+    """
+    value, unit = length
+    match unit:
+        case "in":
+            return _Inch(value)
+        case "mm":
+            return _Millimeter(value)
+        case "pt":
+            return _Point(int(value))
+        case _:
+            raise ValueError(f"Invalid unit: {unit}")
+
+
+def _to_public_length(length: _Length, unit: Literal["in", "mm", "pt"]) -> Length:
+    """Convert internal length representation to public length representation
+
+    Args:
+        length (_Length): Internal length representation
+        unit (Literal["in", "mm", "pt"]): Desired unit
+
+    Returns:
+        Length: Public length representation
+    """
+    match unit:
+        case "in":
+            return (to_inche(length).value, "in")
+        case "mm":
+            return (to_millimeter(length).value, "mm")
+        case "pt":
+            return (to_point(length).value, "pt")
+        case _:
+            raise ValueError(f"Invalid unit: {unit}")
 
 
 class SlideLayout(Enum):
@@ -515,24 +628,30 @@ class _PresentationBuilder:
         align = layout.get("align")
 
         if width:
-            shape.width = pptx.util.Inches(to_inche(width).value)
+            internal_width = _to_internal_length(width)
+            shape.width = pptx.util.Inches(to_inche(internal_width).value)
         if height:
-            shape.height = pptx.util.Inches(to_inche(height).value)
+            internal_height = _to_internal_length(height)
+            shape.height = pptx.util.Inches(to_inche(internal_height).value)
         if align:
             if align == Align.CENTER:
+                internal_left = _to_internal_length(shape.left)
+                internal_width = _to_internal_length(shape.width)
                 shape.left = (
-                    pptx.util.Inches(to_inche(shape.left).value)
+                    pptx.util.Inches(to_inche(internal_left).value)
                     + (
                         pptx.util.Inches(8.5)
-                        - pptx.util.Inches(to_inche(shape.width).value)
+                        - pptx.util.Inches(to_inche(internal_width).value)
                     )
                     / 2
                 )
             elif align == Align.END:
+                internal_left = _to_internal_length(shape.left)
+                internal_width = _to_internal_length(shape.width)
                 shape.left = (
-                    pptx.util.Inches(to_inche(shape.left).value)
+                    pptx.util.Inches(to_inche(internal_left).value)
                     + pptx.util.Inches(8.5)
-                    - pptx.util.Inches(to_inche(shape.width).value)
+                    - pptx.util.Inches(to_inche(internal_width).value)
                 )
 
     def _add_component(
@@ -547,8 +666,10 @@ class _PresentationBuilder:
             top (Length): Position from top edge
         """
         # 共通の位置計算を最適化
-        left_inches = to_inche(left).value
-        top_inches = to_inche(top).value
+        internal_left = _to_internal_length(left)
+        internal_top = _to_internal_length(top)
+        left_inches = to_inche(internal_left).value
+        top_inches = to_inche(internal_top).value
 
         if component["type"] == "text":
             # レイアウト情報を一度だけ取得
@@ -556,20 +677,22 @@ class _PresentationBuilder:
             width = layout.get("width")
             height = layout.get("height")
 
+            internal_width = _to_internal_length(width) if width else _Inch(3)
+            internal_height = _to_internal_length(height) if height else _Inch(1)
+
             shape = slide_obj.shapes.add_textbox(
                 pptx.util.Inches(left_inches),
                 pptx.util.Inches(top_inches),
-                pptx.util.Inches(to_inche(width).value)
-                if width
-                else pptx.util.Inches(3),
-                pptx.util.Inches(to_inche(height).value)
-                if height
-                else pptx.util.Inches(1),
+                pptx.util.Inches(to_inche(internal_width).value),
+                pptx.util.Inches(to_inche(internal_height).value),
             )
             text_frame = shape.text_frame
             text_frame.text = component["text"]
             if size := component.get("size"):
-                text_frame.paragraphs[0].font.size = pptx.util.Pt(to_point(size).value)
+                internal_size = _to_internal_length(size)
+                text_frame.paragraphs[0].font.size = pptx.util.Pt(
+                    to_point(internal_size).value
+                )
             if bold := component.get("bold"):
                 text_frame.paragraphs[0].font.bold = bold
             if italic := component.get("italic"):
@@ -580,12 +703,19 @@ class _PresentationBuilder:
             width = component.get("width")
             height = component.get("height")
 
+            internal_width = _to_internal_length(width) if width else None
+            internal_height = _to_internal_length(height) if height else None
+
             shape = slide_obj.shapes.add_picture(
                 component["path"],
                 pptx.util.Inches(left_inches),
                 pptx.util.Inches(top_inches),
-                pptx.util.Inches(to_inche(width).value) if width else None,
-                pptx.util.Inches(to_inche(height).value) if height else None,
+                pptx.util.Inches(to_inche(internal_width).value)
+                if internal_width
+                else None,
+                pptx.util.Inches(to_inche(internal_height).value)
+                if internal_height
+                else None,
             )
 
         elif component["type"] == "chart":
@@ -602,17 +732,12 @@ class _PresentationBuilder:
             width = layout.get("width")
             height = layout.get("height")
 
+            internal_width = _to_internal_length(width) if width else _Inch(6)
+            internal_height = _to_internal_length(height) if height else _Inch(4)
+
             x, y = pptx.util.Inches(left_inches), pptx.util.Inches(top_inches)
-            cx = (
-                pptx.util.Inches(to_inche(width).value)
-                if width
-                else pptx.util.Inches(6)
-            )
-            cy = (
-                pptx.util.Inches(to_inche(height).value)
-                if height
-                else pptx.util.Inches(4)
-            )
+            cx = pptx.util.Inches(to_inche(internal_width).value)
+            cy = pptx.util.Inches(to_inche(internal_height).value)
 
             shape = slide_obj.shapes.add_chart(
                 XL_CHART_TYPE.BAR_CLUSTERED
@@ -631,17 +756,16 @@ class _PresentationBuilder:
             width = layout.get("width")
             height = layout.get("height")
 
+            internal_width = _to_internal_length(width) if width else _Inch(6)
+            internal_height = _to_internal_length(height) if height else _Inch(2)
+
             table = slide_obj.shapes.add_table(
                 component["rows"],
                 component["cols"],
                 pptx.util.Inches(left_inches),
                 pptx.util.Inches(top_inches),
-                pptx.util.Inches(to_inche(width).value)
-                if width
-                else pptx.util.Inches(6),
-                pptx.util.Inches(to_inche(height).value)
-                if height
-                else pptx.util.Inches(2),
+                pptx.util.Inches(to_inche(internal_width).value),
+                pptx.util.Inches(to_inche(internal_height).value),
             ).table
 
             for i, row in enumerate(component["data"]):
@@ -650,8 +774,9 @@ class _PresentationBuilder:
                     table_cell.text = cell.text
 
                     if size := cell.get("size"):
+                        internal_size = _to_internal_length(size)
                         table_cell.text_frame.paragraphs[0].font.size = pptx.util.Pt(
-                            to_point(size).value
+                            to_point(internal_size).value
                         )
                     if bold := cell.get("bold"):
                         table_cell.text_frame.paragraphs[0].font.bold = bold
@@ -690,9 +815,9 @@ class _PresentationBuilder:
             self._add_component(slide_obj, component, current_left, current_top)
 
             if container["layout"]["direction"] == "row":
-                current_left += Inch(2)  # Default spacing
+                current_left = (current_left[0] + 2, current_left[1])  # Default spacing
             else:
-                current_top += Inch(1)  # Default spacing
+                current_top = (current_top[0] + 1, current_top[1])  # Default spacing
 
     def build(self) -> "Presentation":
         """Build the presentation
@@ -719,7 +844,7 @@ class _PresentationBuilder:
             if containers := slide.get("containers"):
                 for container in containers:
                     self._add_container(
-                        slide_obj, container, Inch(1), Inch(2)
+                        slide_obj, container, (1, "in"), (2, "in")
                     )  # Default position
 
         return self.presentation
@@ -849,7 +974,7 @@ def layout(
     direction: str = "row",
     align: Align = Align.START,
     justify: Justify = Justify.START,
-    gap: Length = Inch(0.1),
+    gap: Length = (0.1, "in"),
     padding: Optional[dict[str, Length]] = None,
     width: Optional[Length] = None,
     height: Optional[Length] = None,
@@ -861,7 +986,7 @@ def layout(
         direction (str, optional): Layout direction ("row" or "column"). Defaults to "row".
         align (Align, optional): Element alignment. Defaults to Align.START.
         justify (Justify, optional): Element justification. Defaults to Justify.START.
-        gap (Length, optional): Gap between elements. Defaults to Inch(0.1).
+        gap (Length, optional): Gap between elements. Defaults to (0.1, "in").
         padding (Optional[dict[str, Length]], optional): Padding (top, right, bottom, left). Defaults to None.
         width (Optional[Length], optional): Width. Defaults to None.
         height (Optional[Length], optional): Height. Defaults to None.

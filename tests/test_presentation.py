@@ -5,10 +5,8 @@ from pathlib import Path
 from pptxr import (
     Align,
     Container,
-    Inch,
     Justify,
     LayoutType,
-    Point,
     Presentation,
     SlideLayout,
     chart,
@@ -37,14 +35,14 @@ class TestPresentation(unittest.TestCase):
             .add_slide(
                 slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=text("Simple Slide", size=Point(44), bold=True),
+                    title=text("Simple Slide", size=(44, "pt"), bold=True),
                     containers=[
                         Container(
                             components=[
                                 text(
                                     "This is a test text",
-                                    size=Point(24),
-                                    layout=layout(width=Inch(4), height=Inch(1)),
+                                    size=(24, "pt"),
+                                    layout=layout(width=(4, "in"), height=(1, "in")),
                                 )
                             ],
                             layout=layout(
@@ -70,27 +68,27 @@ class TestPresentation(unittest.TestCase):
             .add_slide(
                 slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=text("Complex Layout", size=Point(44), bold=True),
+                    title=text("Complex Layout", size=(44, "pt"), bold=True),
                     containers=[
                         # Horizontal container
                         Container(
                             components=[
                                 text(
                                     "Left text",
-                                    size=Point(20),
-                                    layout=layout(width=Inch(3), height=Inch(1)),
+                                    size=(20, "pt"),
+                                    layout=layout(width=(3, "in"), height=(1, "in")),
                                 ),
                                 text(
                                     "Right text",
-                                    size=Point(20),
-                                    layout=layout(width=Inch(3), height=Inch(1)),
+                                    size=(20, "pt"),
+                                    layout=layout(width=(3, "in"), height=(1, "in")),
                                 ),
                             ],
                             layout=layout(
                                 type=LayoutType.FLEX,
                                 direction="row",
                                 justify=Justify.SPACE_BETWEEN,
-                                gap=Inch(0.5),
+                                gap=(0.5, "in"),
                             ),
                         ),
                         # Vertical container
@@ -98,20 +96,20 @@ class TestPresentation(unittest.TestCase):
                             components=[
                                 text(
                                     "Top text",
-                                    size=Point(20),
-                                    layout=layout(width=Inch(6), height=Inch(1)),
+                                    size=(20, "pt"),
+                                    layout=layout(width=(6, "in"), height=(1, "in")),
                                 ),
                                 text(
                                     "Bottom text",
-                                    size=Point(20),
-                                    layout=layout(width=Inch(6), height=Inch(1)),
+                                    size=(20, "pt"),
+                                    layout=layout(width=(6, "in"), height=(1, "in")),
                                 ),
                             ],
                             layout=layout(
                                 type=LayoutType.FLEX,
                                 direction="column",
                                 align=Align.CENTER,
-                                gap=Inch(0.5),
+                                gap=(0.5, "in"),
                             ),
                         ),
                     ],
@@ -139,27 +137,27 @@ class TestPresentation(unittest.TestCase):
             .add_slide(
                 slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=text("Slide with Image", size=Point(44), bold=True),
+                    title=text("Slide with Image", size=(44, "pt"), bold=True),
                     containers=[
                         Container(
                             components=[
                                 image(
                                     path=str(test_image_path),
-                                    width=Inch(4),
-                                    height=Inch(3),
-                                    layout=layout(width=Inch(4), height=Inch(3)),
+                                    width=(4, "in"),
+                                    height=(3, "in"),
+                                    layout=layout(width=(4, "in"), height=(3, "in")),
                                 ),
                                 text(
                                     "Image description",
-                                    size=Point(20),
-                                    layout=layout(width=Inch(4), height=Inch(1)),
+                                    size=(20, "pt"),
+                                    layout=layout(width=(4, "in"), height=(1, "in")),
                                 ),
                             ],
                             layout=layout(
                                 type=LayoutType.FLEX,
                                 direction="column",
                                 align=Align.CENTER,
-                                gap=Inch(0.5),
+                                gap=(0.5, "in"),
                             ),
                         )
                     ],
@@ -179,7 +177,7 @@ class TestPresentation(unittest.TestCase):
             .add_slide(
                 slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=text("Slide with Chart", size=Point(44), bold=True),
+                    title=text("Slide with Chart", size=(44, "pt"), bold=True),
                     containers=[
                         Container(
                             components=[
@@ -190,9 +188,9 @@ class TestPresentation(unittest.TestCase):
                                         {"category": "B", "value": 20},
                                         {"category": "C", "value": 30},
                                     ],
-                                    width=Inch(6),
-                                    height=Inch(4),
-                                    layout=layout(width=Inch(6), height=Inch(4)),
+                                    width=(6, "in"),
+                                    height=(4, "in"),
+                                    layout=layout(width=(6, "in"), height=(4, "in")),
                                 )
                             ],
                             layout=layout(
@@ -217,14 +215,14 @@ class TestPresentation(unittest.TestCase):
             Presentation.builder()
             .add_slide(
                 layout=SlideLayout.TITLE_AND_CONTENT,
-                title=text("Keyword Arguments Test", size=Point(44), bold=True),
+                title=text("Keyword Arguments Test", size=(44, "pt"), bold=True),
                 containers=[
                     Container(
                         components=[
                             text(
                                 "Slide created with keyword arguments",
-                                size=Point(24),
-                                layout=layout(width=Inch(4), height=Inch(1)),
+                                size=(24, "pt"),
+                                layout=layout(width=(4, "in"), height=(1, "in")),
                             )
                         ],
                         layout=layout(

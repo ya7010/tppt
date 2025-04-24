@@ -5,7 +5,6 @@ import pytest
 from pptxr import (
     Align,
     Chart,
-    Inch,
     Justify,
     LayoutType,
     Presentation,
@@ -48,7 +47,7 @@ class TwoColumnTemplate(SlideTemplate):
                         type=LayoutType.FLEX,
                         direction="row",
                         justify=Justify.SPACE_BETWEEN,
-                        gap=Inch(0.5),
+                        gap=(0.5, "in"),
                     ),
                 }
             ],
@@ -66,24 +65,25 @@ class ChartWithDescriptionTemplate(SlideTemplate):
     def build(
         self,
         title: Optional[Text] = None,
-        chart: Chart = None,
+        chart_data: Chart = None,
         description: Text = None,
         **kwargs,
     ) -> Slide:
+        default_chart = chart("bar", [])
         return slide(
             layout=SlideLayout.TITLE_AND_CONTENT,
             title=title,
             containers=[
                 {
                     "components": [
-                        chart or chart("bar", []),
+                        chart_data if chart_data is not None else default_chart,
                         description or text("Chart Description"),
                     ],
                     "layout": layout(
                         type=LayoutType.FLEX,
                         direction="column",
                         align=Align.CENTER,
-                        gap=Inch(0.5),
+                        gap=(0.5, "in"),
                     ),
                 }
             ],
@@ -116,7 +116,7 @@ class FeatureCardsTemplate(SlideTemplate):
             containers=[
                 {
                     "components": features or default_features,
-                    "layout": layout(type=LayoutType.GRID, gap=Inch(0.5)),
+                    "layout": layout(type=LayoutType.GRID, gap=(0.5, "in")),
                 }
             ],
         )
@@ -134,7 +134,7 @@ def test_two_column_template():
     assert slide["containers"][0]["layout"]["type"] == LayoutType.FLEX
     assert slide["containers"][0]["layout"]["direction"] == "row"
     assert slide["containers"][0]["layout"]["justify"] == Justify.SPACE_BETWEEN
-    assert slide["containers"][0]["layout"]["gap"] == Inch(0.5)
+    assert slide["containers"][0]["layout"]["gap"] == (0.5, "in")
 
     # Test with custom values
     left_content = text("Custom Left")
@@ -162,17 +162,17 @@ def test_chart_with_description_template():
     assert slide["containers"][0]["layout"]["type"] == LayoutType.FLEX
     assert slide["containers"][0]["layout"]["direction"] == "column"
     assert slide["containers"][0]["layout"]["align"] == Align.CENTER
-    assert slide["containers"][0]["layout"]["gap"] == Inch(0.5)
+    assert slide["containers"][0]["layout"]["gap"] == (0.5, "in")
 
     # Test with custom values
-    chart = chart("bar", [{"value": 1}, {"value": 2}])
+    chart_data = chart("bar", [{"value": 1}, {"value": 2}])
     description = text("Custom Description")
     title = text("Custom Title")
 
-    slide = template.build(title=title, chart=chart, description=description)
+    slide = template.build(title=title, chart_data=chart_data, description=description)
 
     assert slide["title"] == title
-    assert slide["containers"][0]["components"][0] == chart
+    assert slide["containers"][0]["components"][0] == chart_data
     assert slide["containers"][0]["components"][1] == description
 
 
@@ -186,7 +186,7 @@ def test_feature_cards_template():
     assert len(slide["containers"]) == 1
     assert len(slide["containers"][0]["components"]) == 4
     assert slide["containers"][0]["layout"]["type"] == LayoutType.GRID
-    assert slide["containers"][0]["layout"]["gap"] == Inch(0.5)
+    assert slide["containers"][0]["layout"]["gap"] == (0.5, "in")
 
     # Test with custom values
     features = [
@@ -219,7 +219,7 @@ def test_template_in_presentation():
         .add_slide(
             ChartWithDescriptionTemplate(),
             title=text("Chart"),
-            chart=chart("bar", [{"value": 1}]),
+            chart_data=chart("bar", [{"category": "A", "value": 1}]),
             description=text("Description"),
         )
         .add_slide(
