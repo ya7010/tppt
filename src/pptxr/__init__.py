@@ -499,12 +499,12 @@ class _PresentationBuilder:
         """
         if component["type"] == "text":
             shape = slide_obj.shapes.add_textbox(
-                pptx.util.Inches(float(to_inche(left))),
-                pptx.util.Inches(float(to_inche(top))),
-                pptx.util.Inches(float(to_inche(component["layout"]["width"])))
+                pptx.util.Inches(to_inche(left).value),
+                pptx.util.Inches(to_inche(top).value),
+                pptx.util.Inches(to_inche(component["layout"]["width"]).value)
                 if component.get("layout") and component["layout"].get("width")
                 else pptx.util.Inches(3),
-                pptx.util.Inches(float(to_inche(component["layout"]["height"])))
+                pptx.util.Inches(to_inche(component["layout"]["height"]).value)
                 if component.get("layout") and component["layout"].get("height")
                 else pptx.util.Inches(1),
             )
@@ -522,12 +522,12 @@ class _PresentationBuilder:
         elif component["type"] == "image":
             shape = slide_obj.shapes.add_picture(
                 component["path"],
-                pptx.util.Inches(float(to_inche(left))),
-                pptx.util.Inches(float(to_inche(top))),
-                pptx.util.Inches(float(to_inche(component["width"])))
+                pptx.util.Inches(to_inche(left).value),
+                pptx.util.Inches(to_inche(top).value),
+                pptx.util.Inches(to_inche(component["width"]).value)
                 if component.get("width")
                 else None,
-                pptx.util.Inches(float(to_inche(component["height"])))
+                pptx.util.Inches(to_inche(component["height"]).value)
                 if component.get("height")
                 else None,
             )
@@ -540,16 +540,16 @@ class _PresentationBuilder:
             )
 
             x, y = (
-                pptx.util.Inches(float(to_inche(left))),
-                pptx.util.Inches(float(to_inche(top))),
+                pptx.util.Inches(to_inche(left).value),
+                pptx.util.Inches(to_inche(top).value),
             )
             cx = (
-                pptx.util.Inches(float(to_inche(component["layout"]["width"])))
+                pptx.util.Inches(to_inche(component["layout"]["width"]).value)
                 if component.get("layout") and component["layout"].get("width")
                 else pptx.util.Inches(6)
             )
             cy = (
-                pptx.util.Inches(float(to_inche(component["layout"]["height"])))
+                pptx.util.Inches(to_inche(component["layout"]["height"]).value)
                 if component.get("layout") and component["layout"].get("height")
                 else pptx.util.Inches(4)
             )
@@ -569,12 +569,12 @@ class _PresentationBuilder:
             table = slide_obj.shapes.add_table(
                 component["rows"],
                 component["cols"],
-                pptx.util.Inches(float(to_inche(left))),
-                pptx.util.Inches(float(to_inche(top))),
-                pptx.util.Inches(float(to_inche(component["layout"]["width"])))
+                pptx.util.Inches(to_inche(left).value),
+                pptx.util.Inches(to_inche(top).value),
+                pptx.util.Inches(to_inche(component["layout"]["width"]).value)
                 if component.get("layout") and component["layout"].get("width")
                 else pptx.util.Inches(6),
-                pptx.util.Inches(float(to_inche(component["layout"]["height"])))
+                pptx.util.Inches(to_inche(component["layout"]["height"]).value)
                 if component.get("layout") and component["layout"].get("height")
                 else pptx.util.Inches(2),
             ).table
