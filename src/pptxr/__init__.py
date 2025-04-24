@@ -8,7 +8,6 @@ from typing import (
     Literal,
     NotRequired,
     TypedDict,
-    Union,
     Unpack,
     overload,
 )
@@ -279,7 +278,7 @@ class Table(TypedDict):
     """Layout settings"""
 
 
-Component = Union[Text, Image, Chart, Table]
+Component = Text | Image | Chart | Table
 """Union type representing any component type"""
 
 
@@ -808,15 +807,3 @@ def slide(
         "title": title,
         "containers": containers,
     }
-
-
-def save_pptx(
-    presentation: Presentation, file: Union[str, pathlib.Path, IO[bytes]]
-) -> None:
-    """Save presentation to file
-
-    Args:
-        presentation (Presentation): Presentation to save
-        file (Union[str, pathlib.Path, IO[bytes]]): Output file path or file-like object
-    """
-    presentation.save(file)
