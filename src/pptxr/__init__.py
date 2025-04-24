@@ -1,8 +1,10 @@
 """PowerPoint presentation creation library."""
 
 import os
+from abc import ABC, abstractmethod
 from typing import (
     IO,
+    Generic,
     Literal,
     NotRequired,
     TypeAlias,
@@ -10,6 +12,8 @@ from typing import (
     Unpack,
     overload,
 )
+
+from typing_extensions import TypeVar
 
 from pptxr.units import Length
 
@@ -152,7 +156,34 @@ class Slide(TypedDict):
     """Containers within slide"""
 
 
-class SlideTemplate:
+class SlideBuilder(ABC):
+    """Builder class for creating slides."""
+
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def build(self) -> Slide:
+        """Build the slide."""
+        raise NotImplementedError()
+
+
+class DefaultSlideBuilder(SlideBuilder):
+    """Default slide builder."""
+
+    def build(self) -> Slide:
+        """Build the slide."""
+        return slide(layout="TITLE")
+
+
+_GenericSlideBuilder = TypeVar(
+    "_GenericSlideBuilder",
+    default=DefaultSlideBuilder,
+    bound=SlideBuilder,
+)
+
+
+class SlideTemplate(Generic[_GenericSlideBuilder]):
     """Interface for slide templates.
 
     This interface defines the contract for slide templates.
@@ -160,7 +191,7 @@ class SlideTemplate:
     and implementing the build method.
     """
 
-    def build(self) -> Slide:
+    def build(self, builder: _GenericSlideBuilder) -> Slide:
         """Build a slide using this template."""
         raise NotImplementedError()
 
@@ -190,39 +221,47 @@ class Presentation:
         self._presentation.save(path)
 
     @classmethod
-    def builder(cls) -> "PresentationBuilder":
+    def builder(
+        cls,
+        slide_builder: type[_GenericSlideBuilder] = DefaultSlideBuilder,  # type: ignore
+    ) -> "PresentationBuilder[_GenericSlideBuilder]":
         """Create a new presentation builder.
 
         Returns:
             PresentationBuilder: Newly created presentation builder
         """
-        return PresentationBuilder()
+        return PresentationBuilder(slide_builder)
 
 
-class PresentationBuilder:
+class PresentationBuilder(Generic[_GenericSlideBuilder]):
     """Builder class for creating presentations."""
 
-    def __init__(self):
+    def __init__(self, slide_builder: type[_GenericSlideBuilder]):
         """Initialize presentation builder."""
         self._presentation = Presentation()
+        self._slide_builder = slide_builder
         self.slides: list[Slide] = []
 
     @overload
-    def add_slide(self, slide: Slide | SlideTemplate, /) -> "PresentationBuilder": ...
+    def add_slide(
+        self, slide: Slide | SlideTemplate, /
+    ) -> "PresentationBuilder[_GenericSlideBuilder]": ...
 
     @overload
-    def add_slide(self, /, **kwargs: Unpack[Slide]) -> "PresentationBuilder": ...
+    def add_slide(
+        self, /, **kwargs: Unpack[Slide]
+    ) -> "PresentationBuilder[_GenericSlideBuilder]": ...
 
     def add_slide(  # type: ignore
         self,
-        slide: Slide | SlideTemplate | None = None,
+        slide: Slide | SlideTemplate[_GenericSlideBuilder] | None = None,
         /,
         **kwargs: Unpack[Slide],
-    ) -> "PresentationBuilder":
+    ) -> "PresentationBuilder[_GenericSlideBuilder]":
         """Add a slide to the presentation."""
         if isinstance(slide, SlideTemplate):
             # Using template
-            slide = slide.build()
+            slide = slide.build(self._slide_builder())
         elif slide is None:
             slide = kwargs
 

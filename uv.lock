@@ -221,6 +221,7 @@ source = { editable = "." }
 dependencies = [
     { name = "pillow" },
     { name = "python-pptx" },
+    { name = "typing-extensions" },
 ]
 
 [package.dev-dependencies]
@@ -237,6 +238,7 @@ dev = [
 requires-dist = [
     { name = "pillow", specifier = ">=10.0.0" },
     { name = "python-pptx", specifier = ">=1.0.2" },
+    { name = "typing-extensions", specifier = ">=4.13.2" },
 ]
 
 [package.metadata.requires-dev]

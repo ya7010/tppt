@@ -6,8 +6,9 @@ readme = "README.md"
 requires-python = ">=3.11.9"
 authors = [{ name = "yassun7010", email = "yassun7010@outlook.com" }]
 dependencies = [
-  "Pillow>=10.0.0",  # 画像処理用
+  "Pillow>=10.0.0", # 画像処理用
   "python-pptx>=1.0.2",
+  "typing-extensions>=4.13.2",
 ]
 
 [dependency-groups]

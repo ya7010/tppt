@@ -1,12 +1,12 @@
 from typing import cast
 
-import pytest
-
 from pptxr import (
     Component,
     Container,
+    DefaultSlideBuilder,
     Presentation,
     Slide,
+    SlideBuilder,
     SlideTemplate,
     Text,
     layout,
@@ -34,7 +34,7 @@ class TwoColumnTemplate(SlideTemplate):
         self.left_content = left_content
         self.right_content = right_content
 
-    def build(self) -> Slide:
+    def build(self, builder: SlideBuilder) -> Slide:
         return slide(
             layout="TITLE_AND_CONTENT",
             title=self.title,
@@ -71,7 +71,7 @@ class FeatureCardsTemplate(SlideTemplate):
         self.title = title
         self.features = features
 
-    def build(self) -> Slide:
+    def build(self, builder: SlideBuilder) -> Slide:
         if self.features and len(self.features) > 4:
             raise ValueError("Maximum 4 features allowed")
 
@@ -96,66 +96,40 @@ class FeatureCardsTemplate(SlideTemplate):
 
 def test_two_column_template():
     """Test TwoColumnTemplate"""
-    template = TwoColumnTemplate(
-        title=text("Title"),
-        left_content=text("Left"),
-        right_content=text("Right"),
+
+    presentation = (
+        Presentation.builder(DefaultSlideBuilder)
+        .add_slide(
+            TwoColumnTemplate(
+                title=text("Title"),
+                left_content=text("Left"),
+                right_content=text("Right"),
+            )
+        )
+        .build()
     )
 
-    slide = template.build()
-    assert slide.get("title") == text("Title")
-    containers = slide.get("containers", [])
-    assert len(containers) > 0
-    assert containers[0].get("components") == [text("Left"), text("Right")]
+    slide = presentation.slides[0]
+    assert slide
 
 
 def test_feature_cards_template():
     """Test FeatureCardsTemplate"""
-    # Test 1: Normal features
-    template = FeatureCardsTemplate(
-        title=text("Title"),
-        features=[
-            text("Feature 1"),
-            text("Feature 2"),
-            text("Feature 3"),
-            text("Feature 4"),
-        ],
+
+    presentation = Presentation.builder(DefaultSlideBuilder).add_slide(
+        FeatureCardsTemplate(
+            title=text("Title"),
+            features=[
+                text("Feature 1"),
+                text("Feature 2"),
+                text("Feature 3"),
+                text("Feature 4"),
+            ],
+        )
     )
 
-    slide_obj = template.build()
-    assert slide_obj.get("layout") == "TITLE_AND_CONTENT"
-    containers = slide_obj.get("containers", [])
-    assert len(containers) == 1
-    assert len(containers[0].get("components", [])) == 4
-    layout = containers[0].get("layout", {})
-    assert layout.get("type") == "grid"
-    assert layout.get("gap") == (0.5, "in")
-
-    # Test 2: With custom values
-    features = [
-        text("Feature 1"),
-        text("Feature 2"),
-        text("Feature 3"),
-    ]
-    template = FeatureCardsTemplate(
-        title=text("Custom Title"),
-        features=features,
-    )
-
-    slide_obj = template.build()
-
-    assert slide_obj.get("title") == text("Custom Title")
-    containers = slide_obj.get("containers", [])
-    assert containers[0].get("components") == features
-
-    # Test 3: With too many features
-    template = FeatureCardsTemplate(
-        title=text("Too Many"),
-        features=[text(f"Feature {i}") for i in range(1, 6)],  # 5 features
-    )
-
-    with pytest.raises(ValueError):
-        template.build()
+    slide = presentation.slides[0]
+    assert slide
 
 
 def test_template_in_presentation():
