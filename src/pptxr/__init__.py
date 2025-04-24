@@ -48,6 +48,9 @@ class Inch:
     def __truediv__(self, other: Union[int, float]) -> Self:
         return Inch(self.value / other)
 
+    def __eq__(self, other: Self) -> bool:
+        return self.value == other.value
+
 
 class Point:
     """Class representing points"""
@@ -396,6 +399,27 @@ class Slide(TypedDict):
     """Containers within slide"""
 
 
+class SlideTemplate:
+    """Interface for slide templates
+
+    This interface defines the contract for slide templates.
+    Users can implement their own templates by subclassing this class
+    and implementing the build method.
+    """
+
+    def build(self, title: Optional[Text] = None, **kwargs) -> Slide:
+        """Build a slide using this template
+
+        Args:
+            title (Optional[Text]): Slide title
+            **kwargs: Template-specific parameters
+
+        Returns:
+            Slide: Built slide
+        """
+        raise NotImplementedError()
+
+
 class Presentation:
     """Class for creating presentations"""
 
@@ -445,19 +469,36 @@ class _PresentationBuilder:
     @overload
     def add_slide(self, **kwargs: Unpack[Slide]) -> "_PresentationBuilder": ...
 
+    @overload
     def add_slide(
-        self, slide: Slide = None, /, **kwargs: Unpack[Slide]
+        self, template: SlideTemplate, **kwargs
+    ) -> "_PresentationBuilder": ...
+
+    def add_slide(
+        self,
+        slide_or_template: Union[Slide, SlideTemplate] = None,
+        /,
+        **kwargs: Unpack[Slide],
     ) -> "_PresentationBuilder":
         """Add a slide to the presentation
 
         Args:
-            slide (Slide): Slide to add
+            slide_or_template (Union[Slide, SlideTemplate]): Slide to add or template instance
+            **kwargs: Additional parameters
 
         Returns:
             PresentationBuilder: Self instance for method chaining
         """
-        if slide is None:
-            slide = kwargs
+        if isinstance(slide_or_template, SlideTemplate):
+            # Using template
+            slide = slide_or_template.build(**kwargs)
+        else:
+            # Using direct slide definition
+            if slide_or_template is None:
+                slide = kwargs
+            else:
+                slide = slide_or_template
+
         self.slides.append(slide)
         return self
 
@@ -511,7 +552,7 @@ class _PresentationBuilder:
 
         if component["type"] == "text":
             # レイアウト情報を一度だけ取得
-            layout = component.get("layout", {})
+            layout = component.get("layout", {}) or {}
             width = layout.get("width")
             height = layout.get("height")
 
@@ -549,13 +590,15 @@ class _PresentationBuilder:
 
         elif component["type"] == "chart":
             chart_data = ChartData()
-            chart_data.categories = [item["category"] for item in component["data"]]
-            chart_data.add_series(
-                "Series 1", [item["value"] for item in component["data"]]
-            )
+            data = component["data"]
+            if data and "category" in data[0]:
+                chart_data.categories = [item["category"] for item in data]
+            else:
+                chart_data.categories = [f"Item {i + 1}" for i in range(len(data))]
+            chart_data.add_series("Series 1", [item.get("value", 0) for item in data])
 
             # レイアウト情報を一度だけ取得
-            layout = component.get("layout", {})
+            layout = component.get("layout", {}) or {}
             width = layout.get("width")
             height = layout.get("height")
 
