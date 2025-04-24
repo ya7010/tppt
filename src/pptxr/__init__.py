@@ -14,8 +14,8 @@ from typing import (
 from pptxr.units import Length
 
 from ._pptx import PptxPresentationFactory
-from .abstract.types import FilePath
-from .abstract.types import Slide as AbstractSlide
+from .types import FilePath
+from .types import Slide as AbstractSlide
 from .units import (
     LiteralLength,
     to_length,
