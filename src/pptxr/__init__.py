@@ -321,8 +321,7 @@ Component = Union[Text, Image, Chart, Table]
 """Union type representing any component type"""
 
 
-@dataclass
-class Container:
+class Container(TypedDict):
     """Data class representing container"""
 
     components: List[Component]
@@ -331,15 +330,14 @@ class Container:
     """Layout settings"""
 
 
-@dataclass
-class Slide:
+class Slide(TypedDict):
     """Data class representing slide"""
 
     layout: SlideLayout
     """Slide layout"""
-    title: Optional[Text] = None
+    title: NotRequired[Optional[Text]]
     """Slide title"""
-    containers: List[Container] = None
+    containers: NotRequired[Optional[List[Container]]]
     """Containers within slide"""
 
 
@@ -554,10 +552,10 @@ class _PresentationBuilder:
         current_left = left
         current_top = top
 
-        for component in container.components:
+        for component in container["components"]:
             self._add_component(slide_obj, component, current_left, current_top)
 
-            if container.layout["direction"] == "row":
+            if container["layout"]["direction"] == "row":
                 current_left += Inch(2)  # Default spacing
             else:
                 current_top += Inch(1)  # Default spacing
@@ -569,25 +567,27 @@ class _PresentationBuilder:
             Presentation: Built presentation
         """
         for slide in self.slides:
-            slide_layout = self.presentation.slide_layouts[slide.layout.value]
+            slide_layout = self.presentation.slide_layouts[slide["layout"].value]
             slide_obj = self.presentation.slides.add_slide(slide_layout)
 
-            if slide.title:
+            if slide.get("title"):
                 title_shape = slide_obj.shapes.title
-                title_shape.text = slide.title["text"]
-                if slide.title.get("size"):
+                title_shape.text = slide["title"]["text"]
+                if slide["title"].get("size"):
                     title_shape.text_frame.paragraphs[0].font.size = Pt(
-                        int(to_point(slide.title["size"]))
+                        int(to_point(slide["title"]["size"]))
                     )
-                if slide.title.get("bold"):
-                    title_shape.text_frame.paragraphs[0].font.bold = slide.title["bold"]
-                if slide.title.get("italic"):
-                    title_shape.text_frame.paragraphs[0].font.italic = slide.title[
+                if slide["title"].get("bold"):
+                    title_shape.text_frame.paragraphs[0].font.bold = slide["title"][
+                        "bold"
+                    ]
+                if slide["title"].get("italic"):
+                    title_shape.text_frame.paragraphs[0].font.italic = slide["title"][
                         "italic"
                     ]
 
-            if slide.containers:
-                for container in slide.containers:
+            if slide.get("containers"):
+                for container in slide["containers"]:
                     self._add_container(
                         slide_obj, container, Inch(1), Inch(2)
                     )  # Default position
@@ -768,4 +768,8 @@ def create_slide(
     """
     if containers is None:
         containers = []
-    return Slide(layout=layout, title=title, containers=containers)
+    return {
+        "layout": layout,
+        "title": title,
+        "containers": containers,
+    }
