@@ -19,10 +19,10 @@ from pptx.enum.text import PP_ALIGN
 from ._pptx import PptxPresentationFactory
 from .abstract.types import Slide as AbstractSlide
 from .units import (
-    Length,
-    _Inch,
-    _to_internal_length,
+    Inch,
+    LiteralLength,
     to_inche,
+    to_internal_length,
 )
 
 SlideLayout = Literal[
@@ -61,16 +61,16 @@ class Layout(TypedDict):
     justify: NotRequired[Justify]
     """Element justification"""
 
-    gap: NotRequired[Length]
+    gap: NotRequired[LiteralLength]
     """Gap between elements"""
 
-    padding: NotRequired[dict[str, Length]]
+    padding: NotRequired[dict[str, LiteralLength]]
     """Padding (top, right, bottom, left)"""
 
-    width: NotRequired[Length]
+    width: NotRequired[LiteralLength]
     """Width"""
 
-    height: NotRequired[Length]
+    height: NotRequired[LiteralLength]
     """Height"""
 
 
@@ -83,7 +83,7 @@ class Text(TypedDict):
     text: str | None
     """Text content"""
 
-    size: Length | None
+    size: LiteralLength | None
     """Font size"""
 
     bold: NotRequired[bool]
@@ -106,16 +106,16 @@ class Shape:
     type: str
     """Shape type"""
 
-    left: Length
+    left: LiteralLength
     """Position from left edge"""
 
-    top: Length
+    top: LiteralLength
     """Position from top edge"""
 
-    width: Length
+    width: LiteralLength
     """Width"""
 
-    height: Length
+    height: LiteralLength
     """Height"""
 
     text: Text | None = None
@@ -131,10 +131,10 @@ class Image(TypedDict):
     path: str
     """Path to image file"""
 
-    width: NotRequired[Length]
+    width: NotRequired[LiteralLength]
     """Width"""
 
-    height: NotRequired[Length]
+    height: NotRequired[LiteralLength]
     """Height"""
 
     layout: NotRequired[Layout]
@@ -153,10 +153,10 @@ class Chart(TypedDict):
     data: list[dict[str, Any]]
     """Chart data"""
 
-    width: NotRequired[Length]
+    width: NotRequired[LiteralLength]
     """Width"""
 
-    height: NotRequired[Length]
+    height: NotRequired[LiteralLength]
     """Height"""
 
     layout: NotRequired[Layout]
@@ -170,7 +170,7 @@ class TableCell:
     text: str
     """Cell text content"""
 
-    size: Length | None = None
+    size: LiteralLength | None = None
     """Font size"""
 
     bold: bool = False
@@ -204,10 +204,10 @@ class Table(TypedDict):
     data: list[list[TableCell]]
     """Table data"""
 
-    width: NotRequired[Length]
+    width: NotRequired[LiteralLength]
     """Width"""
 
-    height: NotRequired[Length]
+    height: NotRequired[LiteralLength]
     """Height"""
 
     layout: NotRequired[Layout]
@@ -327,7 +327,11 @@ class _PresentationBuilder:
         return self
 
     def _add_component(
-        self, slide_obj: AbstractSlide, component: Component, left: Length, top: Length
+        self,
+        slide_obj: AbstractSlide,
+        component: Component,
+        left: LiteralLength,
+        top: LiteralLength,
     ) -> None:
         """Add a component to a slide.
 
@@ -338,8 +342,8 @@ class _PresentationBuilder:
             top (Length): Position from top edge
         """
         # 共通の位置計算を最適化
-        internal_left = _to_internal_length(left)
-        internal_top = _to_internal_length(top)
+        internal_left = to_internal_length(left)
+        internal_top = to_internal_length(top)
         left_inches = to_inche(internal_left).value
         top_inches = to_inche(internal_top).value
 
@@ -349,8 +353,8 @@ class _PresentationBuilder:
             width = layout.get("width")
             height = layout.get("height")
 
-            internal_width = _to_internal_length(width) if width else _Inch(3)
-            internal_height = _to_internal_length(height) if height else _Inch(1)
+            internal_width = to_internal_length(width) if width else Inch(3)
+            internal_height = to_internal_length(height) if height else Inch(1)
 
             shape = slide_obj.add_shape(
                 MSO_SHAPE_TYPE.TEXT_BOX,
@@ -375,7 +379,11 @@ class _PresentationBuilder:
             pass
 
     def _add_container(
-        self, slide_obj: AbstractSlide, container: Container, left: Length, top: Length
+        self,
+        slide_obj: AbstractSlide,
+        container: Container,
+        left: LiteralLength,
+        top: LiteralLength,
     ) -> None:
         """Add a container to a slide.
 
@@ -422,8 +430,8 @@ class _PresentationBuilder:
 
 def image(
     path: str | pathlib.Path,
-    width: Length | None = None,
-    height: Length | None = None,
+    width: LiteralLength | None = None,
+    height: LiteralLength | None = None,
     layout: Layout | None = None,
 ) -> Image:
     """Create an image component with type field automatically set.
@@ -448,7 +456,7 @@ def image(
 
 def text(
     text: str,
-    size: Length | None = None,
+    size: LiteralLength | None = None,
     bold: bool = False,
     italic: bool = False,
     color: str | None = None,
@@ -481,8 +489,8 @@ def text(
 def chart(
     chart_type: str,
     data: list[dict[str, Any]],
-    width: Length | None = None,
-    height: Length | None = None,
+    width: LiteralLength | None = None,
+    height: LiteralLength | None = None,
     layout: Layout | None = None,
 ) -> Chart:
     """Create a chart component with type field automatically set.
@@ -511,8 +519,8 @@ def table(
     rows: int,
     cols: int,
     data: list[list[TableCell]],
-    width: Length | None = None,
-    height: Length | None = None,
+    width: LiteralLength | None = None,
+    height: LiteralLength | None = None,
     layout: Layout | None = None,
 ) -> Table:
     """Create a table component with type field automatically set.
@@ -544,10 +552,10 @@ def layout(
     direction: str = "row",
     align: Align = "start",
     justify: Justify = "start",
-    gap: Length = (0.1, "in"),
-    padding: dict[str, Length] | None = None,
-    width: Length | None = None,
-    height: Length | None = None,
+    gap: LiteralLength = (0.1, "in"),
+    padding: dict[str, LiteralLength] | None = None,
+    width: LiteralLength | None = None,
+    height: LiteralLength | None = None,
 ) -> Layout:
     """Create a layout with default values.
 

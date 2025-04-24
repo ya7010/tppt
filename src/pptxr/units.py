@@ -6,9 +6,9 @@ INCHES_PER_POINT = 1 / 72  # 1 point = 1/72 inches
 POINTS_PER_INCH = 72  # 1 inch = 72 points
 CM_PER_INCH = 2.54  # 1 inch = 2.54 cm
 
-_Length = Literal["_Inch", "_Point", "_Centimeter"]
+Length = Literal["Inch", "Point", "Centimeter"]
 
-Length = (
+LiteralLength = (
     tuple[int, Literal["pt"]]
     | tuple[float, Literal["in"]]
     | tuple[float, Literal["cm"]]
@@ -16,126 +16,126 @@ Length = (
 
 
 @dataclass
-class _Inch:
+class Inch:
     """Class representing inches"""
 
     value: float
 
-    def __add__(self, other: "_Length | Length") -> "_Inch":
+    def __add__(self, other: "Length | LiteralLength") -> "Inch":
         if isinstance(other, tuple):
-            other = _to_internal_length(other)
-        return _Inch(self.value + to_inche(other).value)
+            other = to_internal_length(other)
+        return Inch(self.value + to_inche(other).value)
 
-    def __sub__(self, other: "_Length | Length") -> "_Inch":
+    def __sub__(self, other: "Length | LiteralLength") -> "Inch":
         if isinstance(other, tuple):
-            other = _to_internal_length(other)
-        return _Inch(self.value - to_inche(other).value)
+            other = to_internal_length(other)
+        return Inch(self.value - to_inche(other).value)
 
-    def __iadd__(self, other: "_Length | Length") -> "_Inch":
+    def __iadd__(self, other: "Length | LiteralLength") -> "Inch":
         if isinstance(other, tuple):
-            other = _to_internal_length(other)
+            other = to_internal_length(other)
         self.value += to_inche(other).value
         return self
 
-    def __isub__(self, other: "_Length | Length") -> "_Inch":
+    def __isub__(self, other: "Length | LiteralLength") -> "Inch":
         if isinstance(other, tuple):
-            other = _to_internal_length(other)
+            other = to_internal_length(other)
         self.value -= to_inche(other).value
         return self
 
-    def __mul__(self, other: int | float) -> "_Inch":
-        return _Inch(self.value * other)
+    def __mul__(self, other: int | float) -> "Inch":
+        return Inch(self.value * other)
 
-    def __truediv__(self, other: int | float) -> "_Inch":
-        return _Inch(self.value / other)
+    def __truediv__(self, other: int | float) -> "Inch":
+        return Inch(self.value / other)
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, _Inch):
+        if not isinstance(other, Inch):
             raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
         return self.value == other.value
 
 
 @dataclass
-class _Point:
+class Point:
     """Class representing points"""
 
     value: int
 
-    def __add__(self, other: "_Length | Length") -> "_Point":
+    def __add__(self, other: "Length | LiteralLength") -> "Point":
         if isinstance(other, tuple):
-            other = _to_internal_length(other)
-        return _Point(self.value + to_point(other).value)
+            other = to_internal_length(other)
+        return Point(self.value + to_point(other).value)
 
-    def __sub__(self, other: "_Length | Length") -> "_Point":
+    def __sub__(self, other: "Length | LiteralLength") -> "Point":
         if isinstance(other, tuple):
-            other = _to_internal_length(other)
-        return _Point(self.value - to_point(other).value)
+            other = to_internal_length(other)
+        return Point(self.value - to_point(other).value)
 
-    def __iadd__(self, other: "_Length | Length") -> "_Point":
+    def __iadd__(self, other: "Length | LiteralLength") -> "Point":
         if isinstance(other, tuple):
-            other = _to_internal_length(other)
+            other = to_internal_length(other)
         self.value += to_point(other).value
         return self
 
-    def __isub__(self, other: "_Length | Length") -> "_Point":
+    def __isub__(self, other: "Length | LiteralLength") -> "Point":
         if isinstance(other, tuple):
-            other = _to_internal_length(other)
+            other = to_internal_length(other)
         self.value -= to_point(other).value
         return self
 
-    def __mul__(self, other: int | float) -> "_Point":
-        return _Point(int(self.value * other))
+    def __mul__(self, other: int | float) -> "Point":
+        return Point(int(self.value * other))
 
-    def __truediv__(self, other: int | float) -> "_Point":
-        return _Point(int(self.value / other))
+    def __truediv__(self, other: int | float) -> "Point":
+        return Point(int(self.value / other))
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, _Point):
+        if not isinstance(other, Point):
             raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
         return self.value == other.value
 
 
 @dataclass
-class _Centimeter:
+class Centimeter:
     """Class representing centimeters"""
 
     value: float
 
-    def __add__(self, other: "_Length | Length") -> "_Centimeter":
+    def __add__(self, other: "Length | LiteralLength") -> "Centimeter":
         if isinstance(other, tuple):
-            other = _to_internal_length(other)
-        return _Centimeter(self.value + to_centimeter(other).value)
+            other = to_internal_length(other)
+        return Centimeter(self.value + to_centimeter(other).value)
 
-    def __sub__(self, other: "_Length | Length") -> "_Centimeter":
+    def __sub__(self, other: "Length | LiteralLength") -> "Centimeter":
         if isinstance(other, tuple):
-            other = _to_internal_length(other)
-        return _Centimeter(self.value - to_centimeter(other).value)
+            other = to_internal_length(other)
+        return Centimeter(self.value - to_centimeter(other).value)
 
-    def __iadd__(self, other: "_Length | Length") -> "_Centimeter":
+    def __iadd__(self, other: "Length | LiteralLength") -> "Centimeter":
         if isinstance(other, tuple):
-            other = _to_internal_length(other)
+            other = to_internal_length(other)
         self.value += to_centimeter(other).value
         return self
 
-    def __isub__(self, other: "_Length | Length") -> "_Centimeter":
+    def __isub__(self, other: "Length | LiteralLength") -> "Centimeter":
         if isinstance(other, tuple):
-            other = _to_internal_length(other)
+            other = to_internal_length(other)
         self.value -= to_centimeter(other).value
         return self
 
-    def __mul__(self, other: int | float) -> "_Centimeter":
-        return _Centimeter(self.value * other)
+    def __mul__(self, other: int | float) -> "Centimeter":
+        return Centimeter(self.value * other)
 
-    def __truediv__(self, other: int | float) -> "_Centimeter":
-        return _Centimeter(self.value / other)
+    def __truediv__(self, other: int | float) -> "Centimeter":
+        return Centimeter(self.value / other)
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, _Centimeter):
+        if not isinstance(other, Centimeter):
             raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
         return self.value == other.value
 
 
-def _to_internal_length(length: Length) -> _Length:
+def to_internal_length(length: LiteralLength) -> Length:
     """Convert public length representation to internal length representation
 
     Args:
@@ -147,16 +147,16 @@ def _to_internal_length(length: Length) -> _Length:
     value, unit = length
     match unit:
         case "in":
-            return _Inch(value)
+            return Inch(value)
         case "cm":
-            return _Centimeter(value)
+            return Centimeter(value)
         case "pt":
-            return _Point(int(value))
+            return Point(int(value))
         case _:
             assert_never(unit)
 
 
-def _to_public_length(length: _Length, unit: Literal["in", "cm", "pt"]) -> Length:
+def to_literal_length(length: Length, unit: Literal["in", "cm", "pt"]) -> LiteralLength:
     """Convert internal length representation to public length representation
 
     Args:
@@ -177,7 +177,7 @@ def _to_public_length(length: _Length, unit: Literal["in", "cm", "pt"]) -> Lengt
             assert_never(unit)
 
 
-def to_centimeter(length: _Length | Length) -> _Centimeter:
+def to_centimeter(length: Length | LiteralLength) -> Centimeter:
     """Convert any length to centimeters
 
     Args:
@@ -187,20 +187,20 @@ def to_centimeter(length: _Length | Length) -> _Centimeter:
         _Centimeter: Length in centimeters
     """
     if isinstance(length, tuple):
-        return to_centimeter(_to_internal_length(length))
+        return to_centimeter(to_internal_length(length))
 
     match length:
-        case _Inch():
-            return _Centimeter(length.value * CM_PER_INCH)
-        case _Point():
-            return _Centimeter(length.value * INCHES_PER_POINT * CM_PER_INCH)
-        case _Centimeter():
+        case Inch():
+            return Centimeter(length.value * CM_PER_INCH)
+        case Point():
+            return Centimeter(length.value * INCHES_PER_POINT * CM_PER_INCH)
+        case Centimeter():
             return length
         case _:
             assert_never(length)
 
 
-def to_inche(length: _Length | Length) -> _Inch:
+def to_inche(length: Length | LiteralLength) -> Inch:
     """Convert any length to inches
 
     Args:
@@ -210,20 +210,20 @@ def to_inche(length: _Length | Length) -> _Inch:
         _Inch: Length in inches
     """
     if isinstance(length, tuple):
-        return to_inche(_to_internal_length(length))
+        return to_inche(to_internal_length(length))
 
     match length:
-        case _Inch():
+        case Inch():
             return length
-        case _Point():
-            return _Inch(float(length.value) * INCHES_PER_POINT)
-        case _Centimeter():
-            return _Inch(length.value / CM_PER_INCH)
+        case Point():
+            return Inch(float(length.value) * INCHES_PER_POINT)
+        case Centimeter():
+            return Inch(length.value / CM_PER_INCH)
         case _:
             assert_never(length)
 
 
-def to_point(length: _Length | Length) -> _Point:
+def to_point(length: Length | LiteralLength) -> Point:
     """Convert any length to points
 
     Args:
@@ -233,14 +233,14 @@ def to_point(length: _Length | Length) -> _Point:
         _Point: Length in points
     """
     if isinstance(length, tuple):
-        return to_point(_to_internal_length(length))
+        return to_point(to_internal_length(length))
 
     match length:
-        case _Inch():
-            return _Point(int(length.value * POINTS_PER_INCH))
-        case _Point():
+        case Inch():
+            return Point(int(length.value * POINTS_PER_INCH))
+        case Point():
             return length
-        case _Centimeter():
-            return _Point(int(length.value / CM_PER_INCH * POINTS_PER_INCH))
+        case Centimeter():
+            return Point(int(length.value / CM_PER_INCH * POINTS_PER_INCH))
         case _:
             assert_never(length)
