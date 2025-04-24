@@ -12,12 +12,12 @@ from typing import (
 )
 
 import pptx.util
-from pptx import Presentation as PptxPresentation
 from pptx.chart.data import ChartData
 from pptx.dml.color import RGBColor
 from pptx.enum.chart import XL_CHART_TYPE
 from pptx.enum.text import PP_ALIGN
 
+from ._pptx import Presentation as PptxWrapper
 from .units import (
     Length,
     _Inch,
@@ -268,17 +268,17 @@ class Presentation:
 
     def __init__(self):
         """Initialize presentation"""
-        self._presentation = PptxPresentation()
+        self._presentation = PptxWrapper()
 
     @property
     def slide_layouts(self):
         """Get slide layouts"""
-        return self._presentation.slide_layouts
+        return self._presentation.to_pptx().slide_layouts
 
     @property
     def slides(self):
         """Get slides"""
-        return self._presentation.slides
+        return self._presentation.to_pptx().slides
 
     def save(self, path: str | pathlib.Path | IO[bytes]) -> None:
         """Save presentation to file
@@ -289,7 +289,7 @@ class Presentation:
         if isinstance(path, os.PathLike):
             path = str(path)
 
-        self._presentation.save(path)
+        self._presentation.to_pptx().save(path)
 
     @classmethod
     def builder(cls) -> "_PresentationBuilder":
