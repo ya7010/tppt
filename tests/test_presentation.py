@@ -58,7 +58,7 @@ class TestPresentation(unittest.TestCase):
         )
 
         output_path = self.output_dir / "simple.pptx"
-        presentation.save(str(output_path))
+        presentation.save(output_path)
         self.assertTrue(output_path.exists())
 
     def test_create_complex_presentation(self):
@@ -119,7 +119,7 @@ class TestPresentation(unittest.TestCase):
         )
 
         output_path = self.output_dir / "complex.pptx"
-        presentation.save(str(output_path))
+        presentation.save(output_path)
         self.assertTrue(output_path.exists())
 
     def test_create_presentation_with_image(self):

@@ -1,10 +1,12 @@
-from typing import Optional
+from typing import Optional, cast
 
 import pytest
 
 from pptxr import (
     Align,
     Chart,
+    Component,
+    Container,
     Justify,
     LayoutType,
     Presentation,
@@ -30,26 +32,26 @@ class TwoColumnTemplate(SlideTemplate):
     def build(
         self,
         title: Optional[Text] = None,
-        left_content: Text = None,
-        right_content: Text = None,
+        left_content: Optional[Text] = None,
+        right_content: Optional[Text] = None,
         **kwargs,
     ) -> Slide:
         return slide(
             layout=SlideLayout.TITLE_AND_CONTENT,
             title=title,
             containers=[
-                {
-                    "components": [
+                Container(
+                    components=[
                         left_content or text("Left Column"),
                         right_content or text("Right Column"),
                     ],
-                    "layout": layout(
+                    layout=layout(
                         type=LayoutType.FLEX,
                         direction="row",
                         justify=Justify.SPACE_BETWEEN,
                         gap=(0.5, "in"),
                     ),
-                }
+                )
             ],
         )
 
@@ -65,8 +67,8 @@ class ChartWithDescriptionTemplate(SlideTemplate):
     def build(
         self,
         title: Optional[Text] = None,
-        chart_data: Chart = None,
-        description: Text = None,
+        chart_data: Optional[Chart] = None,
+        description: Optional[Text] = None,
         **kwargs,
     ) -> Slide:
         default_chart = chart("bar", [])
@@ -74,18 +76,18 @@ class ChartWithDescriptionTemplate(SlideTemplate):
             layout=SlideLayout.TITLE_AND_CONTENT,
             title=title,
             containers=[
-                {
-                    "components": [
+                Container(
+                    components=[
                         chart_data if chart_data is not None else default_chart,
                         description or text("Chart Description"),
                     ],
-                    "layout": layout(
+                    layout=layout(
                         type=LayoutType.FLEX,
                         direction="column",
                         align=Align.CENTER,
                         gap=(0.5, "in"),
                     ),
-                }
+                )
             ],
         )
 
@@ -98,7 +100,10 @@ class FeatureCardsTemplate(SlideTemplate):
     """
 
     def build(
-        self, title: Optional[Text] = None, features: list[Text] = None, **kwargs
+        self,
+        title: Optional[Text] = None,
+        features: Optional[list[Text]] = None,
+        **kwargs,
     ) -> Slide:
         if features and len(features) > 4:
             raise ValueError("Maximum 4 features allowed")
@@ -114,10 +119,10 @@ class FeatureCardsTemplate(SlideTemplate):
             layout=SlideLayout.TITLE_AND_CONTENT,
             title=title,
             containers=[
-                {
-                    "components": features or default_features,
-                    "layout": layout(type=LayoutType.GRID, gap=(0.5, "in")),
-                }
+                Container(
+                    components=cast(list[Component], features or default_features),
+                    layout=layout(type=LayoutType.GRID, gap=(0.5, "in")),
+                )
             ],
         )
 
@@ -127,27 +132,30 @@ def test_two_column_template():
     template = TwoColumnTemplate()
 
     # Test with default values
-    slide = template.build()
-    assert slide["layout"] == SlideLayout.TITLE_AND_CONTENT
-    assert len(slide["containers"]) == 1
-    assert len(slide["containers"][0]["components"]) == 2
-    assert slide["containers"][0]["layout"]["type"] == LayoutType.FLEX
-    assert slide["containers"][0]["layout"]["direction"] == "row"
-    assert slide["containers"][0]["layout"]["justify"] == Justify.SPACE_BETWEEN
-    assert slide["containers"][0]["layout"]["gap"] == (0.5, "in")
+    slide_obj = template.build()
+    assert slide_obj["layout"] == SlideLayout.TITLE_AND_CONTENT
+    containers = slide_obj.get("containers", [])
+    assert len(containers) == 1
+    assert len(containers[0]["components"]) == 2
+    layout = containers[0]["layout"]
+    assert layout.get("type") == LayoutType.FLEX
+    assert layout.get("direction") == "row"
+    assert layout.get("justify") == Justify.SPACE_BETWEEN
+    assert layout.get("gap") == (0.5, "in")
 
     # Test with custom values
     left_content = text("Custom Left")
     right_content = text("Custom Right")
     title = text("Custom Title")
 
-    slide = template.build(
+    slide_obj = template.build(
         title=title, left_content=left_content, right_content=right_content
     )
 
-    assert slide["title"] == title
-    assert slide["containers"][0]["components"][0] == left_content
-    assert slide["containers"][0]["components"][1] == right_content
+    assert slide_obj.get("title") == title
+    containers = slide_obj.get("containers", [])
+    assert containers[0]["components"][0] == left_content
+    assert containers[0]["components"][1] == right_content
 
 
 def test_chart_with_description_template():
@@ -155,25 +163,30 @@ def test_chart_with_description_template():
     template = ChartWithDescriptionTemplate()
 
     # Test with default values
-    slide = template.build()
-    assert slide["layout"] == SlideLayout.TITLE_AND_CONTENT
-    assert len(slide["containers"]) == 1
-    assert len(slide["containers"][0]["components"]) == 2
-    assert slide["containers"][0]["layout"]["type"] == LayoutType.FLEX
-    assert slide["containers"][0]["layout"]["direction"] == "column"
-    assert slide["containers"][0]["layout"]["align"] == Align.CENTER
-    assert slide["containers"][0]["layout"]["gap"] == (0.5, "in")
+    slide_obj = template.build()
+    assert slide_obj["layout"] == SlideLayout.TITLE_AND_CONTENT
+    containers = slide_obj.get("containers", [])
+    assert len(containers) == 1
+    assert len(containers[0]["components"]) == 2
+    layout = containers[0]["layout"]
+    assert layout.get("type") == LayoutType.FLEX
+    assert layout.get("direction") == "column"
+    assert layout.get("align") == Align.CENTER
+    assert layout.get("gap") == (0.5, "in")
 
     # Test with custom values
     chart_data = chart("bar", [{"value": 1}, {"value": 2}])
     description = text("Custom Description")
     title = text("Custom Title")
 
-    slide = template.build(title=title, chart_data=chart_data, description=description)
+    slide_obj = template.build(
+        title=title, chart_data=chart_data, description=description
+    )
 
-    assert slide["title"] == title
-    assert slide["containers"][0]["components"][0] == chart_data
-    assert slide["containers"][0]["components"][1] == description
+    assert slide_obj.get("title") == title
+    containers = slide_obj.get("containers", [])
+    assert containers[0]["components"][0] == chart_data
+    assert containers[0]["components"][1] == description
 
 
 def test_feature_cards_template():
@@ -181,12 +194,14 @@ def test_feature_cards_template():
     template = FeatureCardsTemplate()
 
     # Test with default values
-    slide = template.build()
-    assert slide["layout"] == SlideLayout.TITLE_AND_CONTENT
-    assert len(slide["containers"]) == 1
-    assert len(slide["containers"][0]["components"]) == 4
-    assert slide["containers"][0]["layout"]["type"] == LayoutType.GRID
-    assert slide["containers"][0]["layout"]["gap"] == (0.5, "in")
+    slide_obj = template.build()
+    assert slide_obj["layout"] == SlideLayout.TITLE_AND_CONTENT
+    containers = slide_obj.get("containers", [])
+    assert len(containers) == 1
+    assert len(containers[0]["components"]) == 4
+    layout = containers[0]["layout"]
+    assert layout.get("type") == LayoutType.GRID
+    assert layout.get("gap") == (0.5, "in")
 
     # Test with custom values
     features = [
@@ -196,10 +211,11 @@ def test_feature_cards_template():
     ]
     title = text("Custom Title")
 
-    slide = template.build(title=title, features=features)
+    slide_obj = template.build(title=title, features=features)
 
-    assert slide["title"] == title
-    assert slide["containers"][0]["components"] == features
+    assert slide_obj.get("title") == title
+    containers = slide_obj.get("containers", [])
+    assert containers[0]["components"] == features
 
     # Test with too many features
     with pytest.raises(ValueError):
