@@ -1,7 +1,6 @@
 import os
 import pathlib
 from dataclasses import dataclass
-from enum import Enum
 from typing import (
     IO,
     Any,
@@ -27,87 +26,25 @@ from .units import (
     to_point,
 )
 
+SlideLayout = Literal[
+    "TITLE",
+    "TITLE_AND_CONTENT",
+    "SECTION_HEADER",
+    "TWO_CONTENT",
+    "COMPARISON",
+    "TITLE_ONLY",
+    "BLANK",
+    "CONTENT_WITH_CAPTION",
+    "PICTURE_WITH_CAPTION",
+    "TITLE_AND_VERTICAL_TEXT",
+    "VERTICAL_TITLE_AND_TEXT",
+]
 
-class SlideLayout(Enum):
-    """Enumeration defining slide layout types"""
+LayoutType = Literal["flex", "grid", "absolute"]
 
-    TITLE = 0
-    """Title-only layout"""
+Align = Literal["start", "center", "end"]
 
-    TITLE_AND_CONTENT = 1
-    """Title and content layout"""
-
-    SECTION_HEADER = 2
-    """Section header layout"""
-
-    TWO_CONTENT = 3
-    """Layout with two content areas"""
-
-    COMPARISON = 4
-    """Comparison layout"""
-
-    TITLE_ONLY = 5
-    """Title-only layout"""
-
-    BLANK = 6
-    """Blank layout"""
-
-    CONTENT_WITH_CAPTION = 7
-    """Content with caption layout"""
-
-    PICTURE_WITH_CAPTION = 8
-    """Picture with caption layout"""
-
-    TITLE_AND_VERTICAL_TEXT = 9
-    """Title and vertical text layout"""
-
-    VERTICAL_TITLE_AND_TEXT = 10
-    """Vertical title and text layout"""
-
-
-class LayoutType(Enum):
-    """Enumeration defining layout types"""
-
-    FLEX = "flex"
-    """Flexbox layout"""
-
-    GRID = "grid"
-    """Grid layout"""
-
-    ABSOLUTE = "absolute"
-    """Absolute positioning layout"""
-
-
-class Align(Enum):
-    """Enumeration defining element alignment"""
-
-    START = "start"
-    """Align to start position"""
-
-    CENTER = "center"
-    """Align to center"""
-
-    END = "end"
-    """Align to end position"""
-
-
-class Justify(Enum):
-    """Enumeration defining element justification"""
-
-    START = "start"
-    """Justify to start"""
-
-    CENTER = "center"
-    """Justify to center"""
-
-    END = "end"
-    """Justify to end"""
-
-    SPACE_BETWEEN = "space-between"
-    """Distribute space between elements"""
-
-    SPACE_AROUND = "space-around"
-    """Distribute space around elements"""
+Justify = Literal["start", "center", "end", "space-between", "space-around"]
 
 
 class Layout(TypedDict):
@@ -364,6 +301,21 @@ class Presentation:
         return _PresentationBuilder()
 
 
+_SLIDE_LAYOUT_MAP = {
+    "TITLE": 0,
+    "TITLE_AND_CONTENT": 1,
+    "SECTION_HEADER": 2,
+    "TWO_CONTENT": 3,
+    "COMPARISON": 4,
+    "TITLE_ONLY": 5,
+    "BLANK": 6,
+    "CONTENT_WITH_CAPTION": 7,
+    "PICTURE_WITH_CAPTION": 8,
+    "TITLE_AND_VERTICAL_TEXT": 9,
+    "VERTICAL_TITLE_AND_TEXT": 10,
+}
+
+
 class _PresentationBuilder:
     """Builder class for creating presentations"""
 
@@ -413,7 +365,7 @@ class _PresentationBuilder:
             internal_height = _to_internal_length(height)
             shape.height = pptx.util.Inches(to_inche(internal_height).value)
         if align:
-            if align == Align.CENTER:
+            if align == "center":
                 internal_left = _to_internal_length(shape.left)
                 internal_width = _to_internal_length(shape.width)
                 shape.left = (
@@ -424,7 +376,7 @@ class _PresentationBuilder:
                     )
                     / 2
                 )
-            elif align == Align.END:
+            elif align == "end":
                 internal_left = _to_internal_length(shape.left)
                 internal_width = _to_internal_length(shape.width)
                 shape.left = (
@@ -605,7 +557,9 @@ class _PresentationBuilder:
             Presentation: Built presentation
         """
         for slide in self.slides:
-            slide_layout = self.presentation.slide_layouts[slide["layout"].value]
+            slide_layout = self.presentation.slide_layouts[
+                _SLIDE_LAYOUT_MAP[slide["layout"]]
+            ]
             slide_obj = self.presentation.slides.add_slide(slide_layout)
 
             if title := slide.get("title"):
@@ -749,10 +703,10 @@ def table(
 
 
 def layout(
-    type: LayoutType = LayoutType.FLEX,
+    type: LayoutType = "flex",
     direction: str = "row",
-    align: Align = Align.START,
-    justify: Justify = Justify.START,
+    align: Align = "start",
+    justify: Justify = "start",
     gap: Length = (0.1, "in"),
     padding: dict[str, Length] | None = None,
     width: Length | None = None,
@@ -761,10 +715,10 @@ def layout(
     """Create a layout with default values
 
     Args:
-        type (LayoutType, optional): Layout type. Defaults to LayoutType.FLEX.
+        type (LayoutType, optional): Layout type. Defaults to "flex".
         direction (str, optional): Layout direction ("row" or "column"). Defaults to "row".
-        align (Align, optional): Element alignment. Defaults to Align.START.
-        justify (Justify, optional): Element justification. Defaults to Justify.START.
+        align (Align, optional): Element alignment. Defaults to "start".
+        justify (Justify, optional): Element justification. Defaults to "start".
         gap (Length, optional): Gap between elements. Defaults to (0.1, "in").
         padding (dict[str, Length] | None, optional): Padding (top, right, bottom, left). Defaults to None.
         width (Length | None, optional): Width. Defaults to None.

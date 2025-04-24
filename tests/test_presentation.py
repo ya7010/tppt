@@ -3,12 +3,8 @@ import unittest
 from pathlib import Path
 
 from pptxr import (
-    Align,
     Container,
-    Justify,
-    LayoutType,
     Presentation,
-    SlideLayout,
     chart,
     image,
     layout,
@@ -34,7 +30,7 @@ class TestPresentation(unittest.TestCase):
             Presentation.builder()
             .add_slide(
                 slide(
-                    layout=SlideLayout.TITLE_AND_CONTENT,
+                    layout="TITLE_AND_CONTENT",
                     title=text("Simple Slide", size=(44, "pt"), bold=True),
                     containers=[
                         Container(
@@ -46,9 +42,9 @@ class TestPresentation(unittest.TestCase):
                                 )
                             ],
                             layout=layout(
-                                type=LayoutType.FLEX,
+                                type="flex",
                                 direction="column",
-                                align=Align.CENTER,
+                                align="center",
                             ),
                         )
                     ],
@@ -67,7 +63,7 @@ class TestPresentation(unittest.TestCase):
             Presentation.builder()
             .add_slide(
                 slide(
-                    layout=SlideLayout.TITLE_AND_CONTENT,
+                    layout="TITLE_AND_CONTENT",
                     title=text("Complex Layout", size=(44, "pt"), bold=True),
                     containers=[
                         # Horizontal container
@@ -85,9 +81,9 @@ class TestPresentation(unittest.TestCase):
                                 ),
                             ],
                             layout=layout(
-                                type=LayoutType.FLEX,
+                                type="flex",
                                 direction="row",
-                                justify=Justify.SPACE_BETWEEN,
+                                justify="space-between",
                                 gap=(0.5, "in"),
                             ),
                         ),
@@ -106,9 +102,9 @@ class TestPresentation(unittest.TestCase):
                                 ),
                             ],
                             layout=layout(
-                                type=LayoutType.FLEX,
+                                type="flex",
                                 direction="column",
-                                align=Align.CENTER,
+                                align="center",
                                 gap=(0.5, "in"),
                             ),
                         ),
@@ -136,7 +132,7 @@ class TestPresentation(unittest.TestCase):
             Presentation.builder()
             .add_slide(
                 slide(
-                    layout=SlideLayout.TITLE_AND_CONTENT,
+                    layout="TITLE_AND_CONTENT",
                     title=text("Slide with Image", size=(44, "pt"), bold=True),
                     containers=[
                         Container(
@@ -154,9 +150,9 @@ class TestPresentation(unittest.TestCase):
                                 ),
                             ],
                             layout=layout(
-                                type=LayoutType.FLEX,
+                                type="flex",
                                 direction="column",
-                                align=Align.CENTER,
+                                align="center",
                                 gap=(0.5, "in"),
                             ),
                         )
@@ -176,7 +172,7 @@ class TestPresentation(unittest.TestCase):
             Presentation.builder()
             .add_slide(
                 slide(
-                    layout=SlideLayout.TITLE_AND_CONTENT,
+                    layout="TITLE_AND_CONTENT",
                     title=text("Slide with Chart", size=(44, "pt"), bold=True),
                     containers=[
                         Container(
@@ -194,9 +190,9 @@ class TestPresentation(unittest.TestCase):
                                 )
                             ],
                             layout=layout(
-                                type=LayoutType.FLEX,
+                                type="flex",
                                 direction="column",
-                                align=Align.CENTER,
+                                align="center",
                             ),
                         )
                     ],
@@ -214,7 +210,7 @@ class TestPresentation(unittest.TestCase):
         presentation = (
             Presentation.builder()
             .add_slide(
-                layout=SlideLayout.TITLE_AND_CONTENT,
+                layout="TITLE_AND_CONTENT",
                 title=text("Keyword Arguments Test", size=(44, "pt"), bold=True),
                 containers=[
                     Container(
@@ -226,9 +222,9 @@ class TestPresentation(unittest.TestCase):
                             )
                         ],
                         layout=layout(
-                            type=LayoutType.FLEX,
+                            type="flex",
                             direction="column",
-                            align=Align.CENTER,
+                            align="center",
                         ),
                     )
                 ],

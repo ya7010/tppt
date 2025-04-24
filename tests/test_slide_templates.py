@@ -3,15 +3,11 @@ from typing import Optional, cast
 import pytest
 
 from pptxr import (
-    Align,
     Chart,
     Component,
     Container,
-    Justify,
-    LayoutType,
     Presentation,
     Slide,
-    SlideLayout,
     SlideTemplate,
     Text,
     chart,
@@ -37,7 +33,7 @@ class TwoColumnTemplate(SlideTemplate):
         **kwargs,
     ) -> Slide:
         return slide(
-            layout=SlideLayout.TITLE_AND_CONTENT,
+            layout="TITLE_AND_CONTENT",
             title=title,
             containers=[
                 Container(
@@ -46,9 +42,9 @@ class TwoColumnTemplate(SlideTemplate):
                         right_content or text("Right Column"),
                     ],
                     layout=layout(
-                        type=LayoutType.FLEX,
+                        type="flex",
                         direction="row",
-                        justify=Justify.SPACE_BETWEEN,
+                        justify="space-between",
                         gap=(0.5, "in"),
                     ),
                 )
@@ -73,7 +69,7 @@ class ChartWithDescriptionTemplate(SlideTemplate):
     ) -> Slide:
         default_chart = chart("bar", [])
         return slide(
-            layout=SlideLayout.TITLE_AND_CONTENT,
+            layout="TITLE_AND_CONTENT",
             title=title,
             containers=[
                 Container(
@@ -82,9 +78,9 @@ class ChartWithDescriptionTemplate(SlideTemplate):
                         description or text("Chart Description"),
                     ],
                     layout=layout(
-                        type=LayoutType.FLEX,
+                        type="flex",
                         direction="column",
-                        align=Align.CENTER,
+                        align="center",
                         gap=(0.5, "in"),
                     ),
                 )
@@ -116,12 +112,12 @@ class FeatureCardsTemplate(SlideTemplate):
         ]
 
         return slide(
-            layout=SlideLayout.TITLE_AND_CONTENT,
+            layout="TITLE_AND_CONTENT",
             title=title,
             containers=[
                 Container(
                     components=cast(list[Component], features or default_features),
-                    layout=layout(type=LayoutType.GRID, gap=(0.5, "in")),
+                    layout=layout(type="grid", gap=(0.5, "in")),
                 )
             ],
         )
@@ -191,12 +187,12 @@ def test_feature_cards_template():
 
     # Test with default values
     slide_obj = template.build()
-    assert slide_obj["layout"] == SlideLayout.TITLE_AND_CONTENT
+    assert slide_obj["layout"] == "TITLE_AND_CONTENT"
     containers = slide_obj.get("containers", [])
     assert len(containers) == 1
     assert len(containers[0]["components"]) == 4
     layout = containers[0]["layout"]
-    assert layout.get("type") == LayoutType.GRID
+    assert layout.get("type") == "grid"
     assert layout.get("gap") == (0.5, "in")
 
     # Test with custom values
