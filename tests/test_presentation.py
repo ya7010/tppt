@@ -211,6 +211,37 @@ class TestPresentation(unittest.TestCase):
         presentation.save(str(output_path))
         self.assertTrue(output_path.exists())
 
+    def test_create_presentation_with_keyword_args(self):
+        # キーワード引数を使用したプレゼンテーションの作成
+        presentation = (
+            Presentation.builder()
+            .add_slide(
+                layout=SlideLayout.TITLE_AND_CONTENT,
+                title=create_text("キーワード引数テスト", size=Point(44), bold=True),
+                containers=[
+                    Container(
+                        components=[
+                            create_text(
+                                "キーワード引数で作成したスライド",
+                                size=Point(24),
+                                layout=create_layout(width=Inch(4), height=Inch(1)),
+                            )
+                        ],
+                        layout=create_layout(
+                            type=LayoutType.FLEX,
+                            direction="column",
+                            align=Align.CENTER,
+                        ),
+                    )
+                ],
+            )
+            .build()
+        )
+
+        output_path = self.output_dir / "keyword_args.pptx"
+        presentation.save(str(output_path))
+        self.assertTrue(output_path.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -3,15 +3,15 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import (
     Any,
-    Dict,
-    List,
     Literal,
     NotRequired,
     Optional,
     Self,
     TypedDict,
     Union,
+    Unpack,
     assert_never,
+    overload,
 )
 
 from pptx import Presentation as PptxPresentation
@@ -197,7 +197,7 @@ class Layout(TypedDict):
     """Element justification"""
     gap: NotRequired[Length]
     """Gap between elements"""
-    padding: NotRequired[Dict[str, Length]]
+    padding: NotRequired[dict[str, Length]]
     """Padding (top, right, bottom, left)"""
     width: NotRequired[Length]
     """Width"""
@@ -268,7 +268,7 @@ class Chart(TypedDict):
     """Type of component"""
     chart_type: str
     """Chart type ("bar", "line", "pie", etc.)"""
-    data: List[Dict[str, Any]]
+    data: list[dict[str, Any]]
     """Chart data"""
     width: NotRequired[Length]
     """Width"""
@@ -307,7 +307,7 @@ class Table(TypedDict):
     """Number of rows"""
     cols: int
     """Number of columns"""
-    data: List[List[TableCell]]
+    data: list[list[TableCell]]
     """Table data"""
     width: NotRequired[Length]
     """Width"""
@@ -324,7 +324,7 @@ Component = Union[Text, Image, Chart, Table]
 class Container(TypedDict):
     """Data class representing container"""
 
-    components: List[Component]
+    components: list[Component]
     """Components within container"""
     layout: Layout
     """Layout settings"""
@@ -335,9 +335,9 @@ class Slide(TypedDict):
 
     layout: SlideLayout
     """Slide layout"""
-    title: NotRequired[Optional[Text]]
+    title: NotRequired[Text]
     """Slide title"""
-    containers: NotRequired[Optional[List[Container]]]
+    containers: NotRequired[list[Container]]
     """Containers within slide"""
 
 
@@ -358,7 +358,7 @@ class Presentation:
         """Get slides"""
         return self._presentation.slides
 
-    def save(self, path: os.PathLike):
+    def save(self, path: os.PathLike) -> None:
         """Save presentation to file
 
         Args:
@@ -366,8 +366,8 @@ class Presentation:
         """
         self._presentation.save(os.fspath(path))
 
-    @staticmethod
-    def builder() -> "_PresentationBuilder":
+    @classmethod
+    def builder(cls) -> "_PresentationBuilder":
         """Create a new presentation builder
 
         Returns:
@@ -382,9 +382,17 @@ class _PresentationBuilder:
     def __init__(self):
         """Initialize presentation builder"""
         self.presentation = Presentation()
-        self.slides: List[Slide] = []
+        self.slides: list[Slide] = []
 
-    def add_slide(self, slide: Slide) -> "_PresentationBuilder":
+    @overload
+    def add_slide(self, slide: Slide, /) -> "_PresentationBuilder": ...
+
+    @overload
+    def add_slide(self, **kwargs: Unpack[Slide]) -> "_PresentationBuilder": ...
+
+    def add_slide(
+        self, slide: Slide = None, /, **kwargs: Unpack[Slide]
+    ) -> "_PresentationBuilder":
         """Add a slide to the presentation
 
         Args:
@@ -393,6 +401,8 @@ class _PresentationBuilder:
         Returns:
             PresentationBuilder: Self instance for method chaining
         """
+        if slide is None:
+            slide = kwargs
         self.slides.append(slide)
         return self
 
@@ -655,7 +665,7 @@ def create_text(
 
 def create_chart(
     chart_type: str,
-    data: List[Dict[str, Any]],
+    data: list[dict[str, Any]],
     width: Optional[Length] = None,
     height: Optional[Length] = None,
     layout: Optional[Layout] = None,
@@ -664,7 +674,7 @@ def create_chart(
 
     Args:
         chart_type (str): Chart type ("bar", "line", "pie", etc.)
-        data (List[Dict[str, Any]]): Chart data
+        data (list[dict[str, Any]]): Chart data
         width (Optional[Length], optional): Width. Defaults to None.
         height (Optional[Length], optional): Height. Defaults to None.
         layout (Optional[Layout], optional): Layout settings. Defaults to None.
@@ -685,7 +695,7 @@ def create_chart(
 def create_table(
     rows: int,
     cols: int,
-    data: List[List[TableCell]],
+    data: list[list[TableCell]],
     width: Optional[Length] = None,
     height: Optional[Length] = None,
     layout: Optional[Layout] = None,
@@ -695,7 +705,7 @@ def create_table(
     Args:
         rows (int): Number of rows
         cols (int): Number of columns
-        data (List[List[TableCell]]): Table data
+        data (list[list[TableCell]]): Table data
         width (Optional[Length], optional): Width. Defaults to None.
         height (Optional[Length], optional): Height. Defaults to None.
         layout (Optional[Layout], optional): Layout settings. Defaults to None.
@@ -720,7 +730,7 @@ def create_layout(
     align: Align = Align.START,
     justify: Justify = Justify.START,
     gap: Length = Inch(0.1),
-    padding: Optional[Dict[str, Length]] = None,
+    padding: Optional[dict[str, Length]] = None,
     width: Optional[Length] = None,
     height: Optional[Length] = None,
 ) -> Layout:
@@ -732,7 +742,7 @@ def create_layout(
         align (Align, optional): Element alignment. Defaults to Align.START.
         justify (Justify, optional): Element justification. Defaults to Justify.START.
         gap (Length, optional): Gap between elements. Defaults to Inch(0.1).
-        padding (Optional[Dict[str, Length]], optional): Padding (top, right, bottom, left). Defaults to None.
+        padding (Optional[dict[str, Length]], optional): Padding (top, right, bottom, left). Defaults to None.
         width (Optional[Length], optional): Width. Defaults to None.
         height (Optional[Length], optional): Height. Defaults to None.
 
@@ -754,14 +764,14 @@ def create_layout(
 def create_slide(
     layout: SlideLayout,
     title: Optional[Text] = None,
-    containers: Optional[List[Container]] = None,
+    containers: Optional[list[Container]] = None,
 ) -> Slide:
     """Create a slide with specified layout, title, and containers.
 
     Args:
         layout (SlideLayout): Layout type for the slide
         title (Optional[Text], optional): Title text component. Defaults to None.
-        containers (Optional[List[Container]], optional): List of containers. Defaults to None.
+        containers (Optional[list[Container]], optional): list of containers. Defaults to None.
 
     Returns:
         Slide: Created slide object
