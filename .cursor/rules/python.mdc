@@ -9,4 +9,5 @@ alwaysApply: false
 - All code comment and description witten in English.
 - Add one blank line between fields of class.
 - Class/Class fields/Function must be docstrings.
+- docstring does not need arg/return description.
 - Auto test is `uv run task ci`

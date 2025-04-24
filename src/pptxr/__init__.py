@@ -1,7 +1,9 @@
 import os
+import pathlib
 from dataclasses import dataclass
 from enum import Enum
 from typing import (
+    IO,
     Any,
     Literal,
     NotRequired,
@@ -559,13 +561,16 @@ class Presentation:
         """Get slides"""
         return self._presentation.slides
 
-    def save(self, path: os.PathLike) -> None:
+    def save(self, path: str | pathlib.Path | IO[bytes]) -> None:
         """Save presentation to file
 
         Args:
             path (str): Path to save presentation
         """
-        self._presentation.save(os.fspath(path))
+        if isinstance(path, os.PathLike):
+            path = str(path)
+
+        self._presentation.save(path)
 
     @classmethod
     def builder(cls) -> "_PresentationBuilder":
@@ -586,40 +591,23 @@ class _PresentationBuilder:
         self.slides: list[Slide] = []
 
     @overload
-    def add_slide(self, slide: Slide, /) -> "_PresentationBuilder": ...
+    def add_slide(self, slide: Slide | SlideTemplate, /) -> "_PresentationBuilder": ...
 
     @overload
-    def add_slide(self, **kwargs: Unpack[Slide]) -> "_PresentationBuilder": ...
+    def add_slide(self, /, **kwargs: Unpack[Slide]) -> "_PresentationBuilder": ...
 
-    @overload
-    def add_slide(
-        self, template: SlideTemplate, **kwargs
-    ) -> "_PresentationBuilder": ...
-
-    def add_slide(
+    def add_slide(  # type: ignore
         self,
-        slide_or_template: Union[Slide, SlideTemplate] = None,
+        slide: Slide | SlideTemplate | None = None,
         /,
         **kwargs: Unpack[Slide],
     ) -> "_PresentationBuilder":
-        """Add a slide to the presentation
-
-        Args:
-            slide_or_template (Union[Slide, SlideTemplate]): Slide to add or template instance
-            **kwargs: Additional parameters
-
-        Returns:
-            PresentationBuilder: Self instance for method chaining
-        """
-        if isinstance(slide_or_template, SlideTemplate):
+        """Add a slide to the presentation"""
+        if isinstance(slide, SlideTemplate):
             # Using template
-            slide = slide_or_template.build(**kwargs)
-        else:
-            # Using direct slide definition
-            if slide_or_template is None:
-                slide = kwargs
-            else:
-                slide = slide_or_template
+            slide = slide.build(**kwargs)
+        elif slide is None:
+            slide = kwargs
 
         self.slides.append(slide)
         return self

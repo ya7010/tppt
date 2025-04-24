@@ -167,7 +167,7 @@ class TestPresentation(unittest.TestCase):
         )
 
         output_path = self.output_dir / "with_image.pptx"
-        presentation.save(str(output_path))
+        presentation.save(output_path)
         self.assertTrue(output_path.exists())
 
     def test_create_presentation_with_chart(self):
@@ -206,7 +206,7 @@ class TestPresentation(unittest.TestCase):
         )
 
         output_path = self.output_dir / "with_chart.pptx"
-        presentation.save(str(output_path))
+        presentation.save(output_path)
         self.assertTrue(output_path.exists())
 
     def test_create_presentation_with_keyword_args(self):
@@ -237,7 +237,7 @@ class TestPresentation(unittest.TestCase):
         )
 
         output_path = self.output_dir / "keyword_args.pptx"
-        presentation.save(str(output_path))
+        presentation.save(output_path)
         self.assertTrue(output_path.exists())
 
 
