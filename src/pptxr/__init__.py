@@ -395,7 +395,13 @@ def slide(
     """
     if containers is None:
         containers = []
-    return {
+
+    result: Slide = {
         "layout": layout,
         "containers": containers,
     }
+
+    if title is not None:
+        result["title"] = title
+
+    return result
