@@ -1,3 +1,5 @@
+"""PowerPoint presentation creation library."""
+
 import os
 import pathlib
 from dataclasses import dataclass
@@ -11,19 +13,16 @@ from typing import (
     overload,
 )
 
-import pptx.util
-from pptx.chart.data import ChartData
-from pptx.dml.color import RGBColor
-from pptx.enum.chart import XL_CHART_TYPE
+from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.enum.text import PP_ALIGN
 
-from ._pptx import Presentation as PptxWrapper
+from ._pptx import PptxPresentationFactory
+from .abstract.types import Slide as AbstractSlide
 from .units import (
     Length,
     _Inch,
     _to_internal_length,
     to_inche,
-    to_point,
 )
 
 SlideLayout = Literal[
@@ -48,7 +47,7 @@ Justify = Literal["start", "center", "end", "space-between", "space-around"]
 
 
 class Layout(TypedDict):
-    """Data class representing layout settings"""
+    """Data class representing layout settings."""
 
     type: NotRequired[LayoutType]
     """Layout type"""
@@ -76,7 +75,7 @@ class Layout(TypedDict):
 
 
 class Text(TypedDict):
-    """Data class representing text element"""
+    """Data class representing text element."""
 
     type: Literal["text"]
     """Type of component"""
@@ -102,7 +101,7 @@ class Text(TypedDict):
 
 @dataclass
 class Shape:
-    """Data class representing shape"""
+    """Data class representing shape."""
 
     type: str
     """Shape type"""
@@ -124,7 +123,7 @@ class Shape:
 
 
 class Image(TypedDict):
-    """Data class representing image element"""
+    """Data class representing image element."""
 
     type: Literal["image"]
     """Type of component"""
@@ -143,7 +142,7 @@ class Image(TypedDict):
 
 
 class Chart(TypedDict):
-    """Data class representing chart element"""
+    """Data class representing chart element."""
 
     type: Literal["chart"]
     """Type of component"""
@@ -166,7 +165,7 @@ class Chart(TypedDict):
 
 @dataclass
 class TableCell:
-    """Data class representing table cell"""
+    """Data class representing table cell."""
 
     text: str
     """Cell text content"""
@@ -191,7 +190,7 @@ class TableCell:
 
 
 class Table(TypedDict):
-    """Data class representing table element"""
+    """Data class representing table element."""
 
     type: Literal["table"]
     """Type of component"""
@@ -220,7 +219,7 @@ Component = Text | Image | Chart | Table
 
 
 class Container(TypedDict):
-    """Data class representing container"""
+    """Data class representing container."""
 
     components: list[Component]
     """Components within container"""
@@ -230,7 +229,7 @@ class Container(TypedDict):
 
 
 class Slide(TypedDict):
-    """Data class representing slide"""
+    """Data class representing slide."""
 
     layout: SlideLayout
     """Slide layout"""
@@ -243,7 +242,7 @@ class Slide(TypedDict):
 
 
 class SlideTemplate:
-    """Interface for slide templates
+    """Interface for slide templates.
 
     This interface defines the contract for slide templates.
     Users can implement their own templates by subclassing this class
@@ -251,7 +250,7 @@ class SlideTemplate:
     """
 
     def build(self, title: Text | None = None, **kwargs) -> Slide:
-        """Build a slide using this template
+        """Build a slide using this template.
 
         Args:
             title (Text | None): Slide title
@@ -264,24 +263,20 @@ class SlideTemplate:
 
 
 class Presentation:
-    """Class for creating presentations"""
+    """Class for creating presentations."""
 
     def __init__(self):
-        """Initialize presentation"""
-        self._presentation = PptxWrapper()
+        """Initialize presentation."""
+        self._factory = PptxPresentationFactory()
+        self._presentation = self._factory.create_presentation()
 
     @property
-    def slide_layouts(self):
-        """Get slide layouts"""
-        return self._presentation.to_pptx().slide_layouts
-
-    @property
-    def slides(self):
-        """Get slides"""
-        return self._presentation.to_pptx().slides
+    def slides(self) -> list[AbstractSlide]:
+        """Get slides."""
+        return self._presentation.get_slides()
 
     def save(self, path: str | pathlib.Path | IO[bytes]) -> None:
-        """Save presentation to file
+        """Save presentation to file.
 
         Args:
             path (str): Path to save presentation
@@ -289,11 +284,11 @@ class Presentation:
         if isinstance(path, os.PathLike):
             path = str(path)
 
-        self._presentation.to_pptx().save(path)
+        self._presentation.save(path)
 
     @classmethod
     def builder(cls) -> "_PresentationBuilder":
-        """Create a new presentation builder
+        """Create a new presentation builder.
 
         Returns:
             PresentationBuilder: Newly created presentation builder
@@ -301,27 +296,12 @@ class Presentation:
         return _PresentationBuilder()
 
 
-_SLIDE_LAYOUT_MAP = {
-    "TITLE": 0,
-    "TITLE_AND_CONTENT": 1,
-    "SECTION_HEADER": 2,
-    "TWO_CONTENT": 3,
-    "COMPARISON": 4,
-    "TITLE_ONLY": 5,
-    "BLANK": 6,
-    "CONTENT_WITH_CAPTION": 7,
-    "PICTURE_WITH_CAPTION": 8,
-    "TITLE_AND_VERTICAL_TEXT": 9,
-    "VERTICAL_TITLE_AND_TEXT": 10,
-}
-
-
 class _PresentationBuilder:
-    """Builder class for creating presentations"""
+    """Builder class for creating presentations."""
 
     def __init__(self):
-        """Initialize presentation builder"""
-        self.presentation = Presentation()
+        """Initialize presentation builder."""
+        self._presentation = Presentation()
         self.slides: list[Slide] = []
 
     @overload
@@ -336,7 +316,7 @@ class _PresentationBuilder:
         /,
         **kwargs: Unpack[Slide],
     ) -> "_PresentationBuilder":
-        """Add a slide to the presentation"""
+        """Add a slide to the presentation."""
         if isinstance(slide, SlideTemplate):
             # Using template
             slide = slide.build(**kwargs)
@@ -346,52 +326,13 @@ class _PresentationBuilder:
         self.slides.append(slide)
         return self
 
-    def _apply_layout(self, shape, layout: Layout):
-        """Apply layout to a shape
-
-        Args:
-            shape: Target shape
-            layout (Layout): Layout settings to apply
-        """
-        # レイアウト情報を一度だけ取得
-        width = layout.get("width")
-        height = layout.get("height")
-        align = layout.get("align")
-
-        if width:
-            internal_width = _to_internal_length(width)
-            shape.width = pptx.util.Inches(to_inche(internal_width).value)
-        if height:
-            internal_height = _to_internal_length(height)
-            shape.height = pptx.util.Inches(to_inche(internal_height).value)
-        if align:
-            if align == "center":
-                internal_left = _to_internal_length(shape.left)
-                internal_width = _to_internal_length(shape.width)
-                shape.left = (
-                    pptx.util.Inches(to_inche(internal_left).value)
-                    + (
-                        pptx.util.Inches(8.5)
-                        - pptx.util.Inches(to_inche(internal_width).value)
-                    )
-                    / 2
-                )
-            elif align == "end":
-                internal_left = _to_internal_length(shape.left)
-                internal_width = _to_internal_length(shape.width)
-                shape.left = (
-                    pptx.util.Inches(to_inche(internal_left).value)
-                    + pptx.util.Inches(8.5)
-                    - pptx.util.Inches(to_inche(internal_width).value)
-                )
-
     def _add_component(
-        self, slide_obj, component: Component, left: Length, top: Length
-    ):
-        """Add a component to a slide
+        self, slide_obj: AbstractSlide, component: Component, left: Length, top: Length
+    ) -> None:
+        """Add a component to a slide.
 
         Args:
-            slide_obj: Target slide
+            slide_obj (AbstractSlide): Target slide
             component (Component): Component to add
             left (Length): Position from left edge
             top (Length): Position from top edge
@@ -411,130 +352,35 @@ class _PresentationBuilder:
             internal_width = _to_internal_length(width) if width else _Inch(3)
             internal_height = _to_internal_length(height) if height else _Inch(1)
 
-            shape = slide_obj.shapes.add_textbox(
-                pptx.util.Inches(left_inches),
-                pptx.util.Inches(top_inches),
-                pptx.util.Inches(to_inche(internal_width).value),
-                pptx.util.Inches(to_inche(internal_height).value),
+            shape = slide_obj.add_shape(
+                MSO_SHAPE_TYPE.TEXT_BOX,
+                left_inches,
+                top_inches,
+                to_inche(internal_width).value,
+                to_inche(internal_height).value,
             )
-            text_frame = shape.text_frame
-            text_frame.text = component["text"]
-            if size := component.get("size"):
-                internal_size = _to_internal_length(size)
-                text_frame.paragraphs[0].font.size = pptx.util.Pt(
-                    to_point(internal_size).value
-                )
-            if bold := component.get("bold"):
-                text_frame.paragraphs[0].font.bold = bold
-            if italic := component.get("italic"):
-                text_frame.paragraphs[0].font.italic = italic
+            shape.set_text(component["text"])
+            # TODO: Apply text formatting
 
         elif component["type"] == "image":
-            # 画像のサイズ情報を一度だけ取得
-            width = component.get("width")
-            height = component.get("height")
-
-            internal_width = _to_internal_length(width) if width else None
-            internal_height = _to_internal_length(height) if height else None
-
-            shape = slide_obj.shapes.add_picture(
-                component["path"],
-                pptx.util.Inches(left_inches),
-                pptx.util.Inches(top_inches),
-                pptx.util.Inches(to_inche(internal_width).value)
-                if internal_width
-                else None,
-                pptx.util.Inches(to_inche(internal_height).value)
-                if internal_height
-                else None,
-            )
+            # TODO: Implement image component
+            pass
 
         elif component["type"] == "chart":
-            chart_data = ChartData()
-            data = component["data"]
-            if data and "category" in data[0]:
-                chart_data.categories = [item["category"] for item in data]
-            else:
-                chart_data.categories = [f"Item {i + 1}" for i in range(len(data))]
-            chart_data.add_series("Series 1", [item.get("value", 0) for item in data])
-
-            # レイアウト情報を一度だけ取得
-            layout = component.get("layout", {}) or {}
-            width = layout.get("width")
-            height = layout.get("height")
-
-            internal_width = _to_internal_length(width) if width else _Inch(6)
-            internal_height = _to_internal_length(height) if height else _Inch(4)
-
-            x, y = pptx.util.Inches(left_inches), pptx.util.Inches(top_inches)
-            cx = pptx.util.Inches(to_inche(internal_width).value)
-            cy = pptx.util.Inches(to_inche(internal_height).value)
-
-            shape = slide_obj.shapes.add_chart(
-                XL_CHART_TYPE.BAR_CLUSTERED
-                if component["chart_type"] == "bar"
-                else XL_CHART_TYPE.LINE,
-                x,
-                y,
-                cx,
-                cy,
-                chart_data,
-            )
+            # TODO: Implement chart component
+            pass
 
         elif component["type"] == "table":
-            # レイアウト情報を一度だけ取得
-            layout = component.get("layout", {})
-            width = layout.get("width")
-            height = layout.get("height")
-
-            internal_width = _to_internal_length(width) if width else _Inch(6)
-            internal_height = _to_internal_length(height) if height else _Inch(2)
-
-            table = slide_obj.shapes.add_table(
-                component["rows"],
-                component["cols"],
-                pptx.util.Inches(left_inches),
-                pptx.util.Inches(top_inches),
-                pptx.util.Inches(to_inche(internal_width).value),
-                pptx.util.Inches(to_inche(internal_height).value),
-            ).table
-
-            for i, row in enumerate(component["data"]):
-                for j, cell in enumerate(row):
-                    table_cell = table.cell(i, j)
-                    table_cell.text = cell.text
-
-                    if size := cell.get("size"):
-                        internal_size = _to_internal_length(size)
-                        table_cell.text_frame.paragraphs[0].font.size = pptx.util.Pt(
-                            to_point(internal_size).value
-                        )
-                    if bold := cell.get("bold"):
-                        table_cell.text_frame.paragraphs[0].font.bold = bold
-                    if italic := cell.get("italic"):
-                        table_cell.text_frame.paragraphs[0].font.italic = italic
-                    if color := cell.get("color"):
-                        table_cell.text_frame.paragraphs[
-                            0
-                        ].font.color.rgb = RGBColor.from_string(color)
-                    if background := cell.get("background"):
-                        table_cell.fill.solid()
-                        table_cell.fill.fore_color.rgb = RGBColor.from_string(
-                            background
-                        )
-
-                    table_cell.text_frame.paragraphs[0].alignment = cell.get("align")
-
-        if layout := component.get("layout"):
-            self._apply_layout(shape, layout)
+            # TODO: Implement table component
+            pass
 
     def _add_container(
-        self, slide_obj, container: Container, left: Length, top: Length
-    ):
-        """Add a container to a slide
+        self, slide_obj: AbstractSlide, container: Container, left: Length, top: Length
+    ) -> None:
+        """Add a container to a slide.
 
         Args:
-            slide_obj: Target slide
+            slide_obj (AbstractSlide): Target slide
             container (Container): Container to add
             left (Length): Position from left edge
             top (Length): Position from top edge
@@ -551,28 +397,19 @@ class _PresentationBuilder:
                 current_top = (current_top[0] + 1, current_top[1])  # Default spacing
 
     def build(self) -> "Presentation":
-        """Build the presentation
+        """Build the presentation.
 
         Returns:
             Presentation: Built presentation
         """
         for slide in self.slides:
-            slide_layout = self.presentation.slide_layouts[
-                _SLIDE_LAYOUT_MAP[slide["layout"]]
-            ]
-            slide_obj = self.presentation.slides.add_slide(slide_layout)
+            slide_obj = self._presentation._presentation.add_slide(slide["layout"])
 
             if title := slide.get("title"):
-                title_shape = slide_obj.shapes.title
-                title_shape.text = title["text"]
-                if size := title.get("size"):
-                    title_shape.text_frame.paragraphs[0].font.size = pptx.util.Pt(
-                        to_point(size).value
-                    )
-                if bold := title.get("bold"):
-                    title_shape.text_frame.paragraphs[0].font.bold = bold
-                if italic := title.get("italic"):
-                    title_shape.text_frame.paragraphs[0].font.italic = italic
+                title_shape = slide_obj.get_title()
+                if title_shape:
+                    title_shape.set_text(title["text"])
+                    # TODO: Apply title formatting
 
             if containers := slide.get("containers"):
                 for container in containers:
@@ -580,7 +417,7 @@ class _PresentationBuilder:
                         slide_obj, container, (1, "in"), (2, "in")
                     )  # Default position
 
-        return self.presentation
+        return self._presentation
 
 
 def image(
@@ -589,7 +426,7 @@ def image(
     height: Length | None = None,
     layout: Layout | None = None,
 ) -> Image:
-    """Create an image component with type field automatically set
+    """Create an image component with type field automatically set.
 
     Args:
         path (str | pathlib.Path): Path to image file
@@ -617,7 +454,7 @@ def text(
     color: str | None = None,
     layout: Layout | None = None,
 ) -> Text:
-    """Create a text component with type field automatically set
+    """Create a text component with type field automatically set.
 
     Args:
         text (str): Text content
@@ -648,7 +485,7 @@ def chart(
     height: Length | None = None,
     layout: Layout | None = None,
 ) -> Chart:
-    """Create a chart component with type field automatically set
+    """Create a chart component with type field automatically set.
 
     Args:
         chart_type (str): Chart type ("bar", "line", "pie", etc.)
@@ -678,7 +515,7 @@ def table(
     height: Length | None = None,
     layout: Layout | None = None,
 ) -> Table:
-    """Create a table component with type field automatically set
+    """Create a table component with type field automatically set.
 
     Args:
         rows (int): Number of rows
@@ -712,7 +549,7 @@ def layout(
     width: Length | None = None,
     height: Length | None = None,
 ) -> Layout:
-    """Create a layout with default values
+    """Create a layout with default values.
 
     Args:
         type (LayoutType, optional): Layout type. Defaults to "flex".

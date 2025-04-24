@@ -7,7 +7,7 @@ from typing import Any, Protocol, TypeVar
 
 
 class PptxConvertible(Protocol):
-    """Protocol for objects that can be converted to/from pptx objects."""
+    """Protocol for objects that can be converted to and from pptx objects."""
 
     def to_pptx(self) -> Any:
         """Convert to pptx object."""
@@ -23,7 +23,7 @@ T = TypeVar("T", bound=PptxConvertible)
 
 
 class PptxConverter:
-    """Base converter class for pptx objects."""
+    """Utility class for converting pptx objects."""
 
     @staticmethod
     def to_pptx(obj: PptxConvertible) -> Any:
