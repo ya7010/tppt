@@ -527,14 +527,12 @@ class _PresentationBuilder:
             )
             text_frame = shape.text_frame
             text_frame.text = component["text"]
-            if component.get("size"):
-                text_frame.paragraphs[0].font.size = pptx.util.Pt(
-                    to_point(component["size"]).value
-                )
-            if component.get("bold"):
-                text_frame.paragraphs[0].font.bold = component["bold"]
-            if component.get("italic"):
-                text_frame.paragraphs[0].font.italic = component["italic"]
+            if size := component.get("size"):
+                text_frame.paragraphs[0].font.size = pptx.util.Pt(to_point(size).value)
+            if bold := component.get("bold"):
+                text_frame.paragraphs[0].font.bold = bold
+            if italic := component.get("italic"):
+                text_frame.paragraphs[0].font.italic = italic
 
         elif component["type"] == "image":
             # 画像のサイズ情報を一度だけ取得
@@ -608,28 +606,28 @@ class _PresentationBuilder:
                     table_cell = table.cell(i, j)
                     table_cell.text = cell.text
 
-                    if cell.get("size"):
+                    if size := cell.get("size"):
                         table_cell.text_frame.paragraphs[0].font.size = pptx.util.Pt(
-                            to_point(cell.get("size")).value
+                            to_point(size).value
                         )
-                    if cell.get("bold"):
-                        table_cell.text_frame.paragraphs[0].font.bold = True
-                    if cell.get("italic"):
-                        table_cell.text_frame.paragraphs[0].font.italic = True
-                    if cell.get("color"):
+                    if bold := cell.get("bold"):
+                        table_cell.text_frame.paragraphs[0].font.bold = bold
+                    if italic := cell.get("italic"):
+                        table_cell.text_frame.paragraphs[0].font.italic = italic
+                    if color := cell.get("color"):
                         table_cell.text_frame.paragraphs[
                             0
-                        ].font.color.rgb = RGBColor.from_string(cell.get("color"))
-                    if cell.get("background"):
+                        ].font.color.rgb = RGBColor.from_string(color)
+                    if background := cell.get("background"):
                         table_cell.fill.solid()
                         table_cell.fill.fore_color.rgb = RGBColor.from_string(
-                            cell.get("background")
+                            background
                         )
 
                     table_cell.text_frame.paragraphs[0].alignment = cell.get("align")
 
-        if component.get("layout"):
-            self._apply_layout(shape, component["layout"])
+        if layout := component.get("layout"):
+            self._apply_layout(shape, layout)
 
     def _add_container(
         self, slide_obj, container: Container, left: Length, top: Length
@@ -663,24 +661,20 @@ class _PresentationBuilder:
             slide_layout = self.presentation.slide_layouts[slide["layout"].value]
             slide_obj = self.presentation.slides.add_slide(slide_layout)
 
-            if slide.get("title"):
+            if title := slide.get("title"):
                 title_shape = slide_obj.shapes.title
-                title_shape.text = slide["title"]["text"]
-                if slide["title"].get("size"):
+                title_shape.text = title["text"]
+                if size := title.get("size"):
                     title_shape.text_frame.paragraphs[0].font.size = pptx.util.Pt(
-                        to_point(slide["title"]["size"]).value
+                        to_point(size).value
                     )
-                if slide["title"].get("bold"):
-                    title_shape.text_frame.paragraphs[0].font.bold = slide["title"][
-                        "bold"
-                    ]
-                if slide["title"].get("italic"):
-                    title_shape.text_frame.paragraphs[0].font.italic = slide["title"][
-                        "italic"
-                    ]
+                if bold := title.get("bold"):
+                    title_shape.text_frame.paragraphs[0].font.bold = bold
+                if italic := title.get("italic"):
+                    title_shape.text_frame.paragraphs[0].font.italic = italic
 
-            if slide.get("containers"):
-                for container in slide["containers"]:
+            if containers := slide.get("containers"):
+                for container in containers:
                     self._add_container(
                         slide_obj, container, Inch(1), Inch(2)
                     )  # Default position
