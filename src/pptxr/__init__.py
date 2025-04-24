@@ -28,10 +28,10 @@ class _Inch:
     def __init__(self, value: float):
         self.value = float(value)
 
-    def __add__(self, other: "_Length") -> Self:
+    def __add__(self, other: "_Length") -> "_Inch":
         return _Inch(self.value + to_inche(other).value)
 
-    def __sub__(self, other: "_Length") -> Self:
+    def __sub__(self, other: "_Length") -> "_Inch":
         return _Inch(self.value - to_inche(other).value)
 
     def __iadd__(self, other: "_Length") -> Self:
@@ -42,13 +42,15 @@ class _Inch:
         self.value -= to_inche(other).value
         return self
 
-    def __mul__(self, other: Union[int, float]) -> Self:
+    def __mul__(self, other: Union[int, float]) -> "_Inch":
         return _Inch(self.value * other)
 
-    def __truediv__(self, other: Union[int, float]) -> Self:
+    def __truediv__(self, other: Union[int, float]) -> "_Inch":
         return _Inch(self.value / other)
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, _Inch):
+            raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
         return self.value == other.value
 
 
@@ -58,10 +60,10 @@ class _Point:
     def __init__(self, value: int):
         self.value = int(value)
 
-    def __add__(self, other: "_Length") -> Self:
+    def __add__(self, other: "_Length") -> "_Point":
         return _Point(self.value + to_point(other).value)
 
-    def __sub__(self, other: "_Length") -> Self:
+    def __sub__(self, other: "_Length") -> "_Point":
         return _Point(self.value - to_point(other).value)
 
     def __iadd__(self, other: "_Length") -> Self:
@@ -72,11 +74,16 @@ class _Point:
         self.value -= to_point(other).value
         return self
 
-    def __mul__(self, other: Union[int, float]) -> Self:
+    def __mul__(self, other: Union[int, float]) -> "_Point":
         return _Point(int(self.value * other))
 
-    def __truediv__(self, other: Union[int, float]) -> Self:
+    def __truediv__(self, other: Union[int, float]) -> "_Point":
         return _Point(int(self.value / other))
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, _Point):
+            raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
+        return self.value == other.value
 
 
 class _Millimeter:
@@ -85,10 +92,10 @@ class _Millimeter:
     def __init__(self, value: float):
         self.value = float(value)
 
-    def __add__(self, other: "_Length") -> Self:
+    def __add__(self, other: "_Length") -> "_Millimeter":
         return _Millimeter(self.value + to_millimeter(other).value)
 
-    def __sub__(self, other: "_Length") -> Self:
+    def __sub__(self, other: "_Length") -> "_Millimeter":
         return _Millimeter(self.value - to_millimeter(other).value)
 
     def __iadd__(self, other: "_Length") -> Self:
@@ -99,13 +106,15 @@ class _Millimeter:
         self.value -= to_millimeter(other).value
         return self
 
-    def __mul__(self, other: Union[int, float]) -> Self:
+    def __mul__(self, other: Union[int, float]) -> "_Millimeter":
         return _Millimeter(self.value * other)
 
-    def __truediv__(self, other: Union[int, float]) -> Self:
+    def __truediv__(self, other: Union[int, float]) -> "_Millimeter":
         return _Millimeter(self.value / other)
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, _Millimeter):
+            raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
         return self.value == other.value
 
 
