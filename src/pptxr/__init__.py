@@ -7,7 +7,6 @@ from typing import (
     Any,
     Literal,
     NotRequired,
-    Optional,
     TypedDict,
     Union,
     Unpack,
@@ -146,10 +145,10 @@ class Text(TypedDict):
     type: Literal["text"]
     """Type of component"""
 
-    text: str
+    text: str | None
     """Text content"""
 
-    size: NotRequired[Length]
+    size: Length | None
     """Font size"""
 
     bold: NotRequired[bool]
@@ -158,7 +157,7 @@ class Text(TypedDict):
     italic: NotRequired[bool]
     """Whether text is italic"""
 
-    color: NotRequired[str]
+    color: str | None
     """Text color"""
 
     layout: NotRequired[Layout]
@@ -184,7 +183,7 @@ class Shape:
     height: Length
     """Height"""
 
-    text: Optional[Text] = None
+    text: Text | None = None
     """Text within shape"""
 
 
@@ -236,7 +235,7 @@ class TableCell:
     text: str
     """Cell text content"""
 
-    size: Optional[Length] = None
+    size: Length | None = None
     """Font size"""
 
     bold: bool = False
@@ -245,10 +244,10 @@ class TableCell:
     italic: bool = False
     """Whether text is italic"""
 
-    color: Optional[str] = None
+    color: str | None = None
     """Text color"""
 
-    background: Optional[str] = None
+    background: str | None = None
     """Background color"""
 
     align: PP_ALIGN = PP_ALIGN.LEFT
@@ -315,11 +314,11 @@ class SlideTemplate:
     and implementing the build method.
     """
 
-    def build(self, title: Optional[Text] = None, **kwargs) -> Slide:
+    def build(self, title: Text | None = None, **kwargs) -> Slide:
         """Build a slide using this template
 
         Args:
-            title (Optional[Text]): Slide title
+            title (Text | None): Slide title
             **kwargs: Template-specific parameters
 
         Returns:
@@ -632,18 +631,18 @@ class _PresentationBuilder:
 
 
 def image(
-    path: str,
-    width: Optional[Length] = None,
-    height: Optional[Length] = None,
-    layout: Optional[Layout] = None,
+    path: str | pathlib.Path,
+    width: Length | None = None,
+    height: Length | None = None,
+    layout: Layout | None = None,
 ) -> Image:
     """Create an image component with type field automatically set
 
     Args:
-        path (str): Path to image file
-        width (Optional[Length], optional): Width. Defaults to None.
-        height (Optional[Length], optional): Height. Defaults to None.
-        layout (Optional[Layout], optional): Layout settings. Defaults to None.
+        path (str | pathlib.Path): Path to image file
+        width (Length | None, optional): Width. Defaults to None.
+        height (Length | None, optional): Height. Defaults to None.
+        layout (Layout | None, optional): Layout settings. Defaults to None.
 
     Returns:
         Image: Created image component
@@ -659,21 +658,21 @@ def image(
 
 def text(
     text: str,
-    size: Optional[Length] = None,
+    size: Length | None = None,
     bold: bool = False,
     italic: bool = False,
-    color: Optional[str] = None,
-    layout: Optional[Layout] = None,
+    color: str | None = None,
+    layout: Layout | None = None,
 ) -> Text:
     """Create a text component with type field automatically set
 
     Args:
         text (str): Text content
-        size (Optional[Length], optional): Font size. Defaults to None.
+        size (Length | None, optional): Font size. Defaults to None.
         bold (bool, optional): Whether text is bold. Defaults to False.
         italic (bool, optional): Whether text is italic. Defaults to False.
-        color (Optional[str], optional): Text color. Defaults to None.
-        layout (Optional[Layout], optional): Layout settings. Defaults to None.
+        color (str | None, optional): Text color. Defaults to None.
+        layout (Layout | None, optional): Layout settings. Defaults to None.
 
     Returns:
         Text: Created text component
@@ -692,18 +691,18 @@ def text(
 def chart(
     chart_type: str,
     data: list[dict[str, Any]],
-    width: Optional[Length] = None,
-    height: Optional[Length] = None,
-    layout: Optional[Layout] = None,
+    width: Length | None = None,
+    height: Length | None = None,
+    layout: Layout | None = None,
 ) -> Chart:
     """Create a chart component with type field automatically set
 
     Args:
         chart_type (str): Chart type ("bar", "line", "pie", etc.)
         data (list[dict[str, Any]]): Chart data
-        width (Optional[Length], optional): Width. Defaults to None.
-        height (Optional[Length], optional): Height. Defaults to None.
-        layout (Optional[Layout], optional): Layout settings. Defaults to None.
+        width (Length | None, optional): Width. Defaults to None.
+        height (Length | None, optional): Height. Defaults to None.
+        layout (Layout | None, optional): Layout settings. Defaults to None.
 
     Returns:
         Chart: Created chart component
@@ -722,9 +721,9 @@ def table(
     rows: int,
     cols: int,
     data: list[list[TableCell]],
-    width: Optional[Length] = None,
-    height: Optional[Length] = None,
-    layout: Optional[Layout] = None,
+    width: Length | None = None,
+    height: Length | None = None,
+    layout: Layout | None = None,
 ) -> Table:
     """Create a table component with type field automatically set
 
@@ -732,9 +731,9 @@ def table(
         rows (int): Number of rows
         cols (int): Number of columns
         data (list[list[TableCell]]): Table data
-        width (Optional[Length], optional): Width. Defaults to None.
-        height (Optional[Length], optional): Height. Defaults to None.
-        layout (Optional[Layout], optional): Layout settings. Defaults to None.
+        width (Length | None, optional): Width. Defaults to None.
+        height (Length | None, optional): Height. Defaults to None.
+        layout (Layout | None, optional): Layout settings. Defaults to None.
 
     Returns:
         Table: Created table component
@@ -756,9 +755,9 @@ def layout(
     align: Align = Align.START,
     justify: Justify = Justify.START,
     gap: Length = (0.1, "in"),
-    padding: Optional[dict[str, Length]] = None,
-    width: Optional[Length] = None,
-    height: Optional[Length] = None,
+    padding: dict[str, Length] | None = None,
+    width: Length | None = None,
+    height: Length | None = None,
 ) -> Layout:
     """Create a layout with default values
 
@@ -768,9 +767,9 @@ def layout(
         align (Align, optional): Element alignment. Defaults to Align.START.
         justify (Justify, optional): Element justification. Defaults to Justify.START.
         gap (Length, optional): Gap between elements. Defaults to (0.1, "in").
-        padding (Optional[dict[str, Length]], optional): Padding (top, right, bottom, left). Defaults to None.
-        width (Optional[Length], optional): Width. Defaults to None.
-        height (Optional[Length], optional): Height. Defaults to None.
+        padding (dict[str, Length] | None, optional): Padding (top, right, bottom, left). Defaults to None.
+        width (Length | None, optional): Width. Defaults to None.
+        height (Length | None, optional): Height. Defaults to None.
 
     Returns:
         Layout: Created layout
@@ -789,15 +788,15 @@ def layout(
 
 def slide(
     layout: SlideLayout,
-    title: Optional[Text] = None,
-    containers: Optional[list[Container]] = None,
+    title: Text | None = None,
+    containers: list[Container] | None = None,
 ) -> Slide:
     """Create a slide with specified layout, title, and containers.
 
     Args:
         layout (SlideLayout): Layout type for the slide
-        title (Optional[Text], optional): Title text component. Defaults to None.
-        containers (Optional[list[Container]], optional): list of containers. Defaults to None.
+        title (Text | None, optional): Title text component. Defaults to None.
+        containers (list[Container] | None, optional): list of containers. Defaults to None.
 
     Returns:
         Slide: Created slide object
@@ -809,3 +808,15 @@ def slide(
         "title": title,
         "containers": containers,
     }
+
+
+def save_pptx(
+    presentation: Presentation, file: Union[str, pathlib.Path, IO[bytes]]
+) -> None:
+    """Save presentation to file
+
+    Args:
+        presentation (Presentation): Presentation to save
+        file (Union[str, pathlib.Path, IO[bytes]]): Output file path or file-like object
+    """
+    presentation.save(file)
