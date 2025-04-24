@@ -14,12 +14,12 @@ from typing import (
     overload,
 )
 
+import pptx.util
 from pptx import Presentation as PptxPresentation
 from pptx.chart.data import ChartData
 from pptx.dml.color import RGBColor
 from pptx.enum.chart import XL_CHART_TYPE
 from pptx.enum.text import PP_ALIGN
-from pptx.util import Inches, Pt
 
 
 class Inch:
@@ -469,20 +469,21 @@ class _PresentationBuilder:
             layout (Layout): Layout settings to apply
         """
         if layout.get("width"):
-            shape.width = Inches(to_inche(layout["width"]))
+            shape.width = pptx.util.Inches(to_inche(layout["width"]))
         if layout.get("height"):
-            shape.height = Inches(to_inche(layout["height"]))
+            shape.height = pptx.util.Inches(to_inche(layout["height"]))
         if layout.get("align"):
             if layout["align"] == Align.CENTER:
                 shape.left = (
-                    Inches(to_inche(shape.left))
-                    + (Inches(8.5) - Inches(to_inche(shape.width))) / 2
+                    pptx.util.Inches(to_inche(shape.left))
+                    + (pptx.util.Inches(8.5) - pptx.util.Inches(to_inche(shape.width)))
+                    / 2
                 )
             elif layout["align"] == Align.END:
                 shape.left = (
-                    Inches(to_inche(shape.left))
-                    + Inches(8.5)
-                    - Inches(to_inche(shape.width))
+                    pptx.util.Inches(to_inche(shape.left))
+                    + pptx.util.Inches(8.5)
+                    - pptx.util.Inches(to_inche(shape.width))
                 )
 
     def _add_component(
@@ -498,19 +499,19 @@ class _PresentationBuilder:
         """
         if component["type"] == "text":
             shape = slide_obj.shapes.add_textbox(
-                Inches(float(to_inche(left))),
-                Inches(float(to_inche(top))),
-                Inches(float(to_inche(component["layout"]["width"])))
+                pptx.util.Inches(float(to_inche(left))),
+                pptx.util.Inches(float(to_inche(top))),
+                pptx.util.Inches(float(to_inche(component["layout"]["width"])))
                 if component.get("layout") and component["layout"].get("width")
-                else Inches(3),
-                Inches(float(to_inche(component["layout"]["height"])))
+                else pptx.util.Inches(3),
+                pptx.util.Inches(float(to_inche(component["layout"]["height"])))
                 if component.get("layout") and component["layout"].get("height")
-                else Inches(1),
+                else pptx.util.Inches(1),
             )
             text_frame = shape.text_frame
             text_frame.text = component["text"]
             if component.get("size"):
-                text_frame.paragraphs[0].font.size = Pt(
+                text_frame.paragraphs[0].font.size = pptx.util.Pt(
                     int(to_point(component["size"]))
                 )
             if component.get("bold"):
@@ -521,12 +522,12 @@ class _PresentationBuilder:
         elif component["type"] == "image":
             shape = slide_obj.shapes.add_picture(
                 component["path"],
-                Inches(float(to_inche(left))),
-                Inches(float(to_inche(top))),
-                Inches(float(to_inche(component["width"])))
+                pptx.util.Inches(float(to_inche(left))),
+                pptx.util.Inches(float(to_inche(top))),
+                pptx.util.Inches(float(to_inche(component["width"])))
                 if component.get("width")
                 else None,
-                Inches(float(to_inche(component["height"])))
+                pptx.util.Inches(float(to_inche(component["height"])))
                 if component.get("height")
                 else None,
             )
@@ -538,16 +539,19 @@ class _PresentationBuilder:
                 "Series 1", [item["value"] for item in component["data"]]
             )
 
-            x, y = Inches(float(to_inche(left))), Inches(float(to_inche(top)))
+            x, y = (
+                pptx.util.Inches(float(to_inche(left))),
+                pptx.util.Inches(float(to_inche(top))),
+            )
             cx = (
-                Inches(float(to_inche(component["layout"]["width"])))
+                pptx.util.Inches(float(to_inche(component["layout"]["width"])))
                 if component.get("layout") and component["layout"].get("width")
-                else Inches(6)
+                else pptx.util.Inches(6)
             )
             cy = (
-                Inches(float(to_inche(component["layout"]["height"])))
+                pptx.util.Inches(float(to_inche(component["layout"]["height"])))
                 if component.get("layout") and component["layout"].get("height")
-                else Inches(4)
+                else pptx.util.Inches(4)
             )
 
             shape = slide_obj.shapes.add_chart(
@@ -565,14 +569,14 @@ class _PresentationBuilder:
             table = slide_obj.shapes.add_table(
                 component["rows"],
                 component["cols"],
-                Inches(float(to_inche(left))),
-                Inches(float(to_inche(top))),
-                Inches(float(to_inche(component["layout"]["width"])))
+                pptx.util.Inches(float(to_inche(left))),
+                pptx.util.Inches(float(to_inche(top))),
+                pptx.util.Inches(float(to_inche(component["layout"]["width"])))
                 if component.get("layout") and component["layout"].get("width")
-                else Inches(6),
-                Inches(float(to_inche(component["layout"]["height"])))
+                else pptx.util.Inches(6),
+                pptx.util.Inches(float(to_inche(component["layout"]["height"])))
                 if component.get("layout") and component["layout"].get("height")
-                else Inches(2),
+                else pptx.util.Inches(2),
             ).table
 
             for i, row in enumerate(component["data"]):
@@ -581,7 +585,7 @@ class _PresentationBuilder:
                     table_cell.text = cell.text
 
                     if cell.get("size"):
-                        table_cell.text_frame.paragraphs[0].font.size = Pt(
+                        table_cell.text_frame.paragraphs[0].font.size = pptx.util.Pt(
                             int(to_point(cell.get("size")))
                         )
                     if cell.get("bold"):
@@ -639,7 +643,7 @@ class _PresentationBuilder:
                 title_shape = slide_obj.shapes.title
                 title_shape.text = slide["title"]["text"]
                 if slide["title"].get("size"):
-                    title_shape.text_frame.paragraphs[0].font.size = Pt(
+                    title_shape.text_frame.paragraphs[0].font.size = pptx.util.Pt(
                         int(to_point(slide["title"]["size"]))
                     )
                 if slide["title"].get("bold"):
