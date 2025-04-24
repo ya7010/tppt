@@ -20,7 +20,10 @@ from pptxr import (
 
 
 class TestPresentation(unittest.TestCase):
+    """Test class for Presentation functionality"""
+
     def setUp(self):
+        """Set up test environment"""
         self.test_dir = Path(__file__).parent
         self.resources_dir = self.test_dir / "resources"
         self.output_dir = self.test_dir / "output"
@@ -28,18 +31,18 @@ class TestPresentation(unittest.TestCase):
         os.makedirs(self.output_dir, exist_ok=True)
 
     def test_create_simple_presentation(self):
-        # シンプルなプレゼンテーションの作成
+        """Test creating a simple presentation with basic layout"""
         presentation = (
             Presentation.builder()
             .add_slide(
                 create_slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=create_text("シンプルなスライド", size=Point(44), bold=True),
+                    title=create_text("Simple Slide", size=Point(44), bold=True),
                     containers=[
                         Container(
                             components=[
                                 create_text(
-                                    "これはテストテキストです",
+                                    "This is a test text",
                                     size=Point(24),
                                     layout=create_layout(width=Inch(4), height=Inch(1)),
                                 )
@@ -61,24 +64,24 @@ class TestPresentation(unittest.TestCase):
         self.assertTrue(output_path.exists())
 
     def test_create_complex_presentation(self):
-        # より複雑なレイアウトのプレゼンテーション
+        """Test creating a presentation with complex layout"""
         presentation = (
             Presentation.builder()
             .add_slide(
                 create_slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=create_text("複雑なレイアウト", size=Point(44), bold=True),
+                    title=create_text("Complex Layout", size=Point(44), bold=True),
                     containers=[
-                        # 横並びのコンテナ
+                        # Horizontal container
                         Container(
                             components=[
                                 create_text(
-                                    "左側のテキスト",
+                                    "Left text",
                                     size=Point(20),
                                     layout=create_layout(width=Inch(3), height=Inch(1)),
                                 ),
                                 create_text(
-                                    "右側のテキスト",
+                                    "Right text",
                                     size=Point(20),
                                     layout=create_layout(width=Inch(3), height=Inch(1)),
                                 ),
@@ -90,16 +93,16 @@ class TestPresentation(unittest.TestCase):
                                 gap=Inch(0.5),
                             ),
                         ),
-                        # 縦並びのコンテナ
+                        # Vertical container
                         Container(
                             components=[
                                 create_text(
-                                    "上段のテキスト",
+                                    "Top text",
                                     size=Point(20),
                                     layout=create_layout(width=Inch(6), height=Inch(1)),
                                 ),
                                 create_text(
-                                    "下段のテキスト",
+                                    "Bottom text",
                                     size=Point(20),
                                     layout=create_layout(width=Inch(6), height=Inch(1)),
                                 ),
@@ -122,11 +125,10 @@ class TestPresentation(unittest.TestCase):
         self.assertTrue(output_path.exists())
 
     def test_create_presentation_with_image(self):
-        # 画像を含むプレゼンテーション
-        # 注意: テスト用の画像ファイルが必要です
+        """Test creating a presentation with image"""
         test_image_path = self.resources_dir / "test_image.jpg"
         if not test_image_path.exists():
-            # テスト用のダミー画像を作成
+            # Create a dummy image for testing
             from PIL import Image as PILImage
 
             img = PILImage.new("RGB", (100, 100), color="red")
@@ -137,7 +139,7 @@ class TestPresentation(unittest.TestCase):
             .add_slide(
                 create_slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=create_text("画像付きスライド", size=Point(44), bold=True),
+                    title=create_text("Slide with Image", size=Point(44), bold=True),
                     containers=[
                         Container(
                             components=[
@@ -148,7 +150,7 @@ class TestPresentation(unittest.TestCase):
                                     layout=create_layout(width=Inch(4), height=Inch(3)),
                                 ),
                                 create_text(
-                                    "画像の説明",
+                                    "Image description",
                                     size=Point(20),
                                     layout=create_layout(width=Inch(4), height=Inch(1)),
                                 ),
@@ -171,15 +173,13 @@ class TestPresentation(unittest.TestCase):
         self.assertTrue(output_path.exists())
 
     def test_create_presentation_with_chart(self):
-        # チャートを含むプレゼンテーション
+        """Test creating a presentation with chart"""
         presentation = (
             Presentation.builder()
             .add_slide(
                 create_slide(
                     layout=SlideLayout.TITLE_AND_CONTENT,
-                    title=create_text(
-                        "チャート付きスライド", size=Point(44), bold=True
-                    ),
+                    title=create_text("Slide with Chart", size=Point(44), bold=True),
                     containers=[
                         Container(
                             components=[
@@ -212,17 +212,17 @@ class TestPresentation(unittest.TestCase):
         self.assertTrue(output_path.exists())
 
     def test_create_presentation_with_keyword_args(self):
-        # キーワード引数を使用したプレゼンテーションの作成
+        """Test creating a presentation using keyword arguments"""
         presentation = (
             Presentation.builder()
             .add_slide(
                 layout=SlideLayout.TITLE_AND_CONTENT,
-                title=create_text("キーワード引数テスト", size=Point(44), bold=True),
+                title=create_text("Keyword Arguments Test", size=Point(44), bold=True),
                 containers=[
                     Container(
                         components=[
                             create_text(
-                                "キーワード引数で作成したスライド",
+                                "Slide created with keyword arguments",
                                 size=Point(24),
                                 layout=create_layout(width=Inch(4), height=Inch(1)),
                             )

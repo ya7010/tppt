@@ -22,7 +22,6 @@ from pptx.enum.text import PP_ALIGN
 from pptx.util import Inches, Pt
 
 
-# Type definitions for units
 class Inch:
     """Class representing inches"""
 
@@ -125,24 +124,34 @@ class SlideLayout(Enum):
 
     TITLE = 0
     """Title-only layout"""
+
     TITLE_AND_CONTENT = 1
     """Title and content layout"""
+
     SECTION_HEADER = 2
     """Section header layout"""
+
     TWO_CONTENT = 3
     """Layout with two content areas"""
+
     COMPARISON = 4
     """Comparison layout"""
+
     TITLE_ONLY = 5
     """Title-only layout"""
+
     BLANK = 6
     """Blank layout"""
+
     CONTENT_WITH_CAPTION = 7
     """Content with caption layout"""
+
     PICTURE_WITH_CAPTION = 8
     """Picture with caption layout"""
+
     TITLE_AND_VERTICAL_TEXT = 9
     """Title and vertical text layout"""
+
     VERTICAL_TITLE_AND_TEXT = 10
     """Vertical title and text layout"""
 
@@ -152,8 +161,10 @@ class LayoutType(Enum):
 
     FLEX = "flex"
     """Flexbox layout"""
+
     GRID = "grid"
     """Grid layout"""
+
     ABSOLUTE = "absolute"
     """Absolute positioning layout"""
 
@@ -163,8 +174,10 @@ class Align(Enum):
 
     START = "start"
     """Align to start position"""
+
     CENTER = "center"
     """Align to center"""
+
     END = "end"
     """Align to end position"""
 
@@ -174,12 +187,16 @@ class Justify(Enum):
 
     START = "start"
     """Justify to start"""
+
     CENTER = "center"
     """Justify to center"""
+
     END = "end"
     """Justify to end"""
+
     SPACE_BETWEEN = "space-between"
     """Distribute space between elements"""
+
     SPACE_AROUND = "space-around"
     """Distribute space around elements"""
 
@@ -189,18 +206,25 @@ class Layout(TypedDict):
 
     type: NotRequired[LayoutType]
     """Layout type"""
+
     direction: NotRequired[str]
     """Layout direction ("row" or "column")"""
+
     align: NotRequired[Align]
     """Element alignment"""
+
     justify: NotRequired[Justify]
     """Element justification"""
+
     gap: NotRequired[Length]
     """Gap between elements"""
+
     padding: NotRequired[dict[str, Length]]
     """Padding (top, right, bottom, left)"""
+
     width: NotRequired[Length]
     """Width"""
+
     height: NotRequired[Length]
     """Height"""
 
@@ -210,16 +234,22 @@ class Text(TypedDict):
 
     type: Literal["text"]
     """Type of component"""
+
     text: str
     """Text content"""
+
     size: NotRequired[Length]
     """Font size"""
+
     bold: NotRequired[bool]
     """Whether text is bold"""
+
     italic: NotRequired[bool]
     """Whether text is italic"""
+
     color: NotRequired[str]
     """Text color"""
+
     layout: NotRequired[Layout]
     """Layout settings"""
 
@@ -230,14 +260,19 @@ class Shape:
 
     type: str
     """Shape type"""
+
     left: Length
     """Position from left edge"""
+
     top: Length
     """Position from top edge"""
+
     width: Length
     """Width"""
+
     height: Length
     """Height"""
+
     text: Optional[Text] = None
     """Text within shape"""
 
@@ -266,14 +301,19 @@ class Chart(TypedDict):
 
     type: Literal["chart"]
     """Type of component"""
+
     chart_type: str
     """Chart type ("bar", "line", "pie", etc.)"""
+
     data: list[dict[str, Any]]
     """Chart data"""
+
     width: NotRequired[Length]
     """Width"""
+
     height: NotRequired[Length]
     """Height"""
+
     layout: NotRequired[Layout]
     """Layout settings"""
 
@@ -284,16 +324,22 @@ class TableCell:
 
     text: str
     """Cell text content"""
+
     size: Optional[Length] = None
     """Font size"""
+
     bold: bool = False
     """Whether text is bold"""
+
     italic: bool = False
     """Whether text is italic"""
+
     color: Optional[str] = None
     """Text color"""
+
     background: Optional[str] = None
     """Background color"""
+
     align: PP_ALIGN = PP_ALIGN.LEFT
     """Text alignment"""
 
@@ -303,16 +349,22 @@ class Table(TypedDict):
 
     type: Literal["table"]
     """Type of component"""
+
     rows: int
     """Number of rows"""
+
     cols: int
     """Number of columns"""
+
     data: list[list[TableCell]]
     """Table data"""
+
     width: NotRequired[Length]
     """Width"""
+
     height: NotRequired[Length]
     """Height"""
+
     layout: NotRequired[Layout]
     """Layout settings"""
 
@@ -326,6 +378,7 @@ class Container(TypedDict):
 
     components: list[Component]
     """Components within container"""
+
     layout: Layout
     """Layout settings"""
 
@@ -335,8 +388,10 @@ class Slide(TypedDict):
 
     layout: SlideLayout
     """Slide layout"""
+
     title: NotRequired[Text]
     """Slide title"""
+
     containers: NotRequired[list[Container]]
     """Containers within slide"""
 
