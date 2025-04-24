@@ -6,6 +6,14 @@ INCHES_PER_POINT = 1 / 72  # 1 point = 1/72 inches
 POINTS_PER_INCH = 72  # 1 inch = 72 points
 CM_PER_INCH = 2.54  # 1 inch = 2.54 cm
 
+_Length = Union["_Inch", "_Point", "_Centimeter"]
+
+Length = Union[
+    tuple[int, Literal["pt"]],
+    tuple[float, Literal["in"]],
+    tuple[float, Literal["cm"]],
+]
+
 
 @dataclass
 class _Inch:
@@ -13,17 +21,25 @@ class _Inch:
 
     value: float
 
-    def __add__(self, other: "_Length") -> "_Inch":
+    def __add__(self, other: Union["_Length", Length]) -> "_Inch":
+        if isinstance(other, tuple):
+            other = _to_internal_length(other)
         return _Inch(self.value + to_inche(other).value)
 
-    def __sub__(self, other: "_Length") -> "_Inch":
+    def __sub__(self, other: Union["_Length", Length]) -> "_Inch":
+        if isinstance(other, tuple):
+            other = _to_internal_length(other)
         return _Inch(self.value - to_inche(other).value)
 
-    def __iadd__(self, other: "_Length") -> "_Inch":
+    def __iadd__(self, other: Union["_Length", Length]) -> "_Inch":
+        if isinstance(other, tuple):
+            other = _to_internal_length(other)
         self.value += to_inche(other).value
         return self
 
-    def __isub__(self, other: "_Length") -> "_Inch":
+    def __isub__(self, other: Union["_Length", Length]) -> "_Inch":
+        if isinstance(other, tuple):
+            other = _to_internal_length(other)
         self.value -= to_inche(other).value
         return self
 
@@ -45,17 +61,25 @@ class _Point:
 
     value: int
 
-    def __add__(self, other: "_Length") -> "_Point":
+    def __add__(self, other: Union["_Length", Length]) -> "_Point":
+        if isinstance(other, tuple):
+            other = _to_internal_length(other)
         return _Point(self.value + to_point(other).value)
 
-    def __sub__(self, other: "_Length") -> "_Point":
+    def __sub__(self, other: Union["_Length", Length]) -> "_Point":
+        if isinstance(other, tuple):
+            other = _to_internal_length(other)
         return _Point(self.value - to_point(other).value)
 
-    def __iadd__(self, other: "_Length") -> "_Point":
+    def __iadd__(self, other: Union["_Length", Length]) -> "_Point":
+        if isinstance(other, tuple):
+            other = _to_internal_length(other)
         self.value += to_point(other).value
         return self
 
-    def __isub__(self, other: "_Length") -> "_Point":
+    def __isub__(self, other: Union["_Length", Length]) -> "_Point":
+        if isinstance(other, tuple):
+            other = _to_internal_length(other)
         self.value -= to_point(other).value
         return self
 
@@ -77,17 +101,25 @@ class _Centimeter:
 
     value: float
 
-    def __add__(self, other: "_Length") -> "_Centimeter":
+    def __add__(self, other: Union["_Length", Length]) -> "_Centimeter":
+        if isinstance(other, tuple):
+            other = _to_internal_length(other)
         return _Centimeter(self.value + to_centimeter(other).value)
 
-    def __sub__(self, other: "_Length") -> "_Centimeter":
+    def __sub__(self, other: Union["_Length", Length]) -> "_Centimeter":
+        if isinstance(other, tuple):
+            other = _to_internal_length(other)
         return _Centimeter(self.value - to_centimeter(other).value)
 
-    def __iadd__(self, other: "_Length") -> "_Centimeter":
+    def __iadd__(self, other: Union["_Length", Length]) -> "_Centimeter":
+        if isinstance(other, tuple):
+            other = _to_internal_length(other)
         self.value += to_centimeter(other).value
         return self
 
-    def __isub__(self, other: "_Length") -> "_Centimeter":
+    def __isub__(self, other: Union["_Length", Length]) -> "_Centimeter":
+        if isinstance(other, tuple):
+            other = _to_internal_length(other)
         self.value -= to_centimeter(other).value
         return self
 
@@ -101,15 +133,6 @@ class _Centimeter:
         if not isinstance(other, _Centimeter):
             raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
         return self.value == other.value
-
-
-_Length = Union[_Inch, _Point, _Centimeter]
-
-Length = Union[
-    tuple[int, Literal["pt"]],
-    tuple[float, Literal["in"]],
-    tuple[float, Literal["cm"]],
-]
 
 
 def _to_internal_length(length: Length) -> _Length:

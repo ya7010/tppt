@@ -64,10 +64,20 @@ def test_internal_length_operations():
     assert (_Point(72) + _Point(72)).value == 144
     assert (_Centimeter(2.54) + _Centimeter(2.54)).value == 5.08
 
+    # Test addition with Length tuples
+    assert (_Inch(1) + (1.0, "in")).value == 2.0
+    assert (_Point(72) + (72, "pt")).value == 144
+    assert (_Centimeter(2.54) + (2.54, "cm")).value == 5.08
+
     # Test subtraction
     assert (_Inch(2) - _Inch(1)).value == 1.0
     assert (_Point(144) - _Point(72)).value == 72
     assert (_Centimeter(5.08) - _Centimeter(2.54)).value == 2.54
+
+    # Test subtraction with Length tuples
+    assert (_Inch(2) - (1.0, "in")).value == 1.0
+    assert (_Point(144) - (72, "pt")).value == 72
+    assert (_Centimeter(5.08) - (2.54, "cm")).value == 2.54
 
     # Test multiplication
     assert (_Inch(1) * 2).value == 2.0
@@ -78,6 +88,31 @@ def test_internal_length_operations():
     assert (_Inch(2) / 2).value == 1.0
     assert (_Point(144) / 2).value == 72
     assert (_Centimeter(5.08) / 2).value == 2.54
+
+    # Test in-place operations with Length tuples
+    inch = _Inch(1)
+    inch += (1.0, "in")
+    assert inch.value == 2.0
+
+    point = _Point(72)
+    point += (72, "pt")
+    assert point.value == 144
+
+    cm = _Centimeter(2.54)
+    cm += (2.54, "cm")
+    assert cm.value == 5.08
+
+    inch = _Inch(2)
+    inch -= (1.0, "in")
+    assert inch.value == 1.0
+
+    point = _Point(144)
+    point -= (72, "pt")
+    assert point.value == 72
+
+    cm = _Centimeter(5.08)
+    cm -= (2.54, "cm")
+    assert cm.value == 2.54
 
 
 def test_conversion_between_units():
