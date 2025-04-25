@@ -5,8 +5,8 @@ from typing import Literal, TypeAlias
 
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 
-from .color import Color
-from .length import (
+from ._color import Color
+from ._length import (
     Length,
     LiteralLength,
     Point,
