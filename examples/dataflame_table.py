@@ -1,0 +1,85 @@
+"""Example of creating tables from Polars dataframe."""
+
+from pathlib import Path
+
+import tppt
+from tppt.types import Color
+
+# Flag to determine whether to use Polars
+USE_POLARS = True
+EXAMPLE_DIR = Path(__file__).parent
+
+
+def main():
+    """Run the sample."""
+    import polars as pl
+
+    # Create dataframe with Polars
+    df = pl.DataFrame(
+        {
+            "Product": ["Product A", "Product B", "Product C", "Product D"],
+            "Price": ["$10.00", "$25.00", "$32.00", "$18.00"],
+            "Stock": ["10 units", "5 units", "8 units", "12 units"],
+            "Rating": ["★★★★☆", "★★★☆☆", "★★★★★", "★★★☆☆"],
+        }
+    )
+
+    # Convert dataframe to nested list
+    columns = list(df.columns)
+    rows = df.rows()
+    table_data = [columns]
+
+    for row in rows:
+        table_data.append([str(item) for item in row])
+
+    # Create presentation using builder pattern
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(
+            tppt.SlideBuilder()
+            .text(
+                "Polars DataFrame Example",
+                left=(50, "pt"),
+                top=(50, "pt"),
+                width=(500, "pt"),
+                height=(50, "pt"),
+                size=(44, "pt"),
+                bold=True,
+                color=Color("#0066CC"),
+            )
+            .text(
+                "Easily convert Polars dataframes to presentations with tppt library",
+                left=(50, "pt"),
+                top=(120, "pt"),
+                width=(500, "pt"),
+                height=(30, "pt"),
+            )
+            .table(
+                table_data,
+                left=(50, "pt"),
+                top=(100, "pt"),
+                width=(500, "pt"),
+                height=(200, "pt"),
+            )
+            .text(
+                "Product list and inventory status created from a Polars dataframe",
+                left=(50, "pt"),
+                top=(320, "pt"),
+                width=(500, "pt"),
+                height=(50, "pt"),
+            )
+        )
+        .build()
+    )
+
+    # Save the presentation
+    presentation.save(EXAMPLE_DIR / "dataflame_table.pptx")
+
+    print("Successfully created presentation from Polars dataframe!")
+
+
+if __name__ == "__main__":
+    if USE_POLARS:
+        main()
+    else:
+        print("Polars is not installed. Please install it to run this example.")
