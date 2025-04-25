@@ -12,7 +12,7 @@ from pptxr.types import FilePath
 from .converter import PptxConvertible, to_pptx_length
 from .shape import Shape
 from .shape.picture import Picture, PictureData, PictureProps
-from .shape.table import DataFrame, Table, TableOptions, TableProps
+from .shape.table import DataFrame, Table, TableData, TableProps
 from .shape.text import Text, TextData, TextProps
 from .shape.title import Title
 
@@ -101,9 +101,9 @@ class SlideBuilder:
 
         return self
 
-    def table(self, data: DataFrame, **kwargs: Unpack[TableOptions]) -> Self:
+    def table(self, data: DataFrame, **kwargs: Unpack[TableProps]) -> Self:
         rows, cols = len(data), len(data[0])
-        props: TableProps = {"type": "table", "data": data, **kwargs}
+        props: TableData = {"type": "table", "data": data, **kwargs}
 
         self._shape_registry.append(
             lambda slide: Table(

@@ -24,7 +24,7 @@ class TableCellStyle(TypedDict):
     font_name: NotRequired[str]
 
 
-class TableOptions(TypedDict):
+class TableProps(TypedDict):
     """Table properties."""
 
     left: Length | LiteralLength
@@ -35,7 +35,7 @@ class TableOptions(TypedDict):
     first_row_header: NotRequired[bool]
 
 
-class TableProps(TableOptions):
+class TableData(TableProps):
     """Table data."""
 
     type: Literal["table"]
@@ -49,7 +49,7 @@ class Table(Shape[GraphicFrame]):
     def __init__(
         self,
         pptx_obj: GraphicFrame,
-        props: TableProps | None = None,
+        props: TableData | None = None,
         /,
     ) -> None:
         self._pptx = pptx_obj
