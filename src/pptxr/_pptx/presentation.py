@@ -1,79 +1,71 @@
 """Presentation wrapper implementation."""
 
 import os
-from typing import IO, Self, cast
+from typing import IO, Self
 
 from pptx.presentation import Presentation as PptxPresentation
 
-from pptxr._pptx.slide import Slide
-from pptxr._pptx.types import PptxConvertible
-from pptxr.types import FilePath, SlideLayoutType
+from pptxr.types import FilePath
+
+from .slide import SlideBuilder
+from .slide_master import SlideMaster
+from .types import PptxConvertible
 
 
 class Presentation(PptxConvertible[PptxPresentation]):
     """Presentation wrapper with type safety."""
 
-    def __init__(self, pptx_presentation: PptxPresentation | None = None) -> None:
+    def __init__(self, presentation: PptxPresentation) -> None:
         """Initialize presentation."""
-        self._presentation: PptxPresentation = (
-            pptx_presentation if pptx_presentation is not None else PptxPresentation()
-        )
+        self._pptx = presentation
 
-    def get_slides(self) -> list[Slide]:
-        """Get all slides in the presentation."""
-        return [Slide(slide) for slide in self._presentation.slides]
+    @property
+    def slide_master(self) -> SlideMaster:
+        """
+        Get the slide master.
 
-    def add_slide(self, layout_type: SlideLayoutType) -> Slide:
-        """Add a slide with specified layout."""
-        layout_map = {
-            "TITLE": 0,
-            "TITLE_AND_CONTENT": 1,
-            "SECTION_HEADER": 2,
-            "TWO_CONTENT": 3,
-            "COMPARISON": 4,
-            "TITLE_ONLY": 5,
-            "BLANK": 6,
-            "CONTENT_WITH_CAPTION": 7,
-            "PICTURE_WITH_CAPTION": 8,
-            "TITLE_AND_VERTICAL_TEXT": 9,
-            "VERTICAL_TITLE_AND_TEXT": 10,
-        }
-        layout = self._presentation.slide_layouts[layout_map[layout_type]]
-        slide = self._presentation.slides.add_slide(layout)
-        return Slide(slide)
+        This tool supports only one slide master.
+        """
+        return SlideMaster.from_pptx(self._pptx.slide_masters[0])
+
+    @classmethod
+    def builder(cls) -> "PresentationBuilder":
+        """Get a builder for the presentation."""
+        return PresentationBuilder()
 
     def save(self, file: FilePath | IO[bytes]) -> None:
         """Save presentation to file."""
         if isinstance(file, os.PathLike):
             file = os.fspath(file)
-        self._presentation.save(file)
+        self._pptx.save(file)
 
     def to_pptx(self) -> PptxPresentation:
         """Convert to pptx presentation."""
-        return cast(PptxPresentation, self._presentation)
+        return self._pptx
 
     @classmethod
     def from_pptx(cls, pptx_obj: PptxPresentation) -> Self:
         """Create from pptx presentation."""
-        if not isinstance(pptx_obj, PptxPresentation):
-            raise TypeError(f"Expected PptxPresentation, got {type(pptx_obj)}")
         return cls(pptx_obj)
 
 
-class PptxPresentationFactory:
-    """A factory class for creating PowerPoint presentations."""
+class PresentationBuilder:
+    """Builder for presentations."""
 
-    def __init__(self, template_path: FilePath | None = None) -> None:
-        """Initialize a new presentation factory."""
-        self._template_path = template_path
-        self._presentation = (
-            PptxPresentation(template_path) if template_path else PptxPresentation()
-        )
+    def __init__(self) -> None:
+        """Initialize the builder."""
+        import pptx
 
-    def add_slide(self, layout_type: SlideLayoutType) -> Slide:
+        self._pptx = pptx.Presentation()
+
+    def slide(self, slide: SlideBuilder, /) -> Self:
         """Add a slide to the presentation."""
-        return self._presentation.slides.add_slide(self._presentation.slide_layouts[0])
 
-    def save(self, path: FilePath) -> None:
-        """Save the presentation to a file."""
-        self._presentation.save(str(path))
+        slide._build(self._pptx)
+
+        return self
+
+    def build(self) -> Presentation:
+        """Build the presentation."""
+
+        return Presentation(self._pptx)

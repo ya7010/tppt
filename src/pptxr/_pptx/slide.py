@@ -1,13 +1,17 @@
 """Slide wrapper implementation."""
 
-from typing import Self, cast
+from typing import Self, Unpack, cast
 
+from pptx.presentation import Presentation as PptxPresentation
 from pptx.slide import Slide as PptxSlide
+from pptx.slide import SlideLayout as PptxSlideLayout
 
-from pptxr._pptx.converters import to_pptx_length, to_pptx_shape_type
 from pptxr._pptx.shape import Shape
+from pptxr._pptx.text import TextProps
 from pptxr._pptx.types import PptxConvertible
-from pptxr.types import Length, LiteralLength, ShapeType
+from pptxr.exception import SlideLayoutIndexError
+
+from .title import Title
 
 
 class Slide(PptxConvertible[PptxSlide]):
@@ -17,32 +21,16 @@ class Slide(PptxConvertible[PptxSlide]):
         """Initialize slide."""
         self._pptx: PptxSlide = pptx_slide
 
-    def get_shapes(self) -> list[Shape]:
+    @property
+    def shapes(self) -> list[Shape]:
         """Get all shapes in the slide."""
         return [Shape(shape) for shape in self._pptx.shapes]
 
-    def add_shape(
-        self,
-        shape_type: ShapeType,
-        left: Length | LiteralLength,
-        top: Length | LiteralLength,
-        width: Length | LiteralLength,
-        height: Length | LiteralLength,
-    ) -> Shape:
-        """Add a shape to the slide."""
-        shape = self._pptx.shapes.add_shape(
-            to_pptx_shape_type(shape_type),
-            to_pptx_length(left),
-            to_pptx_length(top),
-            to_pptx_length(width),
-            to_pptx_length(height),
-        )
-        return Shape(shape)
-
-    def get_title(self) -> Shape | None:
+    @property
+    def title(self) -> Title | None:
         """Get slide title shape."""
-        if self._pptx.shapes.title:
-            return Shape(self._pptx.shapes.title)
+        if title := self._pptx.shapes.title:
+            return Title(title)
         return None
 
     def to_pptx(self) -> PptxSlide:
@@ -52,6 +40,31 @@ class Slide(PptxConvertible[PptxSlide]):
     @classmethod
     def from_pptx(cls, pptx_obj: PptxSlide) -> Self:
         """Create from pptx slide."""
-        if not isinstance(pptx_obj, PptxSlide):
-            raise TypeError(f"Expected PptxSlide, got {type(pptx_obj)}")
         return cls(pptx_obj)
+
+
+class SlideBuilder:
+    """Slide builder."""
+
+    def __init__(self, slide_layout: PptxSlideLayout | int = 0) -> None:
+        self._slide_layout = slide_layout
+        self._shapes: list[Shape]
+
+    def text(self, contents: str, /, **kwargs: Unpack[TextProps]) -> Self:
+        return self
+
+    def _build(self, pptx_presentation: PptxPresentation) -> Slide:
+        if isinstance(self._slide_layout, int):
+            try:
+                slide_layout = pptx_presentation.slide_layouts[self._slide_layout]
+            except IndexError:
+                raise SlideLayoutIndexError(
+                    self._slide_layout,
+                    pptx_presentation.slide_layouts,
+                )
+        else:
+            slide_layout = self._slide_layout
+
+        slide = pptx_presentation.slides.add_slide(slide_layout)
+
+        return Slide(slide)
