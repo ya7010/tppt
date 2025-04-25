@@ -33,7 +33,7 @@ ENV/
 *.swo
 
 # Test
-tests/output/
+output/
 tests/resources/test_image.jpg
 .pytest_cache/
 
