@@ -1,6 +1,6 @@
 """Presentation wrapper implementation."""
 
-from typing import IO, cast
+from typing import IO, Self, cast
 
 from pptx import Presentation as PptxPresentation
 from pptx.presentation import Presentation as PptxPresentationType
@@ -52,7 +52,7 @@ class Presentation(PptxConvertible[PptxPresentationType]):
         return cast(PptxPresentation, self._presentation)
 
     @classmethod
-    def from_pptx(cls, pptx_obj: PptxPresentation) -> "Presentation":
+    def from_pptx(cls, pptx_obj: PptxPresentation) -> Self:
         """Create from pptx presentation."""
         if not isinstance(pptx_obj, PptxPresentationType):
             raise TypeError(f"Expected PptxPresentation, got {type(pptx_obj)}")
