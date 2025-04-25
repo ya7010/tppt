@@ -11,7 +11,7 @@ from pptx.util import Pt
 
 from ._data import Shape, Slide
 from ._pptx.converters import to_pptx_shape_type
-from .types import LiteralLength, ShapeType, to_points
+from .types import FilePath, LiteralLength, ShapeType, to_points
 
 
 class PptxShapeWrapper:
@@ -83,7 +83,7 @@ class PptxPresentationWrapper:
         if shape.text is not None:
             pptx_shape.text = shape.text
 
-    def save(self, path: Union[str, Path, IO[bytes]]) -> None:
+    def save(self, path: Union[FilePath, IO[bytes]]) -> None:
         """Save the presentation."""
         if isinstance(path, (str, Path)):
             self._presentation.save(str(path))
