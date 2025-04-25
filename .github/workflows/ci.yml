@@ -32,13 +32,13 @@ jobs:
         uv pip install --system ".[dev]"
         
     - name: Format check
-      run: task format-check
+      run: uv run task format-check
       
     - name: Lint
-      run: task lint
+      run: uv run task lint
       
     - name: Type check
-      run: task typecheck
+      run: uv run task typecheck
       
     - name: Test
-      run: task test 
+      run: uv run task test
