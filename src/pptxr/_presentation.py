@@ -89,4 +89,3 @@ class PptxPresentationWrapper:
             self._presentation.save(str(path))
         else:
             self._presentation.save(path)
-
