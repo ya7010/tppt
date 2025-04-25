@@ -3,7 +3,7 @@
 import os
 from typing import IO, Self, cast
 
-from pptx.presentation import PptxPresentation
+from pptx.presentation import Presentation as PptxPresentation
 
 from pptxr._pptx.slide import Slide
 from pptxr._pptx.types import PptxConvertible

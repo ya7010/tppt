@@ -30,7 +30,4 @@ def to_pptx_length(length: Length | LiteralLength) -> pptx.util.Length:
 
 def to_pptx_shape_type(shape_type: ShapeType) -> MSO_AUTO_SHAPE_TYPE:
     """Convert pptxr ShapeType to MSO_AUTO_SHAPE_TYPE."""
-    try:
-        return getattr(MSO_AUTO_SHAPE_TYPE, shape_type.value)
-    except AttributeError:
-        raise ValueError(f"Invalid shape type: {shape_type}")
+    return shape_type.value

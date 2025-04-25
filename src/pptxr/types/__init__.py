@@ -1,6 +1,9 @@
 """Types module for pptxr."""
 
 import pathlib
+from typing import TypeAlias
+
+from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 
 from .color import Color
 from .length import (
@@ -13,6 +16,7 @@ from .length import (
 )
 
 FilePath = str | pathlib.Path
+ShapeType: TypeAlias = MSO_AUTO_SHAPE_TYPE
 
 
 def pt(value: int | float) -> LiteralLength:
