@@ -1,4 +1,4 @@
-"""Typed Python PowerPoint Builder"""
+"""Typed Python PowerPoint Tool"""
 
 from tppt._pptx.presentation import Presentation
 from tppt._pptx.shape import Shape
