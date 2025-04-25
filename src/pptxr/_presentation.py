@@ -101,20 +101,3 @@ def create_presentation() -> "Presentation":
     presentation = Presentation()
     presentation._wrapper = wrapper
     return presentation
-
-
-def open_presentation(file: Union[str, Path]) -> "Presentation":
-    """Open a presentation from a file.
-
-    Args:
-        file: The file to open.
-
-    Returns:
-        The opened presentation.
-    """
-    if isinstance(file, Path):
-        file = str(file)
-    wrapper = PptxPresentationWrapper()
-    presentation = Presentation()
-    presentation._wrapper = wrapper
-    return presentation
