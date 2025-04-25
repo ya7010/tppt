@@ -7,7 +7,7 @@ import pptx.util
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 
 from pptxr.types import Length, LiteralLength, ShapeType
-from pptxr.types.length import Centimeter, Inch, Point, to_length
+from pptxr.types._length import Centimeter, Inch, Point, to_length
 
 # pyright: ignore
 
