@@ -6,6 +6,8 @@ alwaysApply: false
 
 # Your rule content
 
+- Use Python 3.11 style.
+- Don't use Optional/Union/Dict/List/Type/etc... old type style.
 - All code comment and description witten in English.
 - Add one blank line between fields of class.
 - Class/Class fields/Function must be docstrings.
