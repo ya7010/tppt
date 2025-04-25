@@ -24,7 +24,7 @@ def test_text_with_options(output) -> None:
                 size=(24, "pt"),
                 bold=True,
                 italic=True,
-                color=Color((255, 0, 0)),  # 赤色
+                color=Color("#FF0000"),
                 margin_bottom=(10, "pt"),
                 margin_left=(10, "pt"),
                 vertical_anchor=MSO_ANCHOR.MIDDLE,

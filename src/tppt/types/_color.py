@@ -1,40 +1,50 @@
 """Color types for tppt."""
 
-from pptx.dml.color import RGBColor
+from typing import overload
 
 from tppt.exception import ColorInvalidFormatError
 
 
 class Color:
-    """Represents a color in RGB or by name."""
+    """Represents a color in RGB or by hex code.
 
-    def __init__(self, value: str | tuple[int, int, int]):
+    Examples:
+        >>> Color("#00B")
+        >>> Color("#00BB00")
+        >>> Color(255, 0, 0)
+    """
+
+    @overload
+    def __init__(self, r: str): ...
+
+    @overload
+    def __init__(self, r: int, g: int, b: int): ...
+
+    def __init__(self, r: str | int, g: int | None = None, b: int | None = None):
         """Initialize a Color instance."""
-        if isinstance(value, str):
-            if not value.startswith("#"):
-                raise ColorInvalidFormatError(value)
+        if isinstance(r, str):
+            if not r.startswith("#"):
+                raise ColorInvalidFormatError(r)
 
-            match len(value):
+            match len(r):
                 case 4:
-                    r = int(value[1:2], 16)
-                    g = int(value[2:3], 16)
-                    b = int(value[3:4], 16)
+                    # #123 は #112233 と同じであることに注意
+                    self.r = int(r[1:2] * 2, 16)
+                    self.g = int(r[2:3] * 2, 16)
+                    self.b = int(r[3:4] * 2, 16)
 
-                    self.value = RGBColor(r, g, b)
                 case 7:
-                    r = int(value[1:3], 16)
-                    g = int(value[3:5], 16)
-                    b = int(value[5:7], 16)
+                    self.r = int(r[1:3], 16)
+                    self.g = int(r[3:5], 16)
+                    self.b = int(r[5:7], 16)
 
-                    self.value = RGBColor(r, g, b)
                 case _:
-                    raise ColorInvalidFormatError(value)
+                    raise ColorInvalidFormatError(r)
 
         else:
-            r, g, b = value
             self.r = r
-            self.g = g
-            self.b = b
+            self.g = g  # type: ignore
+            self.b = b  # type: ignore
 
     def __repr__(self) -> str:
         """Return string representation."""

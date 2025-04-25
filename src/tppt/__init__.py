@@ -1,5 +1,6 @@
 """Typed Python PowerPoint Tool"""
 
+from tppt import types as types
 from tppt._pptx.presentation import Presentation
 from tppt._pptx.shape import Shape
 from tppt._pptx.slide import Slide, SlideBuilder

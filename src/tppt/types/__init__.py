@@ -4,15 +4,24 @@ import pathlib
 from typing import Literal, TypeAlias
 
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
-from tppt._pptx.shape.table import TableCellStyle
 
-from ._color import Color
+from tppt._pptx.shape.table import TableCellStyle as TableCellStyle
+
+from ._color import Color as Color
 from ._length import (
-    Length,
-    LiteralLength,
-    Point,
-    to_length,
-    to_point,
+    Length as Length,
+)
+from ._length import (
+    LiteralLength as LiteralLength,
+)
+from ._length import (
+    Point as Point,
+)
+from ._length import (
+    to_length as to_length,
+)
+from ._length import (
+    to_point as to_point,
 )
 
 FilePath = str | pathlib.Path
@@ -30,23 +39,4 @@ SlideLayoutType: TypeAlias = Literal[
     "PICTURE_WITH_CAPTION",
     "TITLE_AND_VERTICAL_TEXT",
     "VERTICAL_TITLE_AND_TEXT",
-]
-
-
-def pt(value: int | float) -> LiteralLength:
-    """Create a point length."""
-    return (int(value), "pt")
-
-
-__all__ = [
-    "Color",
-    "FilePath",
-    "Length",
-    "LiteralLength",
-    "Point",
-    "pt",
-    "to_length",
-    "to_point",
-    "SlideLayoutType",
-    "TableCellStyle",
 ]
