@@ -5,7 +5,7 @@ from pptx.shapes.picture import Picture as PptxPicture
 from pptxr.types import FilePath
 from pptxr.types._length import Length, LiteralLength
 
-from .shape import Shape
+from . import Shape
 
 
 class PictureProps(TypedDict):

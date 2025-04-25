@@ -10,11 +10,11 @@ from pptxr.exception import SlideLayoutIndexError
 from pptxr.types import FilePath
 
 from .converter import PptxConvertible, to_pptx_length
-from .picture import Picture, PictureData, PictureProps
 from .shape import Shape
-from .table import DataFrame, Table, TableOptions, TableProps
-from .text import Text, TextData, TextProps
-from .title import Title
+from .shape.picture import Picture, PictureData, PictureProps
+from .shape.table import DataFrame, Table, TableOptions, TableProps
+from .shape.text import Text, TextData, TextProps
+from .shape.title import Title
 
 if TYPE_CHECKING:
     from .presentation import PresentationBuilder

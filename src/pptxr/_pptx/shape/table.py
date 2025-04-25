@@ -8,7 +8,7 @@ from pptx.util import Pt
 
 from pptxr.types._length import Length, LiteralLength
 
-from .shape import Shape
+from . import Shape
 
 DataFrame: TypeAlias = list[list[str]]
 
