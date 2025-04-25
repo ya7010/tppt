@@ -1,5 +1,8 @@
-import unittest
+"""Tests for slide templates."""
+
 from pathlib import Path
+
+import pytest
 
 from pptxr import Presentation, SlideBuilder, SlideTemplate
 
@@ -69,99 +72,97 @@ class FeatureCardsTemplate(SlideTemplate):
         return builder
 
 
-class TestSlideTemplates(unittest.TestCase):
-    """Test slide templates functionality."""
+@pytest.fixture
+def test_output_dir():
+    """Set up test environment."""
+    test_dir = Path(__file__).parent
+    output_dir = test_dir / "output"
+    output_dir.mkdir(exist_ok=True)
+    return output_dir
 
-    def setUp(self):
-        """Set up test environment."""
-        self.test_dir = Path(__file__).parent
-        self.output_dir = self.test_dir / "output"
-        self.output_dir.mkdir(exist_ok=True)
 
-    def test_two_column_template(self):
-        """Test TwoColumnTemplate."""
-        presentation = (
-            Presentation.builder()
-            .slide(
-                TwoColumnSlideTemplate(
-                    title="Two Column Title",
-                    left_content="Left Content",
-                    right_content="Right Content",
-                ).builder()
-            )
-            .build()
+def test_two_column_template(test_output_dir):
+    """Test TwoColumnTemplate."""
+    presentation = (
+        Presentation.builder()
+        .slide(
+            TwoColumnSlideTemplate(
+                title="Two Column Title",
+                left_content="Left Content",
+                right_content="Right Content",
+            ).builder()
         )
+        .build()
+    )
 
-        # スライドが作成されたことを確認
-        self.assertEqual(len(presentation.slides), 1)
-        slide = presentation.slides[0]
+    # スライドが作成されたことを確認
+    assert len(presentation.slides) == 1
+    slide = presentation.slides[0]
 
-        # スライド内の要素が3つあることを確認（タイトル、左側、右側）
-        self.assertEqual(len(slide.elements), 3)
+    # スライド内の要素が3つあることを確認（タイトル、左側、右側）
+    assert len(slide.elements) == 3
 
-        # 出力ファイルに保存して確認（実際のファイル作成はスキップ）
-        output_path = self.output_dir / "two_column.pptx"
-        presentation.save(output_path)
-        # 実際のファイル作成機能はまだ実装されていないためスキップ
-        # self.assertTrue(output_path.exists())
+    # 出力ファイルに保存して確認（実際のファイル作成はスキップ）
+    output_path = test_output_dir / "two_column.pptx"
+    presentation.save(output_path)
+    # 実際のファイル作成機能はまだ実装されていないためスキップ
+    # assert output_path.exists()
 
-    def test_feature_cards_template(self):
-        """Test FeatureCardsTemplate."""
-        features = ["Feature 1", "Feature 2", "Feature 3", "Feature 4"]
 
-        presentation = (
-            Presentation.builder()
-            .slide(
-                FeatureCardsTemplate(
-                    title="Features",
-                    features=features,
-                ).builder()
-            )
-            .build()
+def test_feature_cards_template(test_output_dir):
+    """Test FeatureCardsTemplate."""
+    features = ["Feature 1", "Feature 2", "Feature 3", "Feature 4"]
+
+    presentation = (
+        Presentation.builder()
+        .slide(
+            FeatureCardsTemplate(
+                title="Features",
+                features=features,
+            ).builder()
         )
+        .build()
+    )
 
-        # スライドが作成されたことを確認
-        self.assertEqual(len(presentation.slides), 1)
-        slide = presentation.slides[0]
+    # スライドが作成されたことを確認
+    assert len(presentation.slides) == 1
+    slide = presentation.slides[0]
 
-        # スライド内の要素が5つあることを確認（タイトル + 4つの特徴）
-        self.assertEqual(len(slide.elements), 5)
+    # スライド内の要素が5つあることを確認（タイトル + 4つの特徴）
+    assert len(slide.elements) == 5
 
-        # 出力ファイルに保存して確認（実際のファイル作成はスキップ）
-        output_path = self.output_dir / "feature_cards.pptx"
-        presentation.save(output_path)
-        # 実際のファイル作成機能はまだ実装されていないためスキップ
-        # self.assertTrue(output_path.exists())
+    # 出力ファイルに保存して確認（実際のファイル作成はスキップ）
+    output_path = test_output_dir / "feature_cards.pptx"
+    presentation.save(output_path)
+    # 実際のファイル作成機能はまだ実装されていないためスキップ
+    # assert output_path.exists()
 
-    def test_multiple_templates_in_presentation(self):
-        """Test using multiple templates in a presentation."""
-        presentation = (
-            Presentation.builder()
-            .slide(
-                TwoColumnSlideTemplate(
-                    title="Two Column Slide",
-                    left_content="Left Content",
-                    right_content="Right Content",
-                ).builder()
-            )
-            .slide(
-                FeatureCardsTemplate(
-                    title="Features Slide",
-                    features=["Feature 1", "Feature 2"],
-                ).builder()
-            )
-            .build()
+
+def test_multiple_templates_in_presentation(test_output_dir):
+    """Test using multiple templates in a presentation."""
+    presentation = (
+        Presentation.builder()
+        .slide(
+            TwoColumnSlideTemplate(
+                title="Two Column Slide",
+                left_content="Left Content",
+                right_content="Right Content",
+            ).builder()
         )
+        .slide(
+            FeatureCardsTemplate(
+                title="Features Slide",
+                features=["Feature 1", "Feature 2"],
+            ).builder()
+        )
+        .build()
+    )
 
-        # 2つのスライドが作成されたことを確認
-        self.assertEqual(len(presentation.slides), 2)
+    # 2つのスライドが作成されたことを確認
+    assert len(presentation.slides) == 2
 
-        # 出力ファイルに保存して確認（実際のファイル作成はスキップ）
-        output_path = self.output_dir / "multiple_templates.pptx"
-        presentation.save(output_path)
-        # 実際のファイル作成機能はまだ実装されていないためスキップ
-        # self.assertTrue(output_path.exists())
-
-
-if __name__ == "__main__":
-    unittest.main()
+    # 出力ファイルに保存して確認（実際のファイル作成はスキップ）
+    output_path = test_output_dir / "multiple_templates.pptx"
+    presentation.save(output_path)
+    # 実際のファイル作成機能はまだ実装されていないためスキップ
+    # assert output_path.exists()
