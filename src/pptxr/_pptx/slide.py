@@ -10,6 +10,7 @@ from pptxr.exception import SlideLayoutIndexError
 from .converter import PptxConvertible, to_pptx_length
 from .picture import Picture, PictureData, PictureProps
 from .shape import Shape
+from .table import Table, TableData, TableProps
 from .text import Text, TextData, TextProps
 from .title import Title
 
@@ -54,7 +55,7 @@ class SlideBuilder:
         slide_layout: PptxSlideLayout | int = 0,
     ) -> None:
         self._slide_layout = slide_layout
-        self._data: list[TextData | PictureData] = []
+        self._data: list[TextData | PictureData | TableData] = []
 
     def text(self, text: str, /, **kwargs: Unpack[TextProps]) -> Self:
         self._data.append(TextData(type="text", text=text, **kwargs))
@@ -63,6 +64,12 @@ class SlideBuilder:
 
     def picture(self, path: str, /, **kwargs: Unpack[PictureProps]) -> Self:
         self._data.append(PictureData(type="picture", **kwargs))
+
+        return self
+
+    def table(self, rows: int, cols: int, **kwargs: Unpack[TableProps]) -> Self:
+        table_data: TableData = {"type": "table", "rows": rows, "cols": cols, **kwargs}  # type: ignore
+        self._data.append(table_data)
 
         return self
 
@@ -102,6 +109,18 @@ class SlideBuilder:
                         to_pptx_length(data["top"]),
                         to_pptx_length(data.get("width")),
                         to_pptx_length(data.get("height")),
+                    ),
+                    data,
+                )
+            elif data["type"] == "table":
+                Table(
+                    slide.shapes.add_table(
+                        data["rows"],
+                        data["cols"],
+                        to_pptx_length(data["left"]),
+                        to_pptx_length(data["top"]),
+                        to_pptx_length(data["width"]),
+                        to_pptx_length(data["height"]),
                     ),
                     data,
                 )
