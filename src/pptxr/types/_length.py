@@ -8,10 +8,10 @@ POINTS_PER_INCH = 72  # 1 inch = 72 points
 CM_PER_INCH = 2.54  # 1 inch = 2.54 cm
 
 LiteralPoint = tuple[int, Literal["pt"]]
-LiteralInch = tuple[float, Literal["in"]]
 LiteralCentimeter = tuple[float, Literal["cm"]]
+LiteralInch = tuple[float, Literal["in"]]
 
-LiteralLength = LiteralPoint | LiteralInch | LiteralCentimeter
+LiteralLength = LiteralPoint | LiteralCentimeter | LiteralInch
 
 
 class Inch:
