@@ -4,7 +4,7 @@ from typing import cast
 
 from pptx.shapes.base import BaseShape as PptxShapeType
 
-from pptxr._pptx.presentation import PptxConvertible
+from pptxr._pptx.types import PptxConvertible
 
 
 class Shape(PptxConvertible):
@@ -12,7 +12,7 @@ class Shape(PptxConvertible):
 
     def __init__(self, pptx_shape: PptxShapeType) -> None:
         """Initialize shape."""
-        self._pptx = pptx_shape
+        self._pptx: PptxShapeType = pptx_shape
 
     def get_text(self) -> str:
         """Get shape text."""

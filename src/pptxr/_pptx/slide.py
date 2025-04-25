@@ -5,9 +5,9 @@ from typing import cast
 from pptx.slide import Slide as PptxSlideType
 
 from pptxr._pptx.converters import to_pptx_length, to_pptx_shape_type
-from pptxr._pptx.presentation import PptxConvertible
 from pptxr._pptx.shape import Shape
-from pptxr.types import Length, LiteralLength
+from pptxr._pptx.types import PptxConvertible
+from pptxr.types import Length, LiteralLength, ShapeType
 
 
 class Slide(PptxConvertible):
@@ -15,7 +15,7 @@ class Slide(PptxConvertible):
 
     def __init__(self, pptx_slide: PptxSlideType) -> None:
         """Initialize slide."""
-        self._pptx = pptx_slide
+        self._pptx: PptxSlideType = pptx_slide
 
     def get_shapes(self) -> list[Shape]:
         """Get all shapes in the slide."""
@@ -23,7 +23,7 @@ class Slide(PptxConvertible):
 
     def add_shape(
         self,
-        shape_type: str,
+        shape_type: ShapeType,
         left: Length | LiteralLength,
         top: Length | LiteralLength,
         width: Length | LiteralLength,

@@ -16,15 +16,8 @@ FilePath = str | pathlib.Path
 
 
 def pt(value: int | float) -> LiteralLength:
-    """Create a point length.
-
-    Args:
-        value: The value in points.
-
-    Returns:
-        A point length.
-    """
-    return (float(value), "pt")
+    """Create a point length."""
+    return (int(value), "pt")
 
 
 __all__ = [
