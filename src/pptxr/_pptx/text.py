@@ -1,24 +1,34 @@
-from typing import NotRequired, Self, TypedDict
+from typing import Self, TypedDict
 
 from pptx.shapes.autoshape import Shape as PptxShape
 
-from pptxr._pptx.types import PptxConvertible
-from pptxr.types._color import Color
 from pptxr.types._length import Length, LiteralLength
+
+from .converter import PptxConvertible
 
 
 class TextProps(TypedDict):
     """Text properties."""
 
-    font_size: NotRequired[Length | LiteralLength]
-    font_color: NotRequired[Color]
-    font_name: NotRequired[str]
+    left: Length | LiteralLength
+    top: Length | LiteralLength
+    width: Length | LiteralLength
+    height: Length | LiteralLength
+
+
+class TextData(TextProps):
+    """Text data."""
+
+    contents: str
 
 
 class Text(PptxConvertible[PptxShape]):
     """Text data class."""
 
-    def __init__(self, pptx_obj: PptxShape) -> None:
+    def __init__(self, pptx_obj: PptxShape, data: TextData | None = None, /) -> None:
+        if data:
+            pptx_obj.text = data["contents"]
+
         self._pptx = pptx_obj
 
     def to_pptx(self) -> PptxShape:

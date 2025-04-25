@@ -2,7 +2,7 @@ from typing import Self
 
 from pptx.slide import SlideLayout as PptxSlideLayout
 
-from pptxr._pptx.types import PptxConvertible
+from pptxr._pptx.converter import PptxConvertible
 
 
 class SlideLayout(PptxConvertible[PptxSlideLayout]):

@@ -2,7 +2,7 @@ from typing import Self
 
 from pptx.shapes.autoshape import Shape as PptxShape
 
-from pptxr._pptx.types import PptxConvertible
+from pptxr._pptx.converter import PptxConvertible
 
 
 class Title(PptxConvertible[PptxShape]):

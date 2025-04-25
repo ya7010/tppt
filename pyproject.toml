@@ -40,7 +40,7 @@ typecheck = "task typecheck-pyright"
 test = "pytest"
 
 [tool.pyright]
-include = ["src/pptxr", "tests"]
+include = ["src/pptxr", "examples", "tests"]
 exclude = ["src/pptxr/_pptx/**", "**/site-packages", ".venv/**"]
 
 [tool.mypy]

@@ -1,21 +1,25 @@
 """Presentation wrapper implementation."""
 
 import os
-from typing import IO, Self
+from typing import IO, Generic, Self
 
 from pptx.presentation import Presentation as PptxPresentation
 
+from pptxr._pptxr.slide_master import GenericPptxrSlideMaster
 from pptxr.types import FilePath
 
+from .converter import PptxConvertible
 from .slide import SlideBuilder
 from .slide_master import SlideMaster
-from .types import PptxConvertible
 
 
 class Presentation(PptxConvertible[PptxPresentation]):
     """Presentation wrapper with type safety."""
 
-    def __init__(self, presentation: PptxPresentation) -> None:
+    def __init__(
+        self,
+        presentation: PptxPresentation,
+    ) -> None:
         """Initialize presentation."""
         self._pptx = presentation
 
@@ -29,9 +33,11 @@ class Presentation(PptxConvertible[PptxPresentation]):
         return SlideMaster.from_pptx(self._pptx.slide_masters[0])
 
     @classmethod
-    def builder(cls) -> "PresentationBuilder":
+    def builder(
+        cls, slide_master: GenericPptxrSlideMaster | None = None
+    ) -> "PresentationBuilder[GenericPptxrSlideMaster]":
         """Get a builder for the presentation."""
-        return PresentationBuilder()
+        return PresentationBuilder(slide_master)
 
     def save(self, file: FilePath | IO[bytes]) -> None:
         """Save presentation to file."""
@@ -49,19 +55,20 @@ class Presentation(PptxConvertible[PptxPresentation]):
         return cls(pptx_obj)
 
 
-class PresentationBuilder:
+class PresentationBuilder(Generic[GenericPptxrSlideMaster]):
     """Builder for presentations."""
 
-    def __init__(self) -> None:
+    def __init__(self, slide_master: GenericPptxrSlideMaster | None = None) -> None:
         """Initialize the builder."""
         import pptx
 
         self._pptx = pptx.Presentation()
+        self._slide_master = slide_master
 
     def slide(self, slide: SlideBuilder, /) -> Self:
         """Add a slide to the presentation."""
 
-        slide._build(self._pptx)
+        slide._build(self)
 
         return self
 

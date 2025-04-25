@@ -262,15 +262,3 @@ def to_point(length: Length | LiteralLength) -> Point:
             return Point(int(length.value / CM_PER_INCH * POINTS_PER_INCH))
         case _:
             assert_never(length)
-
-
-def to_points(length: Length | LiteralLength) -> float:
-    """Convert any length to points.
-
-    Args:
-        length: The length to convert.
-
-    Returns:
-        The length in points.
-    """
-    return float(to_point(length).value)

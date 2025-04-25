@@ -4,7 +4,7 @@ from typing import Self, cast
 
 from pptx.shapes.base import BaseShape as PptxShape
 
-from pptxr._pptx.types import PptxConvertible
+from pptxr._pptx.converter import PptxConvertible
 
 
 class Shape(PptxConvertible[PptxShape]):
@@ -29,6 +29,4 @@ class Shape(PptxConvertible[PptxShape]):
     @classmethod
     def from_pptx(cls, pptx_obj: PptxShape) -> Self:
         """Create from pptx shape."""
-        if not isinstance(pptx_obj, PptxShape):
-            raise TypeError(f"Expected PptxShape, got {type(pptx_obj)}")
         return cls(pptx_obj)

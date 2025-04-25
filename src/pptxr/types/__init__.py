@@ -12,7 +12,6 @@ from ._length import (
     Point,
     to_length,
     to_point,
-    to_points,
 )
 
 FilePath = str | pathlib.Path
@@ -47,6 +46,5 @@ __all__ = [
     "pt",
     "to_length",
     "to_point",
-    "to_points",
     "SlideLayoutType",
 ]

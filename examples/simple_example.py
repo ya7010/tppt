@@ -1,32 +1,23 @@
 """Simple example of using pptxr."""
 
-from pptxr import Presentation, SlideBuilder, SlideMaster, SlideTemplate
-
-
-class MySlideTemplate(SlideTemplate):
-    """Custom slide template."""
-
-    pass
-
-
-class MyTitleSlide(MySlideTemplate):
-    """Custom title slide."""
-
-    pass
+from pptxr import Presentation, SlideBuilder
 
 
 def main():
     """Run the example."""
     # Create a slide master
-    sm = SlideMaster(template_class=MySlideTemplate)
 
     # Create a presentation using the builder pattern
     presentation = (
-        Presentation.builder(sm)
+        Presentation.builder()
         .slide(
-            SlideBuilder()
-            .text("Hello, world!", x=(100, "pt"), y=(100, "pt"))
-            .image(path="examples/example.png", width=(100, "pt"), height=(100, "pt"))
+            SlideBuilder().text(
+                "Hello, world!",
+                left=(100, "pt"),
+                top=(100, "pt"),
+                width=(100, "pt"),
+                height=(100, "pt"),
+            )
         )
         .build()
     )

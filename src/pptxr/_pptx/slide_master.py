@@ -2,7 +2,7 @@ from typing import Self
 
 from pptx.slide import SlideMaster as PptxSlideMaster
 
-from pptxr._pptx.types import PptxConvertible
+from pptxr._pptx.converter import PptxConvertible
 
 from .slide_layout import SlideLayout
 
