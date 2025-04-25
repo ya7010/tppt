@@ -1,16 +1,24 @@
 """Table wrapper implementation."""
 
-from typing import Literal, NotRequired, Self, TypeAlias, TypedDict
+from typing import Literal, NotRequired, Self, TypeAlias, TypedDict, cast
 
 from pptx.enum.text import MSO_VERTICAL_ANCHOR, PP_ALIGN
 from pptx.shapes.graphfrm import GraphicFrame
 
+from pptxr._features import (
+    USE_PANDAS,
+    USE_POLARS,
+    PandasDataFrame,
+    PolarsDataFrame,
+    PolarsLazyFrame,
+)
 from pptxr.types._length import Length, LiteralLength, LiteralPoint, Point
 
 from ..converter import to_pptx_length
 from . import Shape
 
-DataFrame: TypeAlias = list[list[str]]
+# Define DataFrame type alias
+DataFrame: TypeAlias = list[list[str]] | PandasDataFrame | PolarsDataFrame
 
 
 class TableCellStyle(TypedDict):
@@ -65,12 +73,28 @@ class Table(Shape[GraphicFrame]):
 
         # Apply table data if provided
         if "data" in props:
-            table_data = props["data"]
+            data = props["data"]
+
+            # Convert different DataFrame types to list of lists
+            if USE_POLARS and issubclass(
+                data.__class__, (PolarsDataFrame, PolarsLazyFrame)
+            ):
+                # Convert pandas DataFrame to list of lists
+                data = cast(PandasDataFrame, data)
+                table_data = [data.columns.tolist()] + data.values.tolist()
+            elif USE_PANDAS and issubclass(data.__class__, PandasDataFrame):  # type: ignore
+                # Convert polars DataFrame to list of lists
+                data = cast(PandasDataFrame, data)
+                table_data = [data.columns] + data.to_numpy().tolist()
+            else:
+                table_data = data
+
+            # Now apply the data to the table
             for i, row in enumerate(table_data):
                 if i < len(table.rows):
                     for j, cell_text in enumerate(row):
                         if j < len(table.columns):
-                            table.cell(i, j).text = cell_text
+                            table.cell(i, j).text = str(cell_text)
 
         # Apply cell styles if provided
         if "cell_styles" in props:

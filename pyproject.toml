@@ -11,7 +11,15 @@ dependencies = [
   "typing-extensions>=4.13.2",
 ]
 
+[project.optional-dependencies]
+pandas = ["pandas>=2.0.0"]
+polars = ["polars>=0.20.0"]
+
 [dependency-groups]
+dataframes = [
+  "pandas",
+  "polars",
+]
 dev = [
   "mypy>=1.15.0",
   "pyright>=1.1.399",

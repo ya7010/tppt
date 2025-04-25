@@ -1,0 +1,35 @@
+from typing import TypeVar
+
+from typing_extensions import TypeAlias
+
+T = TypeVar("T")
+
+
+class _NotSupportFeature:
+    pass
+
+
+try:
+    import pandas  # type: ignore[import]  # noqa: F401
+
+    USE_PANDAS = True
+    PandasDataFrame: TypeAlias = pandas.DataFrame  # type: ignore
+
+
+except ImportError:
+    USE_PANDAS = False
+    PandasDataFrame: TypeAlias = _NotSupportFeature  # type: ignore
+
+
+try:
+    import polars  # type: ignore[import]  # noqa: F401
+
+    USE_POLARS = True
+    PolarsDataFrame: TypeAlias = polars.DataFrame  # type: ignore
+    PolarsLazyFrame: TypeAlias = polars.LazyFrame  # type: ignore
+
+
+except ImportError:
+    USE_POLARS = False
+    PolarsDataFrame: TypeAlias = _NotSupportFeature  # type: ignore
+    PolarsLazyFrame: TypeAlias = _NotSupportFeature  # type: ignore
