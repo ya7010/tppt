@@ -11,11 +11,8 @@ from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 from pptx.shapes.base import BaseShape as PptxShape
 from pptx.slide import Slide as PptxSlide
 
-from pptxr.types import FilePath, PresentationFactory
-from pptxr.types import Presentation as AbstractPresentation
-from pptxr.types import Shape as AbstractShape
-from pptxr.types import Slide as AbstractSlide
-from pptxr.units import Centimeter, Inch, Length, LiteralLength, Point, to_length
+from pptxr.types import FilePath, Length, LiteralLength
+from pptxr.types.length import Centimeter, Inch, Point, to_length
 
 from .types import PptxConvertible
 

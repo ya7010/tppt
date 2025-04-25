@@ -1,10 +1,15 @@
 """Types module for pptxr."""
 
+import pathlib
+
 from .color import Color
-from .length import Length, Unit
+from .length import Length, LiteralLength
+
+FilePath = str | pathlib.Path
 
 __all__ = [
-    "Length",
-    "Unit",
     "Color",
+    "FilePath",
+    "Length",
+    "LiteralLength",
 ]

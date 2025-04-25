@@ -2,28 +2,28 @@
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional, Tuple, TypedDict, Union
+from typing import List, NotRequired, Optional, Tuple, TypedDict, Union
 
-from .types import Color, Length
+from pptxr.types import Color, Length, LiteralLength
 
 
-class TextParams(TypedDict, total=False):
+class TextParams(TypedDict):
     """Parameters for a text element."""
 
-    x: Union[Length, Tuple[float, str]]
-    y: Union[Length, Tuple[float, str]]
-    width: Union[Length, Tuple[float, str]]
-    height: Union[Length, Tuple[float, str]]
-    color: Union[Color, str, Tuple[int, int, int]]
+    x: Length | LiteralLength
+    y: Length | LiteralLength
+    width: NotRequired[Length | LiteralLength]
+    height: NotRequired[Length | LiteralLength]
+    color: NotRequired[Color]
 
 
-class ImageParams(TypedDict, total=False):
+class ImageParams(TypedDict):
     """Parameters for an image element."""
 
-    x: Union[Length, Tuple[float, str]]
-    y: Union[Length, Tuple[float, str]]
-    width: Union[Length, Tuple[float, str]]
-    height: Union[Length, Tuple[float, str]]
+    x: Length | LiteralLength
+    y: Length | LiteralLength
+    width: NotRequired[Length | LiteralLength]
+    height: NotRequired[Length | LiteralLength]
 
 
 @dataclass
@@ -31,11 +31,11 @@ class Text:
     """Represents a text element for a slide."""
 
     text: str
-    x: Optional[Union[Length, Tuple[float, str]]] = None
-    y: Optional[Union[Length, Tuple[float, str]]] = None
-    width: Optional[Union[Length, Tuple[float, str]]] = None
-    height: Optional[Union[Length, Tuple[float, str]]] = None
-    color: Optional[Union[Color, str, Tuple[int, int, int]]] = None
+    x: Length
+    y: Length
+    width: Length | None = None
+    height: Length | None = None
+    color: Color | None = None
 
 
 @dataclass
