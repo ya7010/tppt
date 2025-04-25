@@ -4,14 +4,14 @@ from pathlib import Path
 from typing import IO, Union, cast
 
 from pptx import Presentation as PptxPresentation
-from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 from pptx.shapes.autoshape import Shape as PptxShape
 from pptx.shapes.base import BaseShape
 from pptx.slide import Slide as PptxSlide
 from pptx.util import Pt
 
 from ._data import Presentation, Shape, Slide
-from .types import LiteralLength, to_points
+from ._pptx.converters import to_pptx_shape_type
+from .types import LiteralLength, ShapeType, to_points
 
 
 class PptxShapeWrapper:
@@ -39,7 +39,7 @@ class PptxSlideWrapper:
 
     def add_shape(
         self,
-        type: MSO_AUTO_SHAPE_TYPE,
+        shape_type: ShapeType,
         left: LiteralLength,
         top: LiteralLength,
         width: LiteralLength,
@@ -47,7 +47,7 @@ class PptxSlideWrapper:
     ) -> PptxShapeWrapper:
         """Add a shape to the slide."""
         shape = self._slide.shapes.add_shape(
-            type,
+            to_pptx_shape_type(shape_type),
             Pt(to_points(left)),
             Pt(to_points(top)),
             Pt(to_points(width)),
@@ -74,7 +74,7 @@ class PptxPresentationWrapper:
     def _add_shape(self, pptx_slide: PptxSlide, shape: Shape) -> None:
         """Add a shape to a slide."""
         pptx_shape = pptx_slide.shapes.add_shape(
-            shape.type,
+            to_pptx_shape_type(shape.type),
             Pt(to_points(shape.left)),
             Pt(to_points(shape.top)),
             Pt(to_points(shape.width)),

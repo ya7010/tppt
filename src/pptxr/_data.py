@@ -4,9 +4,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import IO, Any, List, Optional, Union
 
-from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
-
-from .types import LiteralLength
+from .types import LiteralLength, ShapeType
 
 
 @dataclass
@@ -32,7 +30,7 @@ class Image:
 class Shape:
     """Shape data class."""
 
-    type: MSO_AUTO_SHAPE_TYPE
+    type: ShapeType
     left: LiteralLength
     top: LiteralLength
     width: LiteralLength

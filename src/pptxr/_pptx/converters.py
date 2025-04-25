@@ -6,7 +6,7 @@ import pptx
 import pptx.util
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 
-from pptxr.types import Length, LiteralLength
+from pptxr.types import Length, LiteralLength, ShapeType
 from pptxr.types.length import Centimeter, Inch, Point, to_length
 
 # pyright: ignore
@@ -28,9 +28,9 @@ def to_pptx_length(length: Length | LiteralLength) -> pptx.util.Length:
             assert_never(length)
 
 
-def to_pptx_shape_type(shape_type: str) -> MSO_AUTO_SHAPE_TYPE:
-    """Convert shape type string to MSO_AUTO_SHAPE_TYPE."""
+def to_pptx_shape_type(shape_type: ShapeType) -> MSO_AUTO_SHAPE_TYPE:
+    """Convert pptxr ShapeType to MSO_AUTO_SHAPE_TYPE."""
     try:
-        return getattr(MSO_AUTO_SHAPE_TYPE, shape_type)
+        return getattr(MSO_AUTO_SHAPE_TYPE, shape_type.value)
     except AttributeError:
         raise ValueError(f"Invalid shape type: {shape_type}")

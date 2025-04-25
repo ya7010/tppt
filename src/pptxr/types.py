@@ -1,8 +1,10 @@
 """Type definitions for pptxr."""
 
+from enum import StrEnum
 from pathlib import Path
 from typing import Literal, Tuple, TypeAlias, Union
 
+from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 from pptx.util import Cm, Inches, Pt
 
 FilePath: TypeAlias = str | Path
@@ -21,6 +23,12 @@ Point = Tuple[float, float]
 
 # Color type
 Color = Tuple[int, int, int]
+
+# Custom string enum for shape types, populated from MSO_AUTO_SHAPE_TYPE member names as values.
+ShapeType = StrEnum(
+    "ShapeType",
+    {name: name for name in MSO_AUTO_SHAPE_TYPE.__members__},
+)
 
 
 # Convert length to points
@@ -93,4 +101,5 @@ __all__ = [
     "pt",
     "inch",
     "cm",
+    "ShapeType",
 ]
