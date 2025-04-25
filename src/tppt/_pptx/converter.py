@@ -2,10 +2,13 @@
 
 from typing import Protocol, Self, TypeVar, assert_never, overload, runtime_checkable
 
+from pptx.dml.color import RGBColor as PptxRGBColor
 from pptx.util import Cm as PptxCm
 from pptx.util import Inches as PptxInches
 from pptx.util import Length as PptxLength
 from pptx.util import Pt as PptxPt
+
+from tppt.types._color import Color
 from tppt.types._length import (
     Centimeter,
     Inch,
@@ -55,3 +58,7 @@ def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None:
             return None
         case _:
             assert_never(length)
+
+
+def to_pptx_color(color: Color) -> PptxRGBColor:
+    return PptxRGBColor(color.r, color.g, color.b)

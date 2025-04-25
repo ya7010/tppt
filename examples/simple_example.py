@@ -21,6 +21,9 @@ def main():
                 top=(50, "pt"),
                 width=(400, "pt"),
                 height=(50, "pt"),
+                size=(60, "pt"),
+                bold=True,
+                italic=True,
             )
             .text(
                 "Example of using tppt library",  # Subtitle

@@ -1,6 +1,7 @@
 """Color types for tppt."""
 
 from pptx.dml.color import RGBColor
+
 from tppt.exception import ColorInvalidFormatError
 
 
@@ -31,21 +32,10 @@ class Color:
 
         else:
             r, g, b = value
-            self.value = RGBColor(r, g, b)
-
-    @property
-    def is_rgb(self) -> bool:
-        """Check if the color is defined as RGB."""
-        return isinstance(self.value, tuple)
-
-    @property
-    def is_named(self) -> bool:
-        """Check if the color is defined as a named color."""
-        return isinstance(self.value, str)
+            self.r = r
+            self.g = g
+            self.b = b
 
     def __repr__(self) -> str:
         """Return string representation."""
-        if self.is_rgb:
-            r, g, b = self.value
-            return "Color())"
-        return f"Color({self.value})"
+        return f"Color({self.r}, {self.g}, {self.b})"

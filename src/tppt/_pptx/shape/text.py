@@ -1,6 +1,10 @@
-from typing import Literal, Self, TypedDict
+from typing import Literal, NotRequired, Self, TypedDict
 
+from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 from pptx.shapes.autoshape import Shape as PptxShape
+
+from tppt._pptx.converter import to_pptx_color, to_pptx_length
+from tppt.types._color import Color
 from tppt.types._length import Length, LiteralLength
 
 from . import Shape
@@ -13,6 +17,17 @@ class TextProps(TypedDict):
     top: Length | LiteralLength
     width: Length | LiteralLength
     height: Length | LiteralLength
+    size: NotRequired[Length | LiteralLength]
+    bold: NotRequired[bool]
+    italic: NotRequired[bool]
+    color: NotRequired[Color]
+    margin_bottom: NotRequired[Length | LiteralLength]
+    margin_left: NotRequired[Length | LiteralLength]
+    vertical_anchor: NotRequired[MSO_ANCHOR]
+    word_wrap: NotRequired[bool]
+    auto_size: NotRequired[MSO_AUTO_SIZE]
+    alignment: NotRequired[PP_ALIGN]
+    level: NotRequired[int]
 
 
 class TextData(TextProps):
@@ -28,7 +43,33 @@ class Text(Shape[PptxShape]):
 
     def __init__(self, pptx_obj: PptxShape, data: TextData | None = None, /) -> None:
         if data:
-            pptx_obj.text = data["text"]
+            text_frame = pptx_obj.text_frame
+            p = text_frame.paragraphs[0]
+            run = p.add_run()
+            run.text = data["text"]
+            font = run.font
+            if size := data.get("size"):
+                font.size = to_pptx_length(size)
+            if (bold := data.get("bold")) is not None:
+                font.bold = bold
+            if (italic := data.get("italic")) is not None:
+                font.italic = italic
+            if (color := data.get("color")) is not None:
+                font.color.rgb = to_pptx_color(color)
+            if (margin_bottom := data.get("margin_bottom")) is not None:
+                p.space_after = to_pptx_length(margin_bottom)
+            if (margin_left := data.get("margin_left")) is not None:
+                p.space_before = to_pptx_length(margin_left)
+            if (vertical_anchor := data.get("vertical_anchor")) is not None:
+                text_frame.vertical_anchor = vertical_anchor
+            if (word_wrap := data.get("word_wrap")) is not None:
+                text_frame.word_wrap = word_wrap
+            if (auto_size := data.get("auto_size")) is not None:
+                text_frame.auto_size = auto_size
+            if (alignment := data.get("alignment")) is not None:
+                p.alignment = alignment
+            if (level := data.get("level")) is not None:
+                p.level = level
 
         self._pptx = pptx_obj
 
