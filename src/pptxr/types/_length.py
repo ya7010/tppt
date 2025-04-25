@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+"""Length types for pptxr."""
+
 from typing import Literal, assert_never
 
 # Constants for unit conversion
@@ -14,11 +15,11 @@ LiteralLength = (
 )
 
 
-@dataclass
 class Inch:
     """Class representing inches"""
 
-    value: float
+    def __init__(self, value: float):
+        self.value = value
 
     def __add__(self, other: "Length | LiteralLength") -> "Inch":
         if isinstance(other, tuple):
@@ -54,11 +55,11 @@ class Inch:
         return self.value == other.value
 
 
-@dataclass
 class Point:
     """Class representing points"""
 
-    value: int
+    def __init__(self, value: int):
+        self.value = value
 
     def __add__(self, other: "Length | LiteralLength") -> "Point":
         if isinstance(other, tuple):
@@ -94,11 +95,11 @@ class Point:
         return self.value == other.value
 
 
-@dataclass
 class Centimeter:
     """Class representing centimeters"""
 
-    value: float
+    def __init__(self, value: float):
+        self.value = value
 
     def __add__(self, other: "Length | LiteralLength") -> "Centimeter":
         if isinstance(other, tuple):
@@ -261,3 +262,15 @@ def to_point(length: Length | LiteralLength) -> Point:
             return Point(int(length.value / CM_PER_INCH * POINTS_PER_INCH))
         case _:
             assert_never(length)
+
+
+def to_points(length: Length | LiteralLength) -> float:
+    """Convert any length to points.
+
+    Args:
+        length: The length to convert.
+
+    Returns:
+        The length in points.
+    """
+    return float(to_point(length).value)

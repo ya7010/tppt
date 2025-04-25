@@ -1,9 +1,3 @@
-"""Builder pattern implementations for pptxr."""
+"""Builder module for pptxr."""
 
-from .presentation import PresentationBuilder
-from .slide import SlideBuilder
-
-__all__ = [
-    "PresentationBuilder",
-    "SlideBuilder",
-]
+__all__ = []

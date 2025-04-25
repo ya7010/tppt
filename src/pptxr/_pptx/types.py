@@ -1,31 +1,19 @@
-"""Type definitions for pptx conversion layer."""
+"""Type definitions for pptx wrapper."""
 
-from typing import Any, Protocol, TypeVar
+from typing import Protocol, Self, TypeVar, runtime_checkable
 
-# pyright: ignore
-# type: ignore
+PT = TypeVar("PT")
 
 
-class PptxConvertible(Protocol):
+@runtime_checkable
+class PptxConvertible(Protocol[PT]):
     """Protocol for objects that can be converted to and from pptx objects."""
 
-    def to_pptx(self) -> Any:
+    def to_pptx(self) -> PT:
         """Convert to pptx object."""
         ...
 
     @classmethod
-    def from_pptx(cls, pptx_obj: Any) -> "PptxConvertible":
+    def from_pptx(cls, pptx_obj: PT) -> Self:
         """Create from pptx object."""
         ...
-
-
-T = TypeVar("T", bound=PptxConvertible)
-
-
-class PptxConverter:
-    """Utility class for converting pptx objects."""
-
-    @staticmethod
-    def to_pptx(obj: PptxConvertible) -> Any:
-        """Convert object to pptx format."""
-        return obj.to_pptx()
