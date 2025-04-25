@@ -11,29 +11,71 @@ pip install tppt
 ## 使用例
 
 ```python
-from tppt import Presentation, SlideTemplate, SlideMaster, SlideBuilder
-
-
-class MySlideTemplate(SlideTemplate):
-    """Custom slide template."""
-    pass
-
-
-class MyTitleSlide(MySlideTemplate):
-    """Custom title slide."""
-    pass
-
-
-# スライドマスターを作成
-sm = SlideMaster(template_class=MySlideTemplate)
+from pathlib import Path
+import tppt
+from tppt.types import Color
 
 # ビルダーパターンを使用してプレゼンテーションを作成
 presentation = (
-    Presentation.builder(sm)
+    tppt.Presentation.builder()
     .slide(
-        SlideBuilder()
-        .text("Hello, world!", x=(100, "pt"), y=(100, "pt"))
-        .image(path="image.png", width=(100, "pt"), height=(100, "pt"))
+        tppt.SlideBuilder()
+        .text(
+            "Amazing Presentation",
+            left=(50, "pt"),
+            top=(50, "pt"),
+            width=(400, "pt"),
+            height=(50, "pt"),
+            size=(60, "pt"),
+            bold=True,
+            italic=True,
+            color=Color("#0000FF"),
+        )
+        .text(
+            "Example of using tppt library",
+            left=(50, "pt"),
+            top=(120, "pt"),
+            width=(400, "pt"),
+            height=(30, "pt"),
+        )
+    )
+    .slide(
+        tppt.SlideBuilder()
+        .text(
+            "画像の例",
+            left=(50, "pt"),
+            top=(50, "pt"),
+            width=(300, "pt"),
+            height=(40, "pt"),
+        )
+        .picture(
+            "image.png",
+            left=(50, "pt"),
+            top=(100, "pt"),
+            width=(300, "pt"),
+            height=(80, "pt"),
+        )
+    )
+    .slide(
+        tppt.SlideBuilder()
+        .text(
+            "表の例",
+            left=(50, "pt"),
+            top=(50, "pt"),
+            width=(300, "pt"),
+            height=(40, "pt"),
+        )
+        .table(
+            [
+                ["製品", "価格", "在庫"],
+                ["製品A", "¥1,000", "10個"],
+                ["製品B", "¥2,500", "5個"],
+            ],
+            left=(50, "pt"),
+            top=(100, "pt"),
+            width=(400, "pt"),
+            height=(200, "pt"),
+        )
     )
     .build()
 )
@@ -46,7 +88,9 @@ presentation.save("output.pptx")
 
 - 型安全なインターフェース
 - ビルダーパターンによる直感的なAPI
-- カスタムスライドテンプレートのサポート
+- テキスト、画像、表などの要素を簡単に配置
+- 位置やサイズの細かな調整が可能
+- テキストのスタイル（サイズ、太字、斜体、色）のカスタマイズ
 
 ## アーキテクチャ
 
