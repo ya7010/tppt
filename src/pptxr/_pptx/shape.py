@@ -1,32 +1,26 @@
 """Shape wrapper implementation."""
 
-from typing import Self, cast
+from typing import Self
 
-from pptx.shapes.base import BaseShape as PptxShape
+from pptx.shapes.base import BaseShape as PptxBaseShape
+from typing_extensions import TypeVar
 
 from pptxr._pptx.converter import PptxConvertible
 
+GenericPptxShape = TypeVar(
+    "GenericPptxShape",
+    bound=PptxBaseShape,
+    default=PptxBaseShape,
+)
 
-class Shape(PptxConvertible[PptxShape]):
-    """Shape wrapper with type safety."""
 
-    def __init__(self, pptx_shape: PptxShape) -> None:
-        """Initialize shape."""
-        self._pptx: PptxShape = pptx_shape
+class Shape(PptxConvertible[GenericPptxShape]):
+    def __init__(self, pptx_shape: GenericPptxShape) -> None:
+        self._pptx: GenericPptxShape = pptx_shape
 
-    def get_text(self) -> str:
-        """Get shape text."""
-        return self._pptx.text  # type: ignore
-
-    def set_text(self, text: str) -> None:
-        """Set shape text."""
-        self._pptx.text = text  # type: ignore
-
-    def to_pptx(self) -> PptxShape:
-        """Convert to pptx shape."""
-        return cast(PptxShape, self._pptx)
+    def to_pptx(self) -> GenericPptxShape:
+        return self._pptx
 
     @classmethod
-    def from_pptx(cls, pptx_obj: PptxShape) -> Self:
-        """Create from pptx shape."""
+    def from_pptx(cls, pptx_obj: GenericPptxShape) -> Self:
         return cls(pptx_obj)

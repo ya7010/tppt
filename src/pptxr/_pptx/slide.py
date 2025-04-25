@@ -1,6 +1,6 @@
 """Slide wrapper implementation."""
 
-from typing import TYPE_CHECKING, Self, Unpack, assert_never, cast
+from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack, cast
 
 from pptx.slide import Slide as PptxSlide
 from pptx.slide import SlideLayout as PptxSlideLayout
@@ -10,7 +10,7 @@ from pptxr.exception import SlideLayoutIndexError
 from .converter import PptxConvertible, to_pptx_length
 from .picture import Picture, PictureData, PictureProps
 from .shape import Shape
-from .table import Table, TableData, TableProps
+from .table import DataFrame, Table, TableOptions, TableProps
 from .text import Text, TextData, TextProps
 from .title import Title
 
@@ -55,22 +55,62 @@ class SlideBuilder:
         slide_layout: PptxSlideLayout | int = 0,
     ) -> None:
         self._slide_layout = slide_layout
-        self._data: list[TextData | PictureData | TableData] = []
+        self._shape_registry: list[Callable[[PptxSlide], Shape[Any]]] = []
 
     def text(self, text: str, /, **kwargs: Unpack[TextProps]) -> Self:
-        self._data.append(TextData(type="text", text=text, **kwargs))
+        data = TextData(type="text", text=text, **kwargs)
+
+        self._shape_registry.append(
+            lambda slide: Text(
+                slide.shapes.add_textbox(
+                    to_pptx_length(data["left"]),
+                    to_pptx_length(data["top"]),
+                    to_pptx_length(data["width"]),
+                    to_pptx_length(data["height"]),
+                ),
+                data,
+            )
+        )
 
         return self
 
-    def picture(self, path: str, /, **kwargs: Unpack[PictureProps]) -> Self:
-        self._data.append(PictureData(type="picture", **kwargs))
+    def picture(
+        self, image_file: str | IO[bytes], /, **kwargs: Unpack[PictureProps]
+    ) -> Self:
+        data = PictureData(type="picture", image_file=image_file, **kwargs)
+
+        self._shape_registry.append(
+            lambda slide: Picture(
+                slide.shapes.add_picture(
+                    data["image_file"],
+                    to_pptx_length(data["left"]),
+                    to_pptx_length(data["top"]),
+                    to_pptx_length(data.get("width")),
+                    to_pptx_length(data.get("height")),
+                ),
+                data,
+            )
+        )
 
         return self
 
-    def table(self, rows: int, cols: int, **kwargs: Unpack[TableProps]) -> Self:
-        table_data: TableData = {"type": "table", "rows": rows, "cols": cols, **kwargs}  # type: ignore
-        self._data.append(table_data)
+    def table(self, data: DataFrame, /, **kwargs: Unpack[TableOptions]) -> Self:
+        rows, cols = len(data), len(data[0])
+        props: TableProps = {"type": "table", "data": data, **kwargs}
 
+        self._shape_registry.append(
+            lambda slide: Table(
+                slide.shapes.add_table(
+                    rows,
+                    cols,
+                    to_pptx_length(props["left"]),
+                    to_pptx_length(props["top"]),
+                    to_pptx_length(props["width"]),
+                    to_pptx_length(props["height"]),
+                ),
+                props,
+            )
+        )
         return self
 
     def _build(
@@ -90,41 +130,7 @@ class SlideBuilder:
 
         slide = builder._pptx.slides.add_slide(slide_layout)
 
-        for data in self._data:
-            if data["type"] == "text":
-                Text(
-                    slide.shapes.add_textbox(
-                        to_pptx_length(data["left"]),
-                        to_pptx_length(data["top"]),
-                        to_pptx_length(data["width"]),
-                        to_pptx_length(data["height"]),
-                    ),
-                    data,
-                )
-            elif data["type"] == "picture":
-                Picture(
-                    slide.shapes.add_picture(
-                        data["image_file"],
-                        to_pptx_length(data["left"]),
-                        to_pptx_length(data["top"]),
-                        to_pptx_length(data.get("width")),
-                        to_pptx_length(data.get("height")),
-                    ),
-                    data,
-                )
-            elif data["type"] == "table":
-                Table(
-                    slide.shapes.add_table(
-                        data["rows"],
-                        data["cols"],
-                        to_pptx_length(data["left"]),
-                        to_pptx_length(data["top"]),
-                        to_pptx_length(data["width"]),
-                        to_pptx_length(data["height"]),
-                    ),
-                    data,
-                )
-            else:
-                assert_never(data)
+        for register in self._shape_registry:
+            register(slide)
 
         return Slide(slide)

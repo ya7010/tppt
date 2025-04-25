@@ -5,6 +5,8 @@ from typing import Literal, TypeAlias
 
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 
+from pptxr._pptx.table import TableCellStyle
+
 from ._color import Color
 from ._length import (
     Length,
@@ -47,4 +49,5 @@ __all__ = [
     "to_length",
     "to_point",
     "SlideLayoutType",
+    "TableCellStyle",
 ]

@@ -4,7 +4,7 @@ from pptx.shapes.autoshape import Shape as PptxShape
 
 from pptxr.types._length import Length, LiteralLength
 
-from .converter import PptxConvertible
+from .shape import Shape
 
 
 class TextProps(TypedDict):
@@ -24,7 +24,7 @@ class TextData(TextProps):
     text: str
 
 
-class Text(PptxConvertible[PptxShape]):
+class Text(Shape[PptxShape]):
     """Text data class."""
 
     def __init__(self, pptx_obj: PptxShape, data: TextData | None = None, /) -> None:

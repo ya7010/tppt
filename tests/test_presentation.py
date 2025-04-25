@@ -3,6 +3,7 @@
 import pathlib
 
 import pptxr
+from pptxr.types import TableCellStyle
 
 
 def test_create_presentation(output: pathlib.Path) -> None:
@@ -21,3 +22,71 @@ def test_create_presentation(output: pathlib.Path) -> None:
         .build()
     )
     presentation.save(output / "text_only.pptx")
+
+
+def test_create_presentation_with_table(output: pathlib.Path) -> None:
+    """Test creating a presentation with a table."""
+    table_data = [
+        ["Header 1", "Header 2", "Header 3"],
+        ["Cell 1,1", "Cell 1,2", "Cell 1,3"],
+        ["Cell 2,1", "Cell 2,2", "Cell 2,3"],
+    ]
+
+    presentation = (
+        pptxr.Presentation.builder()
+        .slide(
+            pptxr.SlideBuilder().table(
+                table_data,
+                left=(100, "pt"),
+                top=(100, "pt"),
+                width=(400, "pt"),
+                height=(200, "pt"),
+            )
+        )
+        .build()
+    )
+    presentation.save(output / "table_only.pptx")
+
+
+def test_create_presentation_with_styled_table(output: pathlib.Path) -> None:
+    """Test creating a presentation with a styled table."""
+    data = [
+        ["Header 1", "Header 2", "Header 3"],
+        ["Cell 1,1", "Cell 1,2", "Cell 1,3"],
+        ["Cell 2,1", "Cell 2,2", "Cell 2,3"],
+    ]
+
+    cell_styles: list[list[TableCellStyle]] = [
+        [
+            {"bold": True, "font_size": 14, "text_align": "center"},
+            {"bold": True, "font_size": 14, "text_align": "center"},
+            {"bold": True, "font_size": 14, "text_align": "center"},
+        ],
+        [
+            {"text_align": "left", "vertical_align": "middle"},
+            {"text_align": "center", "vertical_align": "middle", "italic": True},
+            {"text_align": "right", "vertical_align": "middle"},
+        ],
+        [
+            {"text_align": "left", "vertical_align": "bottom"},
+            {"text_align": "center", "vertical_align": "bottom"},
+            {"text_align": "right", "vertical_align": "bottom", "font_name": "Arial"},
+        ],
+    ]
+
+    presentation = (
+        pptxr.Presentation.builder()
+        .slide(
+            pptxr.SlideBuilder().table(
+                data,
+                left=(100, "pt"),
+                top=(100, "pt"),
+                width=(400, "pt"),
+                height=(200, "pt"),
+                cell_styles=cell_styles,
+                first_row_header=True,
+            )
+        )
+        .build()
+    )
+    presentation.save(output / "styled_table.pptx")

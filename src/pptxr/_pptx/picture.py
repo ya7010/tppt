@@ -4,13 +4,12 @@ from pptx.shapes.picture import Picture as PptxPicture
 
 from pptxr.types._length import Length, LiteralLength
 
-from .converter import PptxConvertible
+from .shape import Shape
 
 
 class PictureProps(TypedDict):
     """Picture properties."""
 
-    image_file: str | IO[bytes]
     left: Length | LiteralLength
     top: Length | LiteralLength
     width: NotRequired[Length | LiteralLength]
@@ -22,8 +21,10 @@ class PictureData(PictureProps):
 
     type: Literal["picture"]
 
+    image_file: str | IO[bytes]
 
-class Picture(PptxConvertible[PptxPicture]):
+
+class Picture(Shape[PptxPicture]):
     """Picture data class."""
 
     def __init__(
