@@ -5,8 +5,8 @@ from typing import cast
 from pptx.slide import Slide as PptxSlideType
 
 from pptxr._pptx.converters import to_pptx_length, to_pptx_shape_type
+from pptxr._pptx.presentation import PptxConvertible
 from pptxr._pptx.shape import Shape
-from pptxr._pptx.types import PptxConvertible, PptxSlide
 from pptxr.types import Length, LiteralLength
 
 
@@ -45,12 +45,12 @@ class Slide(PptxConvertible):
             return Shape(self._pptx.shapes.title)
         return None
 
-    def to_pptx(self) -> PptxSlide:
+    def to_pptx(self) -> PptxSlideType:
         """Convert to pptx slide."""
-        return cast(PptxSlide, self._pptx)
+        return cast(PptxSlideType, self._pptx)
 
     @classmethod
-    def from_pptx(cls, pptx_obj: PptxSlide) -> "Slide":
+    def from_pptx(cls, pptx_obj: PptxSlideType) -> "Slide":
         """Create from pptx slide."""
         if not isinstance(pptx_obj, PptxSlideType):
             raise TypeError(f"Expected PptxSlide, got {type(pptx_obj)}")

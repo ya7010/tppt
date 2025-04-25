@@ -1,14 +1,33 @@
 """Presentation wrapper implementation."""
 
-from typing import IO, cast
+from typing import IO, Protocol, TypeVar, cast, runtime_checkable
 
 from pptx import Presentation as PptxPresentation
 from pptx.presentation import Presentation as PptxPresentationType
+from pptx.shapes.base import BaseShape as PptxShape
+from pptx.slide import Slide as PptxSlide
 
 from pptxr._pptx.converters import save_presentation
 from pptxr._pptx.slide import Slide
-from pptxr._pptx.types import PptxConvertible
 from pptxr.types import FilePath
+
+T = TypeVar("T", bound="PptxConvertible")
+
+
+@runtime_checkable
+class PptxConvertible(Protocol):
+    """Protocol for objects that can be converted to and from pptx objects."""
+
+    def to_pptx(self) -> PptxPresentation | PptxSlide | PptxShape:
+        """Convert to pptx object."""
+        ...
+
+    @classmethod
+    def from_pptx(
+        cls, pptx_obj: PptxPresentation | PptxSlide | PptxShape
+    ) -> "PptxConvertible":
+        """Create from pptx object."""
+        ...
 
 
 class Presentation(PptxConvertible):
