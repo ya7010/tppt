@@ -4,10 +4,10 @@ from typing import Literal, NotRequired, Self, TypeAlias, TypedDict
 
 from pptx.enum.text import MSO_VERTICAL_ANCHOR, PP_ALIGN
 from pptx.shapes.graphfrm import GraphicFrame
-from pptx.util import Pt
 
-from pptxr.types._length import Length, LiteralLength
+from pptxr.types._length import Length, LiteralLength, LiteralPoint, Point
 
+from ..converter import to_pptx_length
 from . import Shape
 
 DataFrame: TypeAlias = list[list[str]]
@@ -20,7 +20,7 @@ class TableCellStyle(TypedDict):
     vertical_align: NotRequired[Literal["top", "middle", "bottom"]]
     bold: NotRequired[bool]
     italic: NotRequired[bool]
-    font_size: NotRequired[int]  # ポイントサイズで指定
+    font_size: NotRequired[Point | LiteralPoint]
     font_name: NotRequired[str]
 
 
@@ -122,7 +122,9 @@ class Table(Shape[GraphicFrame]):
                                     run.font.italic = cell_style["italic"]
 
                                 if "font_size" in cell_style:
-                                    run.font.size = Pt(cell_style["font_size"])
+                                    run.font.size = to_pptx_length(
+                                        cell_style["font_size"]
+                                    )
 
                                 if "font_name" in cell_style:
                                     run.font.name = cell_style["font_name"]

@@ -62,9 +62,9 @@ def test_create_presentation_with_styled_table(output: pathlib.Path) -> None:
 
     cell_styles: list[list[TableCellStyle]] = [
         [
-            {"bold": True, "font_size": 14, "text_align": "center"},
-            {"bold": True, "font_size": 14, "text_align": "center"},
-            {"bold": True, "font_size": 14, "text_align": "center"},
+            {"bold": True, "font_size": (14, "pt"), "text_align": "center"},
+            {"bold": True, "font_size": (14, "pt"), "text_align": "center"},
+            {"bold": True, "font_size": (14, "pt"), "text_align": "center"},
         ],
         [
             {"text_align": "left", "vertical_align": "middle"},
