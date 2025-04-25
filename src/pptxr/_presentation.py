@@ -4,20 +4,20 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 from ._builders.presentation import PresentationBuilder
-from ._data import SlideBone
+from ._data import Slide
 from ._slide_master import SlideMaster
 
 
 class Presentation:
     """Represents a PowerPoint presentation."""
 
-    slides: List[SlideBone]
+    slides: List[Slide]
     slide_master: Optional[SlideMaster]
     template_path: Optional[Path]
 
     def __init__(
         self,
-        slides: List[SlideBone],
+        slides: List[Slide],
         slide_master: Optional[SlideMaster] = None,
         template_path: Optional[Path] = None,
     ):

@@ -27,7 +27,7 @@ class ImageParams(TypedDict, total=False):
 
 
 @dataclass
-class TextBone:
+class Text:
     """Represents a text element for a slide."""
 
     text: str
@@ -39,7 +39,7 @@ class TextBone:
 
 
 @dataclass
-class ImageBone:
+class Image:
     """Represents an image element for a slide."""
 
     path: Union[str, Path]
@@ -50,10 +50,10 @@ class ImageBone:
 
 
 @dataclass
-class SlideBone:
+class Slide:
     """Represents a slide structure."""
 
-    elements: List[Union[TextBone, ImageBone]] = field(default_factory=list)
+    elements: List[Union[Text, Image]] = field(default_factory=list)
 
 
 @dataclass

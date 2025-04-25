@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import List, Optional, Self, Union
 
-from .._data import SlideBone
+from .._data import Slide
 from .._slide_master import SlideMaster
 from .slide import SlideBuilder
 
@@ -11,7 +11,7 @@ from .slide import SlideBuilder
 class PresentationBuilder:
     """Builder class for creating presentations."""
 
-    slides: List[SlideBone]
+    slides: List[Slide]
     slide_master: Optional[SlideMaster]
     template_path: Optional[Path]
 
@@ -25,7 +25,7 @@ class PresentationBuilder:
         self.slide_master = slide_master
         self.template_path = Path(template_path) if template_path else None
 
-    def slide(self, slide_builder: Union[SlideBuilder, SlideBone]) -> Self:
+    def slide(self, slide_builder: Union[SlideBuilder, Slide]) -> Self:
         """Add a slide to the presentation."""
         if isinstance(slide_builder, SlideBuilder):
             self.slides.append(slide_builder.build())
