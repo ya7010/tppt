@@ -7,11 +7,10 @@ from pptx.slide import Slide as PptxSlideType
 from pptxr._pptx.converters import to_pptx_length, to_pptx_shape_type
 from pptxr._pptx.shape import Shape
 from pptxr._pptx.types import PptxConvertible, PptxSlide
-from pptxr.abstract.presentation import AbstractSlide
 from pptxr.types import Length, LiteralLength
 
 
-class Slide(AbstractSlide, PptxConvertible):
+class Slide(PptxConvertible):
     """Slide wrapper with type safety."""
 
     def __init__(self, pptx_slide: PptxSlideType) -> None:

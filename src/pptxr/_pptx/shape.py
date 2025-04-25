@@ -5,10 +5,9 @@ from typing import cast
 from pptx.shapes.base import BaseShape as PptxShapeType
 
 from pptxr._pptx.types import PptxConvertible, PptxShape
-from pptxr.abstract.presentation import AbstractShape
 
 
-class Shape(AbstractShape, PptxConvertible):
+class Shape(PptxConvertible):
     """Shape wrapper with type safety."""
 
     def __init__(self, pptx_shape: PptxShapeType) -> None:

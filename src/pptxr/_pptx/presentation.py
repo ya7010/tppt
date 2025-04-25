@@ -8,11 +8,10 @@ from pptx.presentation import Presentation as PptxPresentationType
 from pptxr._pptx.converters import save_presentation
 from pptxr._pptx.slide import Slide
 from pptxr._pptx.types import PptxConvertible
-from pptxr.abstract.presentation import AbstractPresentation, PresentationFactory
 from pptxr.types import FilePath
 
 
-class Presentation(AbstractPresentation, PptxConvertible):
+class Presentation(PptxConvertible):
     """Presentation wrapper with type safety."""
 
     def __init__(self, pptx_presentation: PptxPresentationType | None = None) -> None:
@@ -61,7 +60,7 @@ class Presentation(AbstractPresentation, PptxConvertible):
         return cls(pptx_obj)
 
 
-class PptxPresentationFactory(PresentationFactory):
+class PptxPresentationFactory:
     """Factory for creating PPTX presentations."""
 
     def create_presentation(self) -> Presentation:
