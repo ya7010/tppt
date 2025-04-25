@@ -11,5 +11,4 @@ alwaysApply: false
 - Class/Class fields/Function must be docstrings.
 - docstring does not need arg/return description.
 - Auto test is `uv run task ci`
-- 全体のデザインは [全体設計.md](mdc:design/全体設計.md) を参考にして実装しなさい。
-- Use pytest in test code.
+- Don't use 'typing.Option' and 'typing.Union'. Please use '|' operator.

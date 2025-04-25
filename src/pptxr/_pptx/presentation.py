@@ -1,6 +1,7 @@
 """Presentation wrapper implementation."""
 
-from typing import IO, Protocol, TypeVar, cast, runtime_checkable
+from pathlib import Path
+from typing import IO, Optional, Protocol, TypeVar, Union, cast, runtime_checkable
 
 from pptx import Presentation as PptxPresentation
 from pptx.presentation import Presentation as PptxPresentationType
@@ -80,12 +81,48 @@ class Presentation(PptxConvertible):
 
 
 class PptxPresentationFactory:
-    """Factory for creating PPTX presentations."""
+    """A factory class for creating PowerPoint presentations."""
 
-    def create_presentation(self) -> Presentation:
-        """Create a new presentation."""
-        return Presentation()
+    def __init__(self, template_path: Optional[Union[str, Path]] = None) -> None:
+        """Initialize a new presentation factory.
 
-    def load_presentation(self, path: str) -> Presentation:
-        """Load presentation from file."""
-        return Presentation(PptxPresentation(path))
+        Args:
+            template_path: The path to the template file.
+        """
+        self._template_path = template_path
+        self._presentation = (
+            PptxPresentation(template_path) if template_path else PptxPresentation()
+        )
+
+    @classmethod
+    def create(
+        cls, template_path: Optional[Union[str, Path]] = None
+    ) -> "PptxPresentationFactory":
+        """Create a new presentation factory.
+
+        Args:
+            template_path: The path to the template file.
+
+        Returns:
+            A new presentation factory.
+        """
+        return cls(template_path)
+
+    def add_slide(self, layout_type: str):
+        """Add a slide to the presentation.
+
+        Args:
+            layout_type: The layout type of the slide.
+
+        Returns:
+            The added slide.
+        """
+        return self._presentation.slides.add_slide(self._presentation.slide_layouts[0])
+
+    def save(self, path: Union[str, Path]) -> None:
+        """Save the presentation to a file.
+
+        Args:
+            path: The path to save the presentation to.
+        """
+        self._presentation.save(str(path))

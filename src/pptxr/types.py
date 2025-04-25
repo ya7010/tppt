@@ -1,85 +1,96 @@
-"""Abstract types for presentation objects."""
+"""Type definitions for pptxr."""
 
-import pathlib
-from abc import ABC, abstractmethod
-from typing import IO, TypeAlias, TypeVar
+from pathlib import Path
+from typing import Literal, Tuple, TypeAlias, Union
 
-from pptxr.types import Length, LiteralLength
+from pptx.util import Cm, Inches, Pt
 
-FilePath: TypeAlias = str | pathlib.Path
+FilePath: TypeAlias = str | Path
 
+# Length units
+Unit = Literal["pt", "in", "cm"]
 
-class Shape(ABC):
-    """Abstract base class for shapes."""
+# Length value with unit
+LiteralLength = Tuple[Union[int, float], Unit]
 
-    @abstractmethod
-    def get_text(self) -> str:
-        """Get shape text."""
-        pass
+# Length can be either a LiteralLength or a pptx length type
+Length = Union[Pt, Inches, Cm]
 
-    @abstractmethod
-    def set_text(self, text: str) -> None:
-        """Set shape text."""
-        pass
+# Point type
+Point = Tuple[float, float]
 
-
-class Slide(ABC):
-    """Abstract base class for slides."""
-
-    @abstractmethod
-    def get_shapes(self) -> list[Shape]:
-        """Get all shapes in the slide."""
-        pass
-
-    @abstractmethod
-    def add_shape(
-        self,
-        shape_type: str,
-        left: Length | LiteralLength,
-        top: Length | LiteralLength,
-        width: Length | LiteralLength,
-        height: Length | LiteralLength,
-    ) -> Shape:
-        """Add a shape to the slide."""
-        pass
-
-    @abstractmethod
-    def get_title(self) -> Shape | None:
-        """Get slide title shape."""
-        pass
+# Color type
+Color = Tuple[int, int, int]
 
 
-class Presentation(ABC):
-    """Abstract base class for presentations."""
+# Convert length to points
+def to_points(length: Union[Length, LiteralLength]) -> float:
+    """Convert a length value to points.
 
-    @abstractmethod
-    def get_slides(self) -> list[Slide]:
-        """Get all slides in the presentation."""
-        raise NotImplementedError()
+    Args:
+        length: The length value to convert.
 
-    @abstractmethod
-    def add_slide(self, layout_type: str) -> Slide:
-        """Add a slide with specified layout."""
-        raise NotImplementedError()
+    Returns:
+        The converted value in points.
+    """
+    if isinstance(length, (Pt, Inches, Cm)):
+        return float(length.pt)
+    value, unit = length
+    if unit == "pt":
+        return float(value)
+    elif unit == "in":
+        return float(value) * 72
+    elif unit == "cm":
+        return float(value) * 28.3465
+    else:
+        raise ValueError(f"Unknown unit: {unit}")
 
-    @abstractmethod
-    def save(self, file: FilePath | IO[bytes]) -> None:
-        """Save presentation to file."""
-        raise NotImplementedError()
+
+def pt(value: Union[int, float]) -> Length:
+    """Create a length value in points.
+
+    Args:
+        value: The value in points.
+
+    Returns:
+        A length value in points.
+    """
+    return Pt(float(value))
 
 
-T = TypeVar("T", bound=Presentation)
+def inch(value: Union[int, float]) -> Length:
+    """Create a length value in inches.
+
+    Args:
+        value: The value in inches.
+
+    Returns:
+        A length value in inches.
+    """
+    return Inches(float(value))
 
 
-class PresentationFactory(ABC):
-    """Abstract factory for creating presentations."""
+def cm(value: Union[int, float]) -> Length:
+    """Create a length value in centimeters.
 
-    @abstractmethod
-    def create_presentation(self) -> Presentation:
-        """Create a new presentation."""
-        pass
+    Args:
+        value: The value in centimeters.
 
-    @abstractmethod
-    def load_presentation(self, path: str) -> Presentation:
-        """Load presentation from file."""
-        pass
+    Returns:
+        A length value in centimeters.
+    """
+    return Cm(float(value))
+
+
+__all__ = [
+    "FilePath",
+    "Unit",
+    "LiteralLength",
+    "Length",
+    "Point",
+    "Color",
+    "to_points",
+    "pt",
+    "inch",
+    "cm",
+]
