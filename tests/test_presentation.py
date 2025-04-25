@@ -38,7 +38,7 @@ def test_add_shape() -> None:
     assert len(slide.shapes) == 1
 
 
-def test_save_presentation(tmp_path: Path) -> None:
+def test_save_presentation(output: Path) -> None:
     """Test saving a presentation."""
     presentation = Presentation()
     slide = presentation.add_slide("TITLE")
@@ -55,7 +55,7 @@ def test_save_presentation(tmp_path: Path) -> None:
     wrapper = presentation._wrapper
     assert wrapper is not None
     wrapper._add_shape(wrapper._presentation.slides[0], shape)
-    path = tmp_path / "test.pptx"
+    path = output / "test.pptx"
     presentation.save(path)
     assert path.exists()
 
