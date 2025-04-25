@@ -28,7 +28,7 @@ class Color:
 
             match len(r):
                 case 4:
-                    # #123 は #112233 と同じであることに注意
+                    # Note that #123 is the same as #112233
                     self.r = int(r[1:2] * 2, 16)
                     self.g = int(r[2:3] * 2, 16)
                     self.b = int(r[3:4] * 2, 16)
