@@ -21,9 +21,9 @@ from pptxr.types import FilePath, Length, LiteralLength
 from pptxr.types.length import Centimeter, Inch, Point, to_length
 
 from .types import PptxConvertible
+from .types import PptxPresentation as PptxPres
 
 # pyright: ignore
-# type: ignore
 
 
 class Shape(AbstractShape, PptxConvertible):
@@ -74,7 +74,7 @@ class Slide(AbstractSlide, PptxConvertible):
     ) -> AbstractShape:
         """Add a shape to the slide."""
         shape = self._pptx.shapes.add_shape(
-            MSO_AUTO_SHAPE_TYPE.ACTION_BUTTON_CUSTOM,
+            to_pptx_shape_type(shape_type),
             to_pptx_length(left),
             to_pptx_length(top),
             to_pptx_length(width),
@@ -137,9 +137,7 @@ class Presentation(AbstractPresentation, PptxConvertible):
 
     def save(self, file: FilePath | IO[bytes]) -> None:
         """Save presentation to file."""
-        if isinstance(file, os.PathLike):
-            file = os.fspath(file)
-        self._presentation.save(file)
+        save_presentation(self._presentation, file)
 
     def to_pptx(self) -> presentation.Presentation:
         """Convert to pptx presentation."""
@@ -179,3 +177,26 @@ def to_pptx_length(length: Length | LiteralLength) -> pptx.util.Length:
             return pptx.util.Pt(length.value)
         case _:
             assert_never(length)
+
+
+def to_pptx_shape_type(shape_type: str) -> MSO_AUTO_SHAPE_TYPE:
+    """Convert shape type string to MSO_AUTO_SHAPE_TYPE."""
+    try:
+        return getattr(MSO_AUTO_SHAPE_TYPE, shape_type)
+    except AttributeError:
+        raise ValueError(f"Invalid shape type: {shape_type}")
+
+
+def save_presentation(presentation: PptxPres, file: FilePath | IO[bytes]) -> None:
+    """Save presentation to file."""
+    if isinstance(file, os.PathLike):
+        file = os.fspath(file)
+    presentation.save(file)
+
+
+# Keep imports for type checking
+__all__ = []
+if False:
+    PptxPresentation
+    PptxShape
+    PptxSlide

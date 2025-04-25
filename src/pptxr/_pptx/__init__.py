@@ -3,12 +3,9 @@
 # pyright: ignore
 # type: ignore
 
-from .converters import (
-    PptxPresentationFactory,
-    Presentation,
-    Shape,
-    Slide,
-)
+from .presentation import PptxPresentationFactory, Presentation
+from .shape import Shape
+from .slide import Slide
 
 __all__ = [
     "Presentation",
