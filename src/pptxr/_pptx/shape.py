@@ -1,13 +1,13 @@
 """Shape wrapper implementation."""
 
-from typing import cast
+from typing import Self, cast
 
 from pptx.shapes.base import BaseShape as PptxShapeType
 
 from pptxr._pptx.types import PptxConvertible
 
 
-class Shape(PptxConvertible):
+class Shape(PptxConvertible[PptxShapeType]):
     """Shape wrapper with type safety."""
 
     def __init__(self, pptx_shape: PptxShapeType) -> None:
@@ -27,7 +27,7 @@ class Shape(PptxConvertible):
         return cast(PptxShapeType, self._pptx)
 
     @classmethod
-    def from_pptx(cls, pptx_obj: PptxShapeType) -> "Shape":
+    def from_pptx(cls, pptx_obj: PptxShapeType) -> Self:
         """Create from pptx shape."""
         if not isinstance(pptx_obj, PptxShapeType):
             raise TypeError(f"Expected PptxShape, got {type(pptx_obj)}")

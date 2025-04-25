@@ -1,6 +1,6 @@
 """Slide wrapper implementation."""
 
-from typing import cast
+from typing import Self, cast
 
 from pptx.slide import Slide as PptxSlideType
 
@@ -10,7 +10,7 @@ from pptxr._pptx.types import PptxConvertible
 from pptxr.types import Length, LiteralLength, ShapeType
 
 
-class Slide(PptxConvertible):
+class Slide(PptxConvertible[PptxSlideType]):
     """Slide wrapper with type safety."""
 
     def __init__(self, pptx_slide: PptxSlideType) -> None:
@@ -50,7 +50,7 @@ class Slide(PptxConvertible):
         return cast(PptxSlideType, self._pptx)
 
     @classmethod
-    def from_pptx(cls, pptx_obj: PptxSlideType) -> "Slide":
+    def from_pptx(cls, pptx_obj: PptxSlideType) -> Self:
         """Create from pptx slide."""
         if not isinstance(pptx_obj, PptxSlideType):
             raise TypeError(f"Expected PptxSlide, got {type(pptx_obj)}")

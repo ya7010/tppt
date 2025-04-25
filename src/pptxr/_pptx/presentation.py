@@ -11,7 +11,7 @@ from pptxr._pptx.types import PptxConvertible
 from pptxr.types import FilePath, SlideLayoutType
 
 
-class Presentation(PptxConvertible):
+class Presentation(PptxConvertible[PptxPresentationType]):
     """Presentation wrapper with type safety."""
 
     def __init__(self, pptx_presentation: PptxPresentationType | None = None) -> None:
@@ -68,11 +68,6 @@ class PptxPresentationFactory:
         self._presentation = (
             PptxPresentation(template_path) if template_path else PptxPresentation()
         )
-
-    @classmethod
-    def create(cls, template_path: FilePath | None = None) -> "PptxPresentationFactory":
-        """Create a new presentation factory."""
-        return cls(template_path)
 
     def add_slide(self, layout_type: SlideLayoutType) -> Slide:
         """Add a slide to the presentation."""

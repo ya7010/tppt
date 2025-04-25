@@ -1,7 +1,7 @@
 """Converter implementations for pptx objects."""
 
 import os
-from typing import IO, Any, assert_never
+from typing import IO, Self, assert_never
 
 import pptx
 import pptx.util
@@ -26,7 +26,7 @@ from .types import PptxPresentation as PptxPres
 # pyright: ignore
 
 
-class Shape(AbstractShape, PptxConvertible):
+class Shape(AbstractShape, PptxConvertible[PptxShape]):
     """Shape wrapper with type safety."""
 
     def __init__(self, pptx_shape: PptxShape) -> None:
@@ -46,14 +46,12 @@ class Shape(AbstractShape, PptxConvertible):
         return self._pptx
 
     @classmethod
-    def from_pptx(cls, pptx_obj: Any) -> "Shape":
+    def from_pptx(cls, pptx_obj: PptxShape) -> Self:
         """Create from pptx shape."""
-        if not isinstance(pptx_obj, PptxShape):
-            raise TypeError(f"Expected PptxShape, got {type(pptx_obj)}")
         return cls(pptx_obj)
 
 
-class Slide(AbstractSlide, PptxConvertible):
+class Slide(AbstractSlide, PptxConvertible[PptxSlide]):
     """Slide wrapper with type safety."""
 
     def __init__(self, pptx_slide: PptxSlide) -> None:
@@ -93,14 +91,12 @@ class Slide(AbstractSlide, PptxConvertible):
         return self._pptx
 
     @classmethod
-    def from_pptx(cls, pptx_obj: Any) -> "Slide":
+    def from_pptx(cls, pptx_obj: PptxSlide) -> Self:
         """Create from pptx slide."""
-        if not isinstance(pptx_obj, PptxSlide):
-            raise TypeError(f"Expected PptxSlide, got {type(pptx_obj)}")
         return cls(pptx_obj)
 
 
-class Presentation(AbstractPresentation, PptxConvertible):
+class Presentation(AbstractPresentation, PptxConvertible[presentation.Presentation]):
     """Presentation wrapper with type safety."""
 
     def __init__(
@@ -144,10 +140,8 @@ class Presentation(AbstractPresentation, PptxConvertible):
         return self._presentation
 
     @classmethod
-    def from_pptx(cls, pptx_obj: Any) -> "Presentation":
+    def from_pptx(cls, pptx_obj: presentation.Presentation) -> Self:
         """Create from pptx presentation."""
-        if not hasattr(pptx_obj, "slides") or not hasattr(pptx_obj, "slide_layouts"):
-            raise TypeError(f"Expected PptxPresentation, got {type(pptx_obj)}")
         return cls(pptx_obj)
 
 
