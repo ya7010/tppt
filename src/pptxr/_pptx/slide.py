@@ -59,7 +59,7 @@ class SlideBuilder:
         self._slide_layout = slide_layout
         self._shape_registry: list[Callable[[PptxSlide], Shape[Any]]] = []
 
-    def text(self, text: str, /, **kwargs: Unpack[TextProps]) -> Self:
+    def text(self, text: str, **kwargs: Unpack[TextProps]) -> Self:
         data = TextData(type="text", text=text, **kwargs)
 
         self._shape_registry.append(
@@ -77,7 +77,7 @@ class SlideBuilder:
         return self
 
     def picture(
-        self, image_file: FilePath | IO[bytes], /, **kwargs: Unpack[PictureProps]
+        self, image_file: FilePath | IO[bytes], **kwargs: Unpack[PictureProps]
     ) -> Self:
         data = PictureData(type="picture", image_file=image_file, **kwargs)
 
@@ -101,7 +101,7 @@ class SlideBuilder:
 
         return self
 
-    def table(self, data: DataFrame, /, **kwargs: Unpack[TableOptions]) -> Self:
+    def table(self, data: DataFrame, **kwargs: Unpack[TableOptions]) -> Self:
         rows, cols = len(data), len(data[0])
         props: TableProps = {"type": "table", "data": data, **kwargs}
 
