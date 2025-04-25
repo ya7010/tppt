@@ -106,6 +106,9 @@ def test_example_files(example_file: pathlib.Path) -> None:
     Args:
         example_file: Path to the example Python file.
     """
+    if example_file.with_suffix(".pptx").exists():
+        example_file.with_suffix(".pptx").unlink()
+
     # Run the example script as a subprocess
     result = subprocess.run(
         [sys.executable, str(example_file)],
