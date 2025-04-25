@@ -1,12 +1,11 @@
-from typing import Any, Callable, TypeVar
+from typing import Callable, TypeVar
 
 _T = TypeVar("_T")
-_U = TypeVar("_U")
 _R = TypeVar("_R")
 
 
 def optional_map(
-    func: Callable[[_T | Any], _R],
+    func: Callable[[_T], _R],
     value: _T | None,
 ) -> _R | None:
     if value is None:
