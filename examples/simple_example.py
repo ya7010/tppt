@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from tppt import Presentation, SlideBuilder
+import tppt
 
 EXAMPLE_DIR = Path(__file__).parent
 
@@ -11,10 +11,10 @@ def main():
     """Run the example."""
     # Create a presentation using the builder pattern
     presentation = (
-        Presentation.builder()
+        tppt.Presentation.builder()
         # Slide 1: Title and Text
         .slide(
-            SlideBuilder()
+            tppt.SlideBuilder()
             .text(
                 "Amazing Presentation",  # Title
                 left=(50, "pt"),
@@ -39,7 +39,7 @@ def main():
         )
         # Slide 2: Python Logo Image
         .slide(
-            SlideBuilder()
+            tppt.SlideBuilder()
             .text(
                 "Python Logo Example",
                 left=(50, "pt"),
@@ -78,7 +78,7 @@ def main():
         )
         # Slide 3: Table example
         .slide(
-            SlideBuilder()
+            tppt.SlideBuilder()
             .text(
                 "Table Example",
                 left=(50, "pt"),
