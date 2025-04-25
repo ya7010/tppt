@@ -3,9 +3,8 @@
 from typing import Self
 
 from pptx.shapes.base import BaseShape as PptxBaseShape
+from tppt._pptx.converter import PptxConvertible
 from typing_extensions import TypeVar
-
-from pptxr._pptx.converter import PptxConvertible
 
 GenericPptxShape = TypeVar(
     "GenericPptxShape",

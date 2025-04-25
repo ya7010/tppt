@@ -4,8 +4,8 @@ import pathlib
 
 import pytest
 
-import pptxr
-from pptxr._features import USE_PANDAS, USE_POLARS
+import tppt
+from tppt._features import USE_PANDAS, USE_POLARS
 
 
 def test_create_table_with_list_data(output: pathlib.Path) -> None:
@@ -17,9 +17,9 @@ def test_create_table_with_list_data(output: pathlib.Path) -> None:
     ]
 
     presentation = (
-        pptxr.Presentation.builder()
+        tppt.Presentation.builder()
         .slide(
-            pptxr.SlideBuilder().table(
+            tppt.SlideBuilder().table(
                 table_data,
                 left=(100, "pt"),
                 top=(100, "pt"),
@@ -50,9 +50,9 @@ def test_create_table_with_pandas_dataframe(output: pathlib.Path) -> None:
     table_data = [df.columns.tolist()] + df.values.tolist()
 
     presentation = (
-        pptxr.Presentation.builder()
+        tppt.Presentation.builder()
         .slide(
-            pptxr.SlideBuilder().table(
+            tppt.SlideBuilder().table(
                 table_data,  # 変換したリストを使用
                 left=(100, "pt"),
                 top=(100, "pt"),
@@ -84,9 +84,9 @@ def test_create_table_with_polars_dataframe(output: pathlib.Path) -> None:
     table_data = [df.columns] + df.to_numpy().tolist()
 
     presentation = (
-        pptxr.Presentation.builder()
+        tppt.Presentation.builder()
         .slide(
-            pptxr.SlideBuilder().table(
+            tppt.SlideBuilder().table(
                 table_data,  # 変換したリストを使用
                 left=(100, "pt"),
                 top=(100, "pt"),
@@ -121,9 +121,9 @@ def test_create_table_with_polars_lazyframe(output: pathlib.Path) -> None:
     table_data = [df.columns] + df.to_numpy().tolist()
 
     presentation = (
-        pptxr.Presentation.builder()
+        tppt.Presentation.builder()
         .slide(
-            pptxr.SlideBuilder().table(
+            tppt.SlideBuilder().table(
                 table_data,
                 left=(100, "pt"),
                 top=(100, "pt"),

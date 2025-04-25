@@ -4,8 +4,8 @@ from typing import Any
 from pptx.slide import SlideLayouts as PptxSlideLayouts
 
 
-class PptxrException(Exception):
-    """Base exception for pptxr."""
+class tpptException(Exception):
+    """Base exception for tppt."""
 
     @property
     @abstractmethod
@@ -19,7 +19,7 @@ class PptxrException(Exception):
         return self.message
 
 
-class ColorInvalidFormatError(PptxrException, ValueError):
+class ColorInvalidFormatError(tpptException, ValueError):
     """Color format is invalid."""
 
     def __init__(self, color: str) -> None:
@@ -30,7 +30,7 @@ class ColorInvalidFormatError(PptxrException, ValueError):
         return f"Invalid color format: {self.color}"
 
 
-class SlideLayoutIndexError(PptxrException, IndexError):
+class SlideLayoutIndexError(tpptException, IndexError):
     """Slide layout index is out of range."""
 
     def __init__(self, index: int, slide_layouts: PptxSlideLayouts) -> None:

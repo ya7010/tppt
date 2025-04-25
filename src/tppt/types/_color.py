@@ -1,8 +1,7 @@
-"""Color types for pptxr."""
+"""Color types for tppt."""
 
 from pptx.dml.color import RGBColor
-
-from pptxr.exception import ColorInvalidFormatError
+from tppt.exception import ColorInvalidFormatError
 
 
 class Color:

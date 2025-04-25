@@ -5,15 +5,14 @@ from typing import assert_never
 import pptx
 import pptx.util
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
-
-from pptxr.types import Length, LiteralLength, ShapeType
-from pptxr.types._length import Centimeter, Inch, Point, to_length
+from tppt.types import Length, LiteralLength, ShapeType
+from tppt.types._length import Centimeter, Inch, Point, to_length
 
 # pyright: ignore
 
 
 def to_pptx_length(length: Length | LiteralLength) -> pptx.util.Length:
-    """Convert pptxr length to pptx length."""
+    """Convert tppt length to pptx length."""
     if isinstance(length, tuple):
         length = to_length(length)
 
@@ -29,5 +28,5 @@ def to_pptx_length(length: Length | LiteralLength) -> pptx.util.Length:
 
 
 def to_pptx_shape_type(shape_type: ShapeType) -> MSO_AUTO_SHAPE_TYPE:
-    """Convert pptxr ShapeType to MSO_AUTO_SHAPE_TYPE."""
+    """Convert tppt ShapeType to MSO_AUTO_SHAPE_TYPE."""
     return shape_type.value

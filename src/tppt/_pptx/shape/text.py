@@ -1,8 +1,7 @@
 from typing import Literal, Self, TypedDict
 
 from pptx.shapes.autoshape import Shape as PptxShape
-
-from pptxr.types._length import Length, LiteralLength
+from tppt.types._length import Length, LiteralLength
 
 from . import Shape
 

@@ -1,8 +1,7 @@
 from typing import Self
 
 from pptx.slide import SlideLayout as PptxSlideLayout
-
-from pptxr._pptx.converter import PptxConvertible
+from tppt._pptx.converter import PptxConvertible
 
 
 class SlideLayout(PptxConvertible[PptxSlideLayout]):

@@ -1,11 +1,10 @@
-"""Types module for pptxr."""
+"""Types module for tppt."""
 
 import pathlib
 from typing import Literal, TypeAlias
 
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
-
-from pptxr._pptx.shape.table import TableCellStyle
+from tppt._pptx.shape.table import TableCellStyle
 
 from ._color import Color
 from ._length import (

@@ -5,8 +5,8 @@ from typing import IO, Generic, Self
 
 from pptx.presentation import Presentation as PptxPresentation
 
-from pptxr._pptxr.slide_master import GenericPptxrSlideMaster
-from pptxr.types import FilePath
+from tppt._tppt.slide_master import GenerictpptSlideMaster
+from tppt.types import FilePath
 
 from .converter import PptxConvertible
 from .slide import SlideBuilder
@@ -34,8 +34,8 @@ class Presentation(PptxConvertible[PptxPresentation]):
 
     @classmethod
     def builder(
-        cls, slide_master: GenericPptxrSlideMaster | None = None
-    ) -> "PresentationBuilder[GenericPptxrSlideMaster]":
+        cls, slide_master: GenerictpptSlideMaster | None = None
+    ) -> "PresentationBuilder[GenerictpptSlideMaster]":
         """Get a builder for the presentation."""
         return PresentationBuilder(slide_master)
 
@@ -55,10 +55,10 @@ class Presentation(PptxConvertible[PptxPresentation]):
         return cls(pptx_obj)
 
 
-class PresentationBuilder(Generic[GenericPptxrSlideMaster]):
+class PresentationBuilder(Generic[GenerictpptSlideMaster]):
     """Builder for presentations."""
 
-    def __init__(self, slide_master: GenericPptxrSlideMaster | None = None) -> None:
+    def __init__(self, slide_master: GenerictpptSlideMaster | None = None) -> None:
         """Initialize the builder."""
         import pptx
 

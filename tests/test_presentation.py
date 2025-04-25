@@ -6,16 +6,16 @@ import sys
 
 import pytest
 
-import pptxr
-from pptxr.types import TableCellStyle
+import tppt
+from tppt.types import TableCellStyle
 
 
 def test_create_presentation(output: pathlib.Path) -> None:
     """Test creating a presentation."""
     presentation = (
-        pptxr.Presentation.builder()
+        tppt.Presentation.builder()
         .slide(
-            pptxr.SlideBuilder().text(
+            tppt.SlideBuilder().text(
                 "text",
                 left=(100, "pt"),
                 top=(100, "pt"),
@@ -37,9 +37,9 @@ def test_create_presentation_with_table(output: pathlib.Path) -> None:
     ]
 
     presentation = (
-        pptxr.Presentation.builder()
+        tppt.Presentation.builder()
         .slide(
-            pptxr.SlideBuilder().table(
+            tppt.SlideBuilder().table(
                 table_data,
                 left=(100, "pt"),
                 top=(100, "pt"),
@@ -79,9 +79,9 @@ def test_create_presentation_with_styled_table(output: pathlib.Path) -> None:
     ]
 
     presentation = (
-        pptxr.Presentation.builder()
+        tppt.Presentation.builder()
         .slide(
-            pptxr.SlideBuilder().table(
+            tppt.SlideBuilder().table(
                 data,
                 left=(100, "pt"),
                 top=(100, "pt"),

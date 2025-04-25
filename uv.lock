@@ -322,7 +322,7 @@ wheels = [
 ]
 
 [[package]]
-name = "pptxr"
+name = "tppt"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

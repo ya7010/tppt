@@ -6,8 +6,7 @@ from pptx.util import Cm as PptxCm
 from pptx.util import Inches as PptxInches
 from pptx.util import Length as PptxLength
 from pptx.util import Pt as PptxPt
-
-from pptxr.types._length import (
+from tppt.types._length import (
     Centimeter,
     Inch,
     Length,

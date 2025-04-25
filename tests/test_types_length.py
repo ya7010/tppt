@@ -1,6 +1,6 @@
 import pytest
 
-from pptxr.types._length import (
+from tppt.types._length import (
     Centimeter,
     Inch,
     Point,

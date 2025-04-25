@@ -5,9 +5,8 @@ from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack, cast
 
 from pptx.slide import Slide as PptxSlide
 from pptx.slide import SlideLayout as PptxSlideLayout
-
-from pptxr.exception import SlideLayoutIndexError
-from pptxr.types import FilePath
+from tppt.exception import SlideLayoutIndexError
+from tppt.types import FilePath
 
 from .converter import PptxConvertible, to_pptx_length
 from .shape import Shape

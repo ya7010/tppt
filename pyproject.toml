@@ -1,5 +1,5 @@
 [project]
-name = "pptxr"
+name = "tppt"
 version = "0.1.0"
 description = "PowerPoint Builder"
 readme = "README.md"
@@ -48,7 +48,7 @@ typecheck = "task typecheck-pyright"
 test = "pytest"
 
 [tool.pyright]
-include = ["src/pptxr", "examples", "tests"]
+include = ["src/tppt", "examples", "tests"]
 exclude = [ "**/site-packages", ".venv/**"]
 
 [tool.mypy]

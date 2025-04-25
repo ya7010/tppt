@@ -1,4 +1,4 @@
-"""Length types for pptxr."""
+"""Length types for tppt."""
 
 from typing import Literal, assert_never
 

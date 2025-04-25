@@ -1,8 +1,8 @@
-"""Simple example of using pptxr."""
+"""Simple example of using tppt."""
 
 from pathlib import Path
 
-from pptxr import Presentation, SlideBuilder
+from tppt import Presentation, SlideBuilder
 
 EXAMPLE_DIR = Path(__file__).parent
 
@@ -23,7 +23,7 @@ def main():
                 height=(50, "pt"),
             )
             .text(
-                "Example of using pptxr library",  # Subtitle
+                "Example of using tppt library",  # Subtitle
                 left=(50, "pt"),
                 top=(120, "pt"),
                 width=(400, "pt"),

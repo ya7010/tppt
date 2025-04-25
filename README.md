@@ -1,17 +1,17 @@
-# pptxr
+# tppt
 
-pptxrは型安全なPowerPointプレゼンテーションビルダーです。このライブラリを使用すると、Pythonコードからパワーポイントを簡単に生成できます。
+tpptは型安全なPowerPointプレゼンテーションビルダーです。このライブラリを使用すると、Pythonコードからパワーポイントを簡単に生成できます。
 
 ## インストール
 
 ```bash
-pip install pptxr
+pip install tppt
 ```
 
 ## 使用例
 
 ```python
-from pptxr import Presentation, SlideTemplate, SlideMaster, SlideBuilder
+from tppt import Presentation, SlideTemplate, SlideMaster, SlideBuilder
 
 
 class MySlideTemplate(SlideTemplate):
@@ -57,7 +57,7 @@ presentation.save("output.pptx")
 - `_builders`: ビルダーパターンの実装
 - `_presentation`: プレゼンテーションクラス
 - `_slide_master`: スライドマスタークラス
-- `_pptxr`: python-pptxとのインターフェース
+- `_tppt`: python-pptxとのインターフェース
 
 ## ライセンス
 

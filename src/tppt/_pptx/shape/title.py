@@ -1,8 +1,7 @@
 from typing import Self
 
 from pptx.shapes.autoshape import Shape as PptxShape
-
-from pptxr._pptx.converter import PptxConvertible
+from tppt._pptx.converter import PptxConvertible
 
 
 class Title(PptxConvertible[PptxShape]):

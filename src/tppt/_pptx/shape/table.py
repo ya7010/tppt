@@ -4,15 +4,14 @@ from typing import Literal, NotRequired, Self, TypeAlias, TypedDict, cast
 
 from pptx.enum.text import MSO_VERTICAL_ANCHOR, PP_ALIGN
 from pptx.shapes.graphfrm import GraphicFrame
-
-from pptxr._features import (
+from tppt._features import (
     USE_PANDAS,
     USE_POLARS,
     PandasDataFrame,
     PolarsDataFrame,
     PolarsLazyFrame,
 )
-from pptxr.types._length import Length, LiteralLength, LiteralPoint, Point
+from tppt.types._length import Length, LiteralLength, LiteralPoint, Point
 
 from ..converter import to_pptx_length
 from . import Shape

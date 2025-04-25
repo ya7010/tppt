@@ -1,9 +1,8 @@
 from typing import IO, Literal, NotRequired, Self, TypedDict
 
 from pptx.shapes.picture import Picture as PptxPicture
-
-from pptxr.types import FilePath
-from pptxr.types._length import Length, LiteralLength
+from tppt.types import FilePath
+from tppt.types._length import Length, LiteralLength
 
 from . import Shape
 
