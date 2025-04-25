@@ -3,11 +3,11 @@ from pathlib import Path
 import pytest
 
 
-@pytest.fixture
-# Provide an output directory under tests/output and clean it before each test
+@pytest.fixture(scope="session")
+# Provide an output directory under tests/output and clean it only once at the beginning of the test session
 # ... existing code is setting up fixtures ...
 def output() -> Path:
-    """Return the output directory for pptx files under tests/output and clean it before each test."""
+    """Return the output directory for pptx files under tests/output and clean it only once at the beginning of the test session."""
     out_dir = Path(__file__).parent / "output"
     if out_dir.exists():
         for file in out_dir.iterdir():
