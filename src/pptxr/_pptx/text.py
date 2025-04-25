@@ -1,4 +1,4 @@
-from typing import Self, TypedDict
+from typing import Literal, Self, TypedDict
 
 from pptx.shapes.autoshape import Shape as PptxShape
 
@@ -19,7 +19,9 @@ class TextProps(TypedDict):
 class TextData(TextProps):
     """Text data."""
 
-    contents: str
+    type: Literal["text"]
+
+    text: str
 
 
 class Text(PptxConvertible[PptxShape]):
@@ -27,7 +29,7 @@ class Text(PptxConvertible[PptxShape]):
 
     def __init__(self, pptx_obj: PptxShape, data: TextData | None = None, /) -> None:
         if data:
-            pptx_obj.text = data["contents"]
+            pptx_obj.text = data["text"]
 
         self._pptx = pptx_obj
 
