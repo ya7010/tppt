@@ -3,11 +3,6 @@
 from pathlib import Path
 from typing import IO, Union, cast
 
-<<<<<<< HEAD
-from ._builder.presentation import PresentationBuilder
-from ._data import Slide
-from ._slide_master import SlideMaster
-=======
 from pptx import Presentation as PptxPresentation
 from pptx.shapes.autoshape import Shape as PptxShape
 from pptx.shapes.base import BaseShape
@@ -17,7 +12,6 @@ from pptx.util import Pt
 from ._data import Shape, Slide
 from ._pptx.converters import to_pptx_shape_type
 from .types import FilePath, LiteralLength, ShapeType, to_points
->>>>>>> 6ee7a769384df23d7dc8b7fd110dbd2397fb0b26
 
 
 class PptxShapeWrapper:
