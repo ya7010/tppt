@@ -98,3 +98,40 @@ def test_create_table_with_polars_dataframe(output: pathlib.Path) -> None:
         .build()
     )
     presentation.save(output / "table_polars_data.pptx")
+
+
+@pytest.mark.skipif(not USE_POLARS, reason="Polars not installed")
+def test_create_table_with_polars_lazyframe(output: pathlib.Path) -> None:
+    """Test creating a table with polars LazyFrame."""
+    # Type checking is done at runtime when polars is available
+    import polars as pl  # type: ignore[import]
+
+    # Create polars LazyFrame with simple data using dictionary
+    data = {
+        "カテゴリ": ["食品", "電化製品", "衣類"],
+        "売上": [5000, 12000, 8000],
+        "利益率": [0.2, 0.15, 0.25],
+    }
+    lazy_df = pl.LazyFrame(data)
+
+    # Collect LazyFrame to DataFrame
+    df = lazy_df.collect()
+
+    # Convert DataFrame to a list of lists for table creation
+    table_data = [df.columns] + df.to_numpy().tolist()
+
+    presentation = (
+        pptxr.Presentation.builder()
+        .slide(
+            pptxr.SlideBuilder().table(
+                table_data,
+                left=(100, "pt"),
+                top=(100, "pt"),
+                width=(400, "pt"),
+                height=(200, "pt"),
+                first_row_header=True,
+            )
+        )
+        .build()
+    )
+    presentation.save(output / "table_polars_lazyframe_data.pptx")
