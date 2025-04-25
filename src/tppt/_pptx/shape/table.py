@@ -4,6 +4,7 @@ from typing import Literal, NotRequired, Self, TypeAlias, TypedDict, cast
 
 from pptx.enum.text import MSO_VERTICAL_ANCHOR, PP_ALIGN
 from pptx.shapes.graphfrm import GraphicFrame
+
 from tppt._features import (
     USE_PANDAS,
     USE_POLARS,
@@ -152,19 +153,19 @@ def dataframe2list(data: DataFrame) -> list[list[str]]:
     if USE_POLARS:
         if isinstance(data, PolarsLazyFrame):
             # For LazyFrame, collect it first
-            polars_df = data.collect()
+            polars_df = cast(PolarsLazyFrame, data).collect()
             columns = list(polars_df.columns)
             rows = polars_df.to_numpy().tolist()
             return [columns] + rows
         elif isinstance(data, PolarsDataFrame):
-            polars_df = data
+            polars_df = cast(PolarsDataFrame, data)
             columns = list(polars_df.columns)
             rows = polars_df.to_numpy().tolist()
             return [columns] + rows
 
     if USE_PANDAS and isinstance(data, PandasDataFrame):  # type: ignore
         # Convert pandas DataFrame to list of lists
-        pandas_df = data
+        pandas_df = cast(PandasDataFrame, data)
         columns = pandas_df.columns.tolist()
         rows = pandas_df.values.tolist()
         return [columns] + rows
