@@ -103,19 +103,19 @@ class SlideBuilder:
 
     def table(self, data: DataFrame, **kwargs: Unpack[TableProps]) -> Self:
         rows, cols = len(data), len(data[0])
-        props: TableData = {"type": "table", "data": data, **kwargs}
+        table_data: TableData = {"type": "table", "data": data, **kwargs}
 
         self._shape_registry.append(
             lambda slide: Table(
                 slide.shapes.add_table(
                     rows,
                     cols,
-                    to_pptx_length(props["left"]),
-                    to_pptx_length(props["top"]),
-                    to_pptx_length(props["width"]),
-                    to_pptx_length(props["height"]),
+                    to_pptx_length(table_data["left"]),
+                    to_pptx_length(table_data["top"]),
+                    to_pptx_length(table_data["width"]),
+                    to_pptx_length(table_data["height"]),
                 ),
-                props,
+                table_data,
             )
         )
         return self
