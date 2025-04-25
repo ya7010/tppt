@@ -41,7 +41,7 @@ test = "pytest"
 
 [tool.pyright]
 include = ["src/pptxr", "examples", "tests"]
-exclude = ["src/pptxr/_pptx/**", "**/site-packages", ".venv/**"]
+exclude = [ "**/site-packages", ".venv/**"]
 
 [tool.mypy]
-exclude = ["src/pptxr/_pptx/.*", "**/site-packages", ".venv/**"]
+exclude = ["**/site-packages", ".venv/**"]
