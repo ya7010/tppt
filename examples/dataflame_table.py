@@ -1,5 +1,6 @@
 """Example of creating tables from Polars dataframe."""
 
+import sys
 from pathlib import Path
 
 import tppt
@@ -82,4 +83,7 @@ if __name__ == "__main__":
     if USE_POLARS:
         main()
     else:
-        print("Polars is not installed. Please install it to run this example.")
+        print(
+            "Polars is not installed. Please install it to run this example.",
+            file=sys.stderr,
+        )
