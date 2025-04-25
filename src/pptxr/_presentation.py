@@ -9,7 +9,7 @@ from pptx.shapes.base import BaseShape
 from pptx.slide import Slide as PptxSlide
 from pptx.util import Pt
 
-from ._data import Presentation, Shape, Slide
+from ._data import Shape, Slide
 from ._pptx.converters import to_pptx_shape_type
 from .types import LiteralLength, ShapeType, to_points
 
@@ -90,14 +90,3 @@ class PptxPresentationWrapper:
         else:
             self._presentation.save(path)
 
-
-def create_presentation() -> "Presentation":
-    """Create a new presentation.
-
-    Returns:
-        A new presentation.
-    """
-    wrapper = PptxPresentationWrapper()
-    presentation = Presentation()
-    presentation._wrapper = wrapper
-    return presentation
