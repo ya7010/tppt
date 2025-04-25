@@ -5,6 +5,8 @@ from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack, cast
 
 from pptx.slide import Slide as PptxSlide
 from pptx.slide import SlideLayout as PptxSlideLayout
+
+from tppt._pptx.placeholder import SlidePlaceholder
 from tppt.exception import SlideLayoutIndexError
 from tppt.types import FilePath
 
@@ -34,9 +36,20 @@ class Slide(PptxConvertible[PptxSlide]):
     @property
     def title(self) -> Title | None:
         """Get slide title shape."""
+
         if title := self._pptx.shapes.title:
             return Title(title)
         return None
+
+    @property
+    def placeholders(self) -> list[SlidePlaceholder]:
+        """Get all placeholders in the slide."""
+        return [
+            SlidePlaceholder(
+                placeholder,  # type: ignore
+            )
+            for placeholder in self._pptx.placeholders
+        ]
 
     def to_pptx(self) -> PptxSlide:
         """Convert to pptx slide."""

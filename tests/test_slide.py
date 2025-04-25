@@ -1,0 +1,40 @@
+"""Tests for slide module."""
+
+import pytest
+
+import tppt
+from tppt._pptx.placeholder import SlidePlaceholder
+
+
+def test_slide_placeholders() -> None:
+    """Test getting placeholders from a slide."""
+    # Create a presentation with a slide
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(
+            tppt.SlideBuilder(0)  # Use layout 0 which usually has placeholders
+        )
+        .build()
+    )
+
+    # Get the slide from the presentation's pptx object
+    pptx_presentation = presentation.to_pptx()
+    if not pptx_presentation.slides:
+        pytest.skip("No slides in presentation")
+
+    slide = tppt.Slide(pptx_presentation.slides[0])
+
+    # Test that we can get placeholders
+    placeholders = slide.placeholders
+
+    # Check that placeholders is a list
+    assert isinstance(placeholders, list)
+    assert len(placeholders) != 0
+
+    # Verify each placeholder is a SlidePlaceholder instance
+    for placeholder in placeholders:
+        assert isinstance(placeholder, SlidePlaceholder)
+
+        # Check that we can convert it to pptx object
+        pptx_placeholder = placeholder.to_pptx()
+        assert pptx_placeholder is not None
