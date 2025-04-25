@@ -1,7 +1,7 @@
 """Types module for pptxr."""
 
 import pathlib
-from typing import TypeAlias
+from typing import Literal, TypeAlias
 
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 
@@ -17,6 +17,20 @@ from .length import (
 
 FilePath = str | pathlib.Path
 ShapeType: TypeAlias = MSO_AUTO_SHAPE_TYPE
+
+SlideLayoutType: TypeAlias = Literal[
+    "TITLE",
+    "TITLE_AND_CONTENT",
+    "SECTION_HEADER",
+    "TWO_CONTENT",
+    "COMPARISON",
+    "TITLE_ONLY",
+    "BLANK",
+    "CONTENT_WITH_CAPTION",
+    "PICTURE_WITH_CAPTION",
+    "TITLE_AND_VERTICAL_TEXT",
+    "VERTICAL_TITLE_AND_TEXT",
+]
 
 
 def pt(value: int | float) -> LiteralLength:
@@ -34,4 +48,5 @@ __all__ = [
     "to_length",
     "to_point",
     "to_points",
+    "SlideLayoutType",
 ]
