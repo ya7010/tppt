@@ -2,8 +2,7 @@
 
 from typing import IO, Self, cast
 
-from pptx import Presentation as PptxPresentation
-from pptx.presentation import Presentation as PptxPresentationType
+from pptx.presentation import PptxPresentation
 
 from pptxr._pptx.converters import save_presentation
 from pptxr._pptx.slide import Slide
@@ -11,12 +10,12 @@ from pptxr._pptx.types import PptxConvertible
 from pptxr.types import FilePath, SlideLayoutType
 
 
-class Presentation(PptxConvertible[PptxPresentationType]):
+class Presentation(PptxConvertible[PptxPresentation]):
     """Presentation wrapper with type safety."""
 
-    def __init__(self, pptx_presentation: PptxPresentationType | None = None) -> None:
+    def __init__(self, pptx_presentation: PptxPresentation | None = None) -> None:
         """Initialize presentation."""
-        self._presentation: PptxPresentationType = (
+        self._presentation: PptxPresentation = (
             pptx_presentation if pptx_presentation is not None else PptxPresentation()
         )
 
@@ -54,7 +53,7 @@ class Presentation(PptxConvertible[PptxPresentationType]):
     @classmethod
     def from_pptx(cls, pptx_obj: PptxPresentation) -> Self:
         """Create from pptx presentation."""
-        if not isinstance(pptx_obj, PptxPresentationType):
+        if not isinstance(pptx_obj, PptxPresentation):
             raise TypeError(f"Expected PptxPresentation, got {type(pptx_obj)}")
         return cls(pptx_obj)
 
