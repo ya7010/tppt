@@ -43,3 +43,4 @@ Thumbs.db
 
 # TypeScript
 node_modules/
+examples/*.pptx

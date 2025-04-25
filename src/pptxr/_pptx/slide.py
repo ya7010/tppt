@@ -1,11 +1,13 @@
 """Slide wrapper implementation."""
 
+import os
 from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack, cast
 
 from pptx.slide import Slide as PptxSlide
 from pptx.slide import SlideLayout as PptxSlideLayout
 
 from pptxr.exception import SlideLayoutIndexError
+from pptxr.types import FilePath
 
 from .converter import PptxConvertible, to_pptx_length
 from .picture import Picture, PictureData, PictureProps
@@ -75,14 +77,19 @@ class SlideBuilder:
         return self
 
     def picture(
-        self, image_file: str | IO[bytes], /, **kwargs: Unpack[PictureProps]
+        self, image_file: FilePath | IO[bytes], /, **kwargs: Unpack[PictureProps]
     ) -> Self:
         data = PictureData(type="picture", image_file=image_file, **kwargs)
+
+        if isinstance(data["image_file"], os.PathLike):
+            image_file = os.fspath(data["image_file"])
+        else:
+            image_file = data["image_file"]
 
         self._shape_registry.append(
             lambda slide: Picture(
                 slide.shapes.add_picture(
-                    data["image_file"],
+                    image_file,
                     to_pptx_length(data["left"]),
                     to_pptx_length(data["top"]),
                     to_pptx_length(data.get("width")),
