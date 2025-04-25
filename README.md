@@ -1,21 +1,21 @@
 # tppt
 
-tpptは型安全なPowerPointプレゼンテーションビルダーです。このライブラリを使用すると、Pythonコードからパワーポイントを簡単に生成できます。
+tppt is a type-safe PowerPoint presentation builder. This library allows you to easily generate PowerPoint presentations from Python code.
 
-## インストール
+## Installation
 
 ```bash
 pip install tppt
 ```
 
-## 使用例
+## Usage Example
 
 ```python
 from pathlib import Path
 import tppt
 from tppt.types import Color
 
-# ビルダーパターンを使用してプレゼンテーションを作成
+# Create a presentation using the builder pattern
 presentation = (
     tppt.Presentation.builder()
     .slide(
@@ -42,7 +42,7 @@ presentation = (
     .slide(
         tppt.SlideBuilder()
         .text(
-            "画像の例",
+            "Image Example",
             left=(50, "pt"),
             top=(50, "pt"),
             width=(300, "pt"),
@@ -59,7 +59,7 @@ presentation = (
     .slide(
         tppt.SlideBuilder()
         .text(
-            "表の例",
+            "Table Example",
             left=(50, "pt"),
             top=(50, "pt"),
             width=(300, "pt"),
@@ -67,9 +67,9 @@ presentation = (
         )
         .table(
             [
-                ["製品", "価格", "在庫"],
-                ["製品A", "¥1,000", "10個"],
-                ["製品B", "¥2,500", "5個"],
+                ["Product", "Price", "Stock"],
+                ["Product A", "$10.00", "10 units"],
+                ["Product B", "$25.00", "5 units"],
             ],
             left=(50, "pt"),
             top=(100, "pt"),
@@ -80,29 +80,29 @@ presentation = (
     .build()
 )
 
-# プレゼンテーションを保存
+# Save the presentation
 presentation.save("output.pptx")
 ```
 
-## 特徴
+## Features
 
-- 型安全なインターフェース
-- ビルダーパターンによる直感的なAPI
-- テキスト、画像、表などの要素を簡単に配置
-- 位置やサイズの細かな調整が可能
-- テキストのスタイル（サイズ、太字、斜体、色）のカスタマイズ
+- Type-safe interface
+- Intuitive API with builder pattern
+- Easy placement of text, images, and tables
+- Fine-tuned control over position and size
+- Customization of text styles (size, bold, italic, color)
 
-## アーキテクチャ
+## Architecture
 
-このライブラリは以下のモジュールで構成されています：
+This library consists of the following modules:
 
-- `types`: 長さや色などの型安全な基本型
-- `_data`: データクラス
-- `_builders`: ビルダーパターンの実装
-- `_presentation`: プレゼンテーションクラス
-- `_slide_master`: スライドマスタークラス
-- `_tppt`: python-pptxとのインターフェース
+- `types`: Type-safe basic types for length, color, etc.
+- `_data`: Data classes
+- `_builders`: Implementation of the builder pattern
+- `_presentation`: Presentation class
+- `_slide_master`: Slide master class
+- `_tppt`: Interface with python-pptx
 
-## ライセンス
+## License
 
 MIT
