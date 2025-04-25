@@ -4,7 +4,7 @@ import pathlib
 from abc import ABC, abstractmethod
 from typing import IO, TypeAlias, TypeVar
 
-from pptxr.units import Length, LiteralLength
+from pptxr.types import Length, LiteralLength
 
 FilePath: TypeAlias = str | pathlib.Path
 

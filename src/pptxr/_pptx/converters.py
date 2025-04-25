@@ -11,6 +11,12 @@ from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 from pptx.shapes.base import BaseShape as PptxShape
 from pptx.slide import Slide as PptxSlide
 
+from pptxr.abstract.presentation import (
+    AbstractPresentation,
+    AbstractShape,
+    AbstractSlide,
+    PresentationFactory,
+)
 from pptxr.types import FilePath, Length, LiteralLength
 from pptxr.types.length import Centimeter, Inch, Point, to_length
 
