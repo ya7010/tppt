@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import List, Optional, Union
 
-from ._builders.presentation import PresentationBuilder
+from ._builder.presentation import PresentationBuilder
 from ._data import Slide
 from ._slide_master import SlideMaster
 
