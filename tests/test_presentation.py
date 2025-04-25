@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from pptx import Presentation as PptxPresentation
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 
 from pptxr._data import Presentation, Shape
@@ -50,6 +51,24 @@ def test_save_presentation(tmp_path: Path) -> None:
         text="Test",
     )
     slide.shapes.append(shape)
+    # データオブジェクトに追加したshapeを実際のプレゼンテーションラッパーに反映
+    presentation._wrapper._add_shape(
+        presentation._wrapper._presentation.slides[0], shape
+    )
     path = tmp_path / "test.pptx"
     presentation.save(path)
     assert path.exists()
+
+    # 保存したPPTXを開いて内容を検証
+    pptx_presentation = PptxPresentation(str(path))
+    slides = pptx_presentation.slides
+    assert len(slides) == 1
+
+    auto_shapes = [
+        s
+        for s in slides[0].shapes
+        if hasattr(s, "auto_shape_type")
+        and s.auto_shape_type == MSO_AUTO_SHAPE_TYPE.RECTANGLE
+    ]
+    assert len(auto_shapes) == 1
+    assert auto_shapes[0].text == "Test"

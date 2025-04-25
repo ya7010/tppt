@@ -1,10 +1,10 @@
 """Presentation wrapper implementation."""
 
+import os
 from typing import IO, Self, cast
 
 from pptx.presentation import PptxPresentation
 
-from pptxr._pptx.converters import save_presentation
 from pptxr._pptx.slide import Slide
 from pptxr._pptx.types import PptxConvertible
 from pptxr.types import FilePath, SlideLayoutType
@@ -44,7 +44,9 @@ class Presentation(PptxConvertible[PptxPresentation]):
 
     def save(self, file: FilePath | IO[bytes]) -> None:
         """Save presentation to file."""
-        save_presentation(self._presentation, file)
+        if isinstance(file, os.PathLike):
+            file = os.fspath(file)
+        self._presentation.save(file)
 
     def to_pptx(self) -> PptxPresentation:
         """Convert to pptx presentation."""
