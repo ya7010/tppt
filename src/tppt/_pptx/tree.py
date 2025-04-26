@@ -1,6 +1,3 @@
-import argparse
-import json
-import os
 from typing import Any, Dict
 
 from pptx.enum.shapes import MSO_SHAPE_TYPE
@@ -270,35 +267,3 @@ def presentation_to_dict(ppt: PptxPresentation) -> Dict[str, Any]:
         }
 
     return prs_data
-
-
-def main():
-    parser = argparse.ArgumentParser(
-        description="Tool to convert PPTX file structure to JSON"
-    )
-    parser.add_argument("pptx_file", help="Path to the PPTX file to convert")
-    parser.add_argument(
-        "-o", "--output", help="Path to the output JSON file", default=None
-    )
-    parser.add_argument(
-        "--indent", type=int, help="JSON indentation for formatting", default=2
-    )
-    args = parser.parse_args()
-
-    if not os.path.exists(args.pptx_file):
-        print(f"Error: File '{args.pptx_file}' not found.")
-        return
-
-    prs_data = presentation_to_dict(args.pptx_file)
-
-    # JSONファイルに出力
-    if args.output:
-        output_path = args.output
-    else:
-        base_name = os.path.splitext(os.path.basename(args.pptx_file))[0]
-        output_path = f"{base_name}_structure.json"
-
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(prs_data, f, ensure_ascii=False, indent=args.indent)
-
-    print(f"Structure of '{args.pptx_file}' has been output to '{output_path}'.")
