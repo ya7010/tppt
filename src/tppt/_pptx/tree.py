@@ -9,16 +9,14 @@ def color_format_to_dict(color_format: Any) -> Dict[str, Any]:
     data = {}
 
     try:
-        if hasattr(color_format, "rgb"):
-            if color_format.rgb is not None:
-                data["rgb"] = str(color_format.rgb)
+        if rgb := getattr(color_format, "rgb"):
+            data["rgb"] = str(rgb)
 
-        if hasattr(color_format, "theme_color"):
-            if color_format.theme_color is not None:
-                data["theme_color"] = str(color_format.theme_color)
+        if theme_color := getattr(color_format, "theme_color"):
+            data["theme_color"] = str(theme_color)
 
-        if hasattr(color_format, "brightness"):
-            data["brightness"] = color_format.brightness
+        if brightness := getattr(color_format, "brightness"):
+            data["brightness"] = brightness
     except Exception:
         pass
 
@@ -38,25 +36,21 @@ def text_frame_to_dict(text_frame: Any) -> Dict[str, Any]:
         for run in p.runs:
             run_data = {"text": run.text}
 
-            if hasattr(run, "font"):
+            if font := getattr(run, "font"):
                 font_data = {}
-                if hasattr(run.font, "name") and run.font.name is not None:
-                    font_data["name"] = run.font.name
-                if hasattr(run.font, "size") and run.font.size is not None:
-                    font_data["size"] = (
-                        run.font.size.pt
-                        if hasattr(run.font.size, "pt")
-                        else run.font.size
-                    )
-                if hasattr(run.font, "bold") and run.font.bold is not None:
-                    font_data["bold"] = run.font.bold
-                if hasattr(run.font, "italic") and run.font.italic is not None:
-                    font_data["italic"] = run.font.italic
-                if hasattr(run.font, "underline") and run.font.underline is not None:
-                    font_data["underline"] = run.font.underline
+                if name := getattr(font, "name"):
+                    font_data["name"] = name
+                if size := getattr(font, "size"):
+                    font_data["size"] = size.pt if hasattr(size, "pt") else size
+                if bold := getattr(font, "bold"):
+                    font_data["bold"] = bold
+                if italic := getattr(font, "italic"):
+                    font_data["italic"] = italic
+                if underline := getattr(font, "underline"):
+                    font_data["underline"] = underline
 
-                if hasattr(run.font, "color") and run.font.color is not None:
-                    font_data["color"] = color_format_to_dict(run.font.color)
+                if color := getattr(font, "color"):
+                    font_data["color"] = color_format_to_dict(color)
 
                 run_data["font"] = font_data
 
@@ -136,15 +130,11 @@ def placeholder_to_dict(placeholder: Any) -> Dict[str, Any]:
 
     # Add placeholder-specific information
     try:
-        placeholder_data["placeholder_type"] = (
-            placeholder.placeholder_format.type
-            if hasattr(placeholder.placeholder_format, "type")
-            else None
+        placeholder_data["placeholder_type"] = getattr(
+            placeholder.placeholder_format, "type"
         )
-        placeholder_data["placeholder_idx"] = (
-            placeholder.placeholder_format.idx
-            if hasattr(placeholder.placeholder_format, "idx")
-            else None
+        placeholder_data["placeholder_idx"] = getattr(
+            placeholder.placeholder_format, "idx"
         )
     except Exception:
         pass
@@ -202,18 +192,17 @@ def slide_to_dict(slide: Any) -> Dict[str, Any]:
     }
 
     # Add placeholder information
-    if hasattr(slide, "placeholders"):
+    if placeholders := getattr(slide, "placeholders"):
         slide_data["placeholders"] = [
-            placeholder_to_dict(placeholder) for placeholder in slide.placeholders
+            placeholder_to_dict(placeholder) for placeholder in placeholders
         ]
 
     # Add notes information
-    if hasattr(slide, "notes_slide") and slide.notes_slide is not None:
+    if notes_slide := getattr(slide, "notes_slide"):
         notes_placeholders = []
-        if hasattr(slide.notes_slide, "placeholders"):
+        if placeholders := getattr(notes_slide, "placeholders"):
             notes_placeholders = [
-                placeholder_to_dict(placeholder)
-                for placeholder in slide.notes_slide.placeholders
+                placeholder_to_dict(placeholder) for placeholder in placeholders
             ]
 
         slide_data["notes_slide"] = {
