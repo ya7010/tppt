@@ -86,7 +86,7 @@ def shape_to_dict(shape: Any) -> Dict[str, Any]:
         "top": shape.top.pt if hasattr(shape.top, "pt") else shape.top,
     }
 
-    # プレースホルダーの場合
+    # In case of a placeholder
     if shape.shape_type == MSO_SHAPE_TYPE.PLACEHOLDER:
         try:
             shape_data["placeholder_type"] = (
@@ -102,11 +102,11 @@ def shape_to_dict(shape: Any) -> Dict[str, Any]:
         except Exception:
             pass
 
-    # テキストフレームがある場合
+    # If there is a text frame
     if shape.has_text_frame:
         shape_data["text_frame"] = text_frame_to_dict(shape.text_frame)
 
-    # テーブルがある場合
+    # If there is a table
     if shape.has_table:
         table_data = {
             "rows": shape.table.rows.count,
@@ -126,7 +126,7 @@ def shape_to_dict(shape: Any) -> Dict[str, Any]:
 
         shape_data["table"] = table_data
 
-    # グループシェイプの場合
+    # In case of a group shape
     if shape.shape_type == MSO_SHAPE_TYPE.GROUP:
         shape_data["shapes"] = [shape_to_dict(subshape) for subshape in shape.shapes]
 
@@ -137,7 +137,7 @@ def placeholder_to_dict(placeholder: Any) -> Dict[str, Any]:
     """Convert placeholder to dictionary"""
     placeholder_data = shape_to_dict(placeholder)
 
-    # プレースホルダー特有の情報を追加
+    # Add placeholder-specific information
     try:
         placeholder_data["placeholder_type"] = (
             placeholder.placeholder_format.type
@@ -184,7 +184,7 @@ def slide_master_to_dict(slide_master: Any) -> Dict[str, Any]:
         "slide_layouts": [],
     }
 
-    # スライドレイアウトの情報を追加
+    # Add slide layout information
     for layout in slide_master.slide_layouts:
         layout_dict = slide_layout_to_dict(layout)
         if slide_layouts := master_data.get("slide_layouts"):
@@ -204,13 +204,13 @@ def slide_to_dict(slide: Any) -> Dict[str, Any]:
         "placeholders": [],
     }
 
-    # プレースホルダーの情報を追加
+    # Add placeholder information
     if hasattr(slide, "placeholders"):
         slide_data["placeholders"] = [
             placeholder_to_dict(placeholder) for placeholder in slide.placeholders
         ]
 
-    # ノートの情報を追加
+    # Add notes information
     if hasattr(slide, "notes_slide") and slide.notes_slide is not None:
         notes_placeholders = []
         if hasattr(slide.notes_slide, "placeholders"):
@@ -230,7 +230,7 @@ def slide_to_dict(slide: Any) -> Dict[str, Any]:
 def presentation_to_dict(ppt: PptxPresentation) -> Dict[str, Any]:
     """Convert presentation information to dictionary"""
 
-    # スライドのサイズを安全に取得
+    # Safely get the slide size
     slide_width = None
     slide_height = None
 
@@ -256,7 +256,7 @@ def presentation_to_dict(ppt: PptxPresentation) -> Dict[str, Any]:
         "slide_masters": [slide_master_to_dict(master) for master in ppt.slide_masters],
     }
 
-    # ノートマスターの情報を追加
+    # Add note master information
     if notes_master := getattr(ppt, "notes_master"):
         notes_placeholders = []
         if placeholders := getattr(notes_master, "placeholders"):
