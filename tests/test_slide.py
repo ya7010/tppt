@@ -51,7 +51,7 @@ def test_slide_layout_placeholders() -> None:
         pytest.skip("No slide layouts in presentation")
 
     # Get the first slide layout
-    slide_layout = tppt.SlideLayout(pptx_presentation.slide_layouts[0])
+    slide_layout = tppt.pptx.SlideLayout(pptx_presentation.slide_layouts[0])
 
     # Test that we can get placeholders
     placeholders = slide_layout.placeholders

@@ -1,17 +1,18 @@
 from pathlib import Path
 
 import tppt
-from tppt.slide_layout import DefaultMasterSlide, DefaultTitleSlide
 
 
 def main():
-    class CustomMasterSlide(DefaultMasterSlide):
-        pass
+    class CustomMasterSlide(tppt.SlideLayout):
+        title: tppt.Placeholder[str]
+        text: tppt.Placeholder[str]
 
-    class CustomTitleSlide(DefaultTitleSlide):
-        pass
+    class CustomTitleSlide(tppt.SlideLayout):
+        title: tppt.Placeholder[str]
+        subtitle: tppt.Placeholder[str | None] = None
 
-    class CustomSlideMaster(tppt.TpptSlideMaster):
+    class CustomSlideMaster(tppt.SlideMaster):
         Master = CustomMasterSlide
         Title = CustomTitleSlide
 

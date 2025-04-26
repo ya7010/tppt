@@ -38,7 +38,7 @@ class _Placeholder:
 Placeholder = Annotated[_AnyType, _Placeholder]
 
 
-class TpptSlideLayoutMeta(type):
+class _SlideLayoutMeta(type):
     """Meta class for TpptSlideLayout.
 
     Tracks fields annotated as placeholders.
@@ -92,7 +92,7 @@ class TpptSlideLayoutMeta(type):
     order_default=False,
     field_specifiers=(),
 )
-class TpptSlideLayout(metaclass=TpptSlideLayoutMeta):
+class SlideLayout(metaclass=_SlideLayoutMeta):
     """Base class for slide layouts"""
 
     __placeholders__: ClassVar[dict[str, Any]] = {}
@@ -129,7 +129,7 @@ class TpptSlideLayout(metaclass=TpptSlideLayoutMeta):
         return SlideBuilder()
 
 
-class DefaultMasterSlide(TpptSlideLayout):
+class DefaultMasterSlide(SlideLayout):
     """Default master slide layout."""
 
     title: Placeholder[str]
@@ -138,7 +138,7 @@ class DefaultMasterSlide(TpptSlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultTitleSlide(TpptSlideLayout):
+class DefaultTitleSlide(SlideLayout):
     """Title slide layout."""
 
     title: Placeholder[str]
@@ -147,7 +147,7 @@ class DefaultTitleSlide(TpptSlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultTitleAndContentSlide(TpptSlideLayout):
+class DefaultTitleAndContentSlide(SlideLayout):
     """Title and content slide layout."""
 
     title: Placeholder[str]
@@ -156,7 +156,7 @@ class DefaultTitleAndContentSlide(TpptSlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultSectionHeaderSlide(TpptSlideLayout):
+class DefaultSectionHeaderSlide(SlideLayout):
     """Section header slide layout."""
 
     title: Placeholder[str]
@@ -165,7 +165,7 @@ class DefaultSectionHeaderSlide(TpptSlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultTwoContentSlide(TpptSlideLayout):
+class DefaultTwoContentSlide(SlideLayout):
     """Two content slide layout."""
 
     title: Placeholder[str]
@@ -175,7 +175,7 @@ class DefaultTwoContentSlide(TpptSlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultComparisonSlide(TpptSlideLayout):
+class DefaultComparisonSlide(SlideLayout):
     """Comparison slide layout."""
 
     title: Placeholder[str]
@@ -187,7 +187,7 @@ class DefaultComparisonSlide(TpptSlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultTitleOnlySlide(TpptSlideLayout):
+class DefaultTitleOnlySlide(SlideLayout):
     """Title only slide layout."""
 
     title: Placeholder[str]
@@ -195,14 +195,14 @@ class DefaultTitleOnlySlide(TpptSlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultBlankSlide(TpptSlideLayout):
+class DefaultBlankSlide(SlideLayout):
     """Blank slide layout."""
 
     date: Placeholder[datetime.date | None] = None
     footer: Placeholder[str | None] = None
 
 
-class DefaultContentWithCaptionSlide(TpptSlideLayout):
+class DefaultContentWithCaptionSlide(SlideLayout):
     """Content with caption slide layout."""
 
     title: Placeholder[str]
@@ -211,7 +211,7 @@ class DefaultContentWithCaptionSlide(TpptSlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultPictureWithCaptionSlide(TpptSlideLayout):
+class DefaultPictureWithCaptionSlide(SlideLayout):
     """Picture with caption slide layout."""
 
     title: Placeholder[str]
@@ -220,7 +220,7 @@ class DefaultPictureWithCaptionSlide(TpptSlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultTitleAndVerticalTextSlide(TpptSlideLayout):
+class DefaultTitleAndVerticalTextSlide(SlideLayout):
     """Title and vertical text slide layout."""
 
     title: Placeholder[str]
@@ -229,7 +229,7 @@ class DefaultTitleAndVerticalTextSlide(TpptSlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultVerticalTitleAndTextSlide(TpptSlideLayout):
+class DefaultVerticalTitleAndTextSlide(SlideLayout):
     """Vertical title and text slide layout."""
 
     vertical_title: Placeholder[str]

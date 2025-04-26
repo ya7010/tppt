@@ -6,7 +6,7 @@ from typing import IO, TYPE_CHECKING, Any, Callable, Generic, Self, overload
 from pptx.presentation import Presentation as PptxPresentation
 
 from tppt.pptx.tree import ppt2dict
-from tppt.slide_layout import TpptSlideLayout
+from tppt.slide_layout import SlideLayout
 from tppt.slide_master import (
     DefaultSlideMaster,
     GenericTpptSlideMaster,
@@ -108,7 +108,7 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
     def slide(
         self,
         slide: SlideBuilder
-        | Callable[[type[GenericTpptSlideMaster]], SlideBuilder | TpptSlideLayout],
+        | Callable[[type[GenericTpptSlideMaster]], SlideBuilder | SlideLayout],
         /,
     ) -> Self:
         """Add a slide to the presentation."""
@@ -118,7 +118,7 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
             slide_layout = slide(self._slide_master)
             slide_builder = (
                 slide_layout.builder()
-                if isinstance(slide_layout, TpptSlideLayout)
+                if isinstance(slide_layout, SlideLayout)
                 else slide_layout
             )
             slide_builder._build(self)

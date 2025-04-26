@@ -18,15 +18,15 @@ from .slide_layout import (
     DefaultTitleSlide,
     DefaultTwoContentSlide,
     DefaultVerticalTitleAndTextSlide,
-    TpptSlideLayout,
+    SlideLayout,
 )
 
 
-class TpptSlideMasterMeta(type):
-    def __getattr__(self, key: str) -> "type[TpptSlideLayout]":
+class _SlideMasterMeta(type):
+    def __getattr__(self, key: str) -> "type[SlideLayout]":
         if key in self.__annotations__:
             annotation = self.__annotations__[key]
-            if issubclass(annotation, TpptSlideLayout):
+            if issubclass(annotation, SlideLayout):
                 return annotation
             else:
                 raise SlideMasterAttributeMustBeSlideLayoutError(key)
@@ -39,10 +39,10 @@ class TpptSlideMasterMeta(type):
     order_default=False,
     field_specifiers=(),
 )
-class TpptSlideMaster(metaclass=TpptSlideMasterMeta): ...
+class SlideMaster(metaclass=_SlideMasterMeta): ...
 
 
-class DefaultSlideMaster(TpptSlideMaster):
+class DefaultSlideMaster(SlideMaster):
     Master: DefaultMasterSlide
     Title: DefaultTitleSlide
     TitleAndContent: DefaultTitleAndContentSlide
@@ -59,5 +59,5 @@ class DefaultSlideMaster(TpptSlideMaster):
 
 GenericTpptSlideMaster = TypeVar(
     "GenericTpptSlideMaster",
-    bound=TpptSlideMaster,
+    bound=SlideMaster,
 )
