@@ -6,7 +6,7 @@ from typing_extensions import dataclass_transform
 class TpptSlideMasterMeta(type):
     """TpptSlideMasterのメタクラス"""
 
-    def __getattr__(self, key: str) -> Any:
+    def __getattr__(self, key: str) -> "type[TpptSlideLayout]":
         if key in self.__annotations__:
             annotation = self.__annotations__[key]
             if issubclass(annotation, TpptSlideLayout):
@@ -14,6 +14,7 @@ class TpptSlideMasterMeta(type):
             else:
                 raise AttributeError(f"属性 {key} は {annotation} ではありません")
 
+        raise AttributeError(f"属性 {key} は存在しません")
 
 @dataclass_transform(
     eq_default=True,
@@ -55,7 +56,8 @@ TpptSlideMasterType = TypeVar("TpptSlideMasterType", bound=Type[TpptSlideMaster]
 TpptSlideLayoutType = TypeVar("TpptSlideLayoutType", bound=Type[TpptSlideLayout])
 
 
-class MyMasterSlide(TpptSlideLayout): ...
+class MyMasterSlide(TpptSlideLayout):
+    def __init__(self, a: int, b: str): ...
 
 
 class MyTitleSlide(TpptSlideLayout): ...
@@ -75,3 +77,4 @@ master: type[TpptSlideMaster] = MySlideMaster
 assert MySlideMaster.master == MyMasterSlide
 assert MySlideMaster.title == MyTitleSlide
 assert MySlideMaster.totle_and_content == MyContentSlide
+MySlideMaster.master(a=1, b="a")
