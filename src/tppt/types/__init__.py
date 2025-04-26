@@ -16,7 +16,7 @@ from ._length import (
     LiteralLength as LiteralLength,
 )
 from ._length import (
-    Point as Point,
+    Points as Points,
 )
 from ._length import (
     to_length as to_length,

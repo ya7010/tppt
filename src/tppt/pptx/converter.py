@@ -4,17 +4,21 @@ from typing import Protocol, Self, TypeVar, assert_never, overload, runtime_chec
 
 from pptx.dml.color import RGBColor as PptxRGBColor
 from pptx.util import Cm as PptxCm
+from pptx.util import Emu as PptxEmu
 from pptx.util import Inches as PptxInches
 from pptx.util import Length as PptxLength
+from pptx.util import Mm as PptxMm
 from pptx.util import Pt as PptxPt
 
 from tppt.types._color import Color, LiteralColor, to_color
 from tppt.types._length import (
-    Centimeter,
-    Inch,
+    Centimeters,
+    EnglishMetricUnits,
+    Inchs,
     Length,
     LiteralLength,
-    Point,
+    Millimeters,
+    Points,
     to_length,
 )
 
@@ -48,24 +52,31 @@ def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None:
         length = to_length(length)
 
     match length:
-        case Inch():
+        case Inchs():
             return PptxInches(length.value)
-        case Centimeter():
+        case Centimeters():
             return PptxCm(length.value)
-        case Point():
+        case Points():
             return PptxPt(length.value)
+        case Millimeters():
+            return PptxMm(length.value)
+        case EnglishMetricUnits():
+            return PptxEmu(length.value)
         case None:
             return None
         case _:
             assert_never(length)
 
+
 def to_tppt_length(length: PptxLength) -> Length:
     return to_length((length.cm, "cm"))
+
 
 def to_pptx_color(color: Color | LiteralColor) -> PptxRGBColor:
     color = to_color(color)
 
     return PptxRGBColor(color.r, color.g, color.b)
+
 
 def to_tppt_color(color: PptxRGBColor) -> Color:
     return Color(*color)
