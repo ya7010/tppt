@@ -6,17 +6,18 @@ from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack, cast
 from pptx.slide import Slide as PptxSlide
 from pptx.slide import SlideLayout as PptxSlideLayout
 
-from tppt._pptx.placeholder import SlidePlaceholder
 from tppt.exception import SlideLayoutIndexError
 from tppt.slide_master import GenericTpptSlideMaster
 from tppt.types import FilePath
 
 from .converter import PptxConvertible, to_pptx_length
+from .placeholder import SlidePlaceholder
 from .shape import Shape
 from .shape.picture import Picture, PictureData, PictureProps
 from .shape.table import DataFrame, Table, TableData, TableProps, dataframe2list
 from .shape.text import Text, TextData, TextProps
-from .shape.title import Title
+from .slide_layout import SlideLayout
+from .snotes_slide import NotesSlide
 
 if TYPE_CHECKING:
     from .presentation import PresentationBuilder
@@ -30,17 +31,24 @@ class Slide(PptxConvertible[PptxSlide]):
         self._pptx: PptxSlide = pptx_slide
 
     @property
+    def name(self) -> str | None:
+        """String representing the internal name of this slide.
+
+        Returns an empty string if no name is assigned.
+        """
+        if name := self._pptx.name:
+            return name
+        return None
+
+    @property
+    def slide_id(self) -> int:
+        """Get the slide id."""
+        return self._pptx.slide_id
+
+    @property
     def shapes(self) -> list[Shape]:
         """Get all shapes in the slide."""
         return [Shape(shape) for shape in self._pptx.shapes]
-
-    @property
-    def title(self) -> Title | None:
-        """Get slide title shape."""
-
-        if title := self._pptx.shapes.title:
-            return Title(title)
-        return None
 
     @property
     def placeholders(self) -> list[SlidePlaceholder]:
@@ -51,6 +59,18 @@ class Slide(PptxConvertible[PptxSlide]):
             )
             for placeholder in self._pptx.placeholders
         ]
+
+    @property
+    def slide_layout(self) -> SlideLayout:
+        """Get the slide layout."""
+        return SlideLayout.from_pptx(self._pptx.slide_layout)
+
+    @property
+    def notes_slide(self) -> NotesSlide | None:
+        """Get the notes slide."""
+        if not self._pptx.has_notes_slide:
+            return None
+        return NotesSlide.from_pptx(self._pptx.notes_slide)
 
     def to_pptx(self) -> PptxSlide:
         """Convert to pptx slide."""
