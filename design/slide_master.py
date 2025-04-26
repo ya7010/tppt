@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Self, Type, TypeVar, overload
+from typing import Any, ClassVar, Self, overload
 
 from typing_extensions import dataclass_transform
 
@@ -50,11 +50,6 @@ class TpptSlideLayout:
 
         else:
             return self
-
-
-# 型変数を調整
-TpptSlideMasterType = TypeVar("TpptSlideMasterType", bound=Type[TpptSlideMaster])
-TpptSlideLayoutType = TypeVar("TpptSlideLayoutType", bound=Type[TpptSlideLayout])
 
 
 class MyMasterSlide(TpptSlideLayout):

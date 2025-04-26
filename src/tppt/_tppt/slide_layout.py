@@ -1,16 +1,23 @@
 import datetime
-from abc import ABC
-
-from tppt._pptx.slide import SlideBuilder
+from typing import Any, Self, overload
 
 
-class TttpSlideLayout(ABC):
-    @classmethod
-    def builder(cls) -> "SlideBuilder":
-        raise NotImplementedError("tppt.SlideLayout.builder must be implemented")
+class TpptSlideLayout:
+    @overload
+    def __get__(self, instance: None, objtype: type[Any]) -> type[Self]: ...
+
+    @overload
+    def __get__(self, instance: object, objtype: type[Any]) -> Self: ...
+
+    def __get__(self, instance: object | None, objtype: type[Any]) -> type[Self] | Self:
+        if instance is None:
+            return type(self)
+
+        else:
+            return self
 
 
-class TitleSlide(TttpSlideLayout):
+class DefaultMasterSlide(TpptSlideLayout):
     def __init__(
         self,
         *,
@@ -25,7 +32,3 @@ class TitleSlide(TttpSlideLayout):
         self.date = date
         self.footer = footer
         self.slide_number = slide_number
-
-    @classmethod
-    def builder(cls) -> "SlideBuilder":
-        return SlideBuilder()

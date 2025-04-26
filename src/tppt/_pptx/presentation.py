@@ -40,7 +40,7 @@ class Presentation(PptxConvertible[PptxPresentation]):
 
     @classmethod
     def builder(
-        cls, slide_master: GenericTpptSlideMaster | None = None
+        cls, slide_master: "GenericTpptSlideMaster | None" = None
     ) -> "PresentationBuilder[GenericTpptSlideMaster]":
         """Get a builder for the presentation."""
         return PresentationBuilder(slide_master)
@@ -64,7 +64,7 @@ class Presentation(PptxConvertible[PptxPresentation]):
 class PresentationBuilder(Generic[GenericTpptSlideMaster]):
     """Builder for presentations."""
 
-    def __init__(self, slide_master: GenericTpptSlideMaster | None = None) -> None:
+    def __init__(self, slide_master: "GenericTpptSlideMaster | None" = None) -> None:
         """Initialize the builder."""
         import pptx
 
