@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 from typing_extensions import dataclass_transform
 
@@ -31,3 +31,8 @@ class MySlideLayout(TpptSlideLayout):
 
 myslide: type[TpptSlideLayout] = MySlideLayout
 myslide(title="a", text="b")
+
+
+def get_placeholders(slide: TpptSlideLayout) -> dict[str, Any]:
+    """クラスのメタ情報を解析し、プレースホルダーのフィールドのキーバリューを取得する"""
+    raise NotImplementedError
