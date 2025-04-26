@@ -75,13 +75,28 @@ class MySlideLayout(TpptSlideLayout):
     text: Annotated[str, Placeholder]
 
 
-def get_placeholders(slide: type[TpptSlideLayout]) -> dict[str, Any]:
-    """クラスのメタ情報を解析し、プレースホルダーのフィールドのキーバリューを取得する"""
-    return slide.__placeholders__
+def get_placeholders(
+    slide_or_class: type[TpptSlideLayout] | TpptSlideLayout,
+) -> dict[str, Any]:
+    """クラスのメタ情報を解析し、プレースホルダーのフィールドのキーバリューを取得する
+
+    引数にインスタンスが渡された場合は、実際のプレースホルダー値を返す
+    クラスが渡された場合は、プレースホルダーの型情報を返す
+    """
+    if isinstance(slide_or_class, type):
+        # クラスが渡された場合は型情報を返す
+        return slide_or_class.__placeholders__
+    else:
+        # インスタンスの場合は実際の値を返す
+        values = {}
+        for field_name in slide_or_class.__class__.__placeholders__:
+            if hasattr(slide_or_class, field_name):
+                values[field_name] = getattr(slide_or_class, field_name)
+        return values
 
 
 # TODO: 以下のアサーションが通るようにせよ
 Myslide: type[TpptSlideLayout] = MySlideLayout
 myslide = Myslide(title="a", text="b")
 
-assert get_placeholders(Myslide) == {"title": "a", "text": "b"}
+assert get_placeholders(myslide) == {"title": "a", "text": "b"}
