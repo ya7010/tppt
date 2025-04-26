@@ -62,3 +62,14 @@ class SlideMasterAttributeNotFoundError(TpptException, ValueError):
     @property
     def message(self) -> str:
         return f"The slide master does not have an attribute for the {self.slide_layout_name} layout"
+
+
+class MasterLayoutNotFoundError(TpptException, ValueError):
+    """Slide with MasterLayout tag not found."""
+
+    def __init__(self, slide_master_name: str) -> None:
+        self.slide_master_name = slide_master_name
+
+    @property
+    def message(self) -> str:
+        return f"No slide with MasterLayout tag found in {self.slide_master_name}"
