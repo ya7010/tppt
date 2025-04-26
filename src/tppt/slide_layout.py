@@ -6,6 +6,7 @@ from typing import (
     Any,
     ClassVar,
     Self,
+    TypeAlias,
     TypeVar,
     dataclass_transform,
     get_args,
@@ -35,7 +36,7 @@ class _Placeholder:
         return Annotated[item, cls()]
 
 
-Placeholder = Annotated[_AnyType, _Placeholder]
+Placeholder: TypeAlias = Annotated[_AnyType, _Placeholder]
 
 
 class _SlideLayoutMeta(type):
