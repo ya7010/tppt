@@ -23,13 +23,13 @@ def main() -> None:
     presentation.save(Path(__file__).with_suffix(".pptx"))
 
     # Get and display the tree structure
-    print(
-        json.dumps(
+    with open(Path(__file__).with_suffix(".json"), "w") as f:
+        json.dump(
             presentation.tree,
+            f,
             indent=2,
             ensure_ascii=False,
         )
-    )
 
 
 if __name__ == "__main__":
