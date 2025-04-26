@@ -4,6 +4,7 @@ import pytest
 
 import tppt
 from tppt.pptx.placeholder import LayoutPlaceholder, SlidePlaceholder
+from tppt.pptx.slide_layout import SlideLayout as PptxSlideLayout
 
 
 def test_slide_placeholders() -> None:
@@ -51,7 +52,7 @@ def test_slide_layout_placeholders() -> None:
         pytest.skip("No slide layouts in presentation")
 
     # Get the first slide layout
-    slide_layout = tppt.pptx.SlideLayout(pptx_presentation.slide_layouts[0])
+    slide_layout = PptxSlideLayout(pptx_presentation.slide_layouts[0])
 
     # Test that we can get placeholders
     placeholders = slide_layout.placeholders
