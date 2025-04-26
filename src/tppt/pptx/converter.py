@@ -69,7 +69,7 @@ def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None:
 
 
 def to_tppt_length(length: PptxLength) -> Length:
-    return to_length((length.cm, "cm"))
+    return to_length((length.emu, "emu"))
 
 
 def to_pptx_color(color: Color | LiteralColor) -> PptxRGBColor:
