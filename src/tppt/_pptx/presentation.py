@@ -1,10 +1,11 @@
 """Presentation wrapper implementation."""
 
 import os
-from typing import IO, Generic, Self
+from typing import IO, Any, Generic, Self
 
 from pptx.presentation import Presentation as PptxPresentation
 
+from tppt._pptx.tree import presentation_to_dict
 from tppt._tppt.slide_master import GenerictpptSlideMaster
 from tppt.types import FilePath
 
@@ -31,6 +32,11 @@ class Presentation(PptxConvertible[PptxPresentation]):
         This tool supports only one slide master.
         """
         return SlideMaster.from_pptx(self._pptx.slide_masters[0])
+
+    @property
+    def tree(self) -> dict[str, Any]:
+        """Get the node tree of the presentation."""
+        return presentation_to_dict(self._pptx)
 
     @classmethod
     def builder(

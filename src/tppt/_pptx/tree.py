@@ -3,8 +3,8 @@ import json
 import os
 from typing import Any, Dict
 
-from pptx import Presentation
 from pptx.enum.shapes import MSO_SHAPE_TYPE
+from pptx.presentation import Presentation as PptxPresentation
 
 
 def color_format_to_dict(color_format: Any) -> Dict[str, Any]:
@@ -188,7 +188,7 @@ def slide_master_to_dict(slide_master: Any) -> Dict[str, Any]:
     for layout in slide_master.slide_layouts:
         layout_dict = slide_layout_to_dict(layout)
         if slide_layouts := master_data.get("slide_layouts"):
-            slide_layouts.append(layout_dict)
+            slide_layouts.append(layout_dict)  # type: ignore
 
     return master_data
 
@@ -227,48 +227,45 @@ def slide_to_dict(slide: Any) -> Dict[str, Any]:
     return slide_data
 
 
-def presentation_to_dict(pptx_path: str) -> Dict[str, Any]:
+def presentation_to_dict(ppt: PptxPresentation) -> Dict[str, Any]:
     """Convert presentation information to dictionary"""
-    prs = Presentation(pptx_path)
 
     # スライドのサイズを安全に取得
     slide_width = None
     slide_height = None
 
-    if hasattr(prs, "slide_width"):
-        if hasattr(prs.slide_width, "pt"):
-            slide_width = prs.slide_width.pt
+    if slide_width := getattr(ppt, "slide_width"):
+        if pt := getattr(slide_width, "pt"):
+            slide_width = pt
         else:
-            slide_width = prs.slide_width
+            slide_width = slide_width
 
-    if hasattr(prs, "slide_height"):
-        if hasattr(prs.slide_height, "pt"):
-            slide_height = prs.slide_height.pt
+    if slide_height := getattr(ppt, "slide_height"):
+        if pt := getattr(slide_height, "pt"):
+            slide_height = pt
         else:
-            slide_height = prs.slide_height
+            slide_height = ppt.slide_height
 
     prs_data = {
-        "file_path": pptx_path,
-        "slides_count": len(prs.slides),
-        "slide_masters_count": len(prs.slide_masters),
-        "slide_layouts_count": len(prs.slide_layouts),
+        "slides_count": len(ppt.slides),
+        "slide_masters_count": len(ppt.slide_masters),
+        "slide_layouts_count": len(ppt.slide_layouts),
         "slide_width": slide_width,
         "slide_height": slide_height,
-        "slides": [slide_to_dict(slide) for slide in prs.slides],
-        "slide_masters": [slide_master_to_dict(master) for master in prs.slide_masters],
+        "slides": [slide_to_dict(slide) for slide in ppt.slides],
+        "slide_masters": [slide_master_to_dict(master) for master in ppt.slide_masters],
     }
 
     # ノートマスターの情報を追加
-    if hasattr(prs, "notes_master") and prs.notes_master is not None:
+    if notes_master := getattr(ppt, "notes_master"):
         notes_placeholders = []
-        if hasattr(prs.notes_master, "placeholders"):
+        if placeholders := getattr(notes_master, "placeholders"):
             notes_placeholders = [
-                placeholder_to_dict(placeholder)
-                for placeholder in prs.notes_master.placeholders
+                placeholder_to_dict(placeholder) for placeholder in placeholders
             ]
 
         prs_data["notes_master"] = {
-            "shapes": [shape_to_dict(shape) for shape in prs.notes_master.shapes],
+            "shapes": [shape_to_dict(shape) for shape in ppt.notes_master.shapes],
             "placeholders": notes_placeholders,
         }
 
@@ -305,7 +302,3 @@ def main():
         json.dump(prs_data, f, ensure_ascii=False, indent=args.indent)
 
     print(f"Structure of '{args.pptx_file}' has been output to '{output_path}'.")
-
-
-if __name__ == "__main__":
-    main()
