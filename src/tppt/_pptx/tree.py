@@ -162,7 +162,6 @@ def slide_layout_to_dict(slide_layout: Any) -> dict[str, Any]:
 def slide_master_to_dict(slide_master: Any) -> dict[str, Any]:
     """Convert slide master to dictionary"""
     master_data = {
-        "id": id(slide_master),
         "shapes": [shape_to_dict(shape) for shape in slide_master.shapes],
         "placeholders": [
             placeholder_to_dict(placeholder)
