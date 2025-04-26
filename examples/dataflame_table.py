@@ -4,9 +4,6 @@ from pathlib import Path
 
 import tppt
 
-# Flag to determine whether to use Polars
-EXAMPLE_DIR = Path(__file__).parent
-
 
 def main():
     """Run the sample."""
@@ -71,7 +68,7 @@ def main():
     )
 
     # Save the presentation
-    presentation.save(EXAMPLE_DIR / "dataflame_table.pptx")
+    presentation.save(Path(__file__).with_suffix(".pptx"))
 
     print("Successfully created presentation from Polars dataframe!")
 
@@ -90,4 +87,4 @@ if __name__ == "__main__":
                 width=(500, "pt"),
                 height=(50, "pt"),
             )
-        ).build().save(EXAMPLE_DIR / "dataflame_table.pptx")
+        ).build().save(Path(__file__).with_suffix(".pptx"))

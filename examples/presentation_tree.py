@@ -5,8 +5,6 @@ from pathlib import Path
 
 import tppt
 
-EXAMPLE_DIR = Path(__file__).parent
-
 
 def main() -> None:
     presentation = (
@@ -22,7 +20,7 @@ def main() -> None:
         )
         .build()
     )
-    presentation.save(EXAMPLE_DIR / "presentation_tree.pptx")
+    presentation.save(Path(__file__).with_suffix(".pptx"))
 
     # Get and display the tree structure
     print(

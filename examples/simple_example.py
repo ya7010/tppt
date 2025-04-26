@@ -116,7 +116,7 @@ def main():
     )
 
     # Save the presentation
-    presentation.save(Path(__file__).parent / "simple_example.pptx")
+    presentation.save(Path(__file__).with_suffix(".pptx"))
 
     print("Rich presentation created successfully!")
 
