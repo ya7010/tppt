@@ -1,19 +1,14 @@
-from typing import IO, Literal, NotRequired, Self, TypedDict
+from typing import IO, Literal, Self
 
 from pptx.shapes.picture import Picture as PptxPicture
+
 from tppt.types import FilePath
-from tppt.types._length import Length, LiteralLength
 
-from . import Shape
+from . import RangeProps, Shape
 
 
-class PictureProps(TypedDict):
+class PictureProps(RangeProps):
     """Picture properties."""
-
-    left: Length | LiteralLength
-    top: Length | LiteralLength
-    width: NotRequired[Length | LiteralLength]
-    height: NotRequired[Length | LiteralLength]
 
 
 class PictureData(PictureProps):

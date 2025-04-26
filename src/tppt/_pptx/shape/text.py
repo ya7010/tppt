@@ -1,4 +1,4 @@
-from typing import Literal, NotRequired, Self, TypedDict
+from typing import Literal, NotRequired, Self
 
 from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 from pptx.shapes.autoshape import Shape as PptxShape
@@ -7,16 +7,12 @@ from tppt._pptx.converter import to_pptx_color, to_pptx_length
 from tppt.types._color import Color
 from tppt.types._length import Length, LiteralLength
 
-from . import Shape
+from . import RangeProps, Shape
 
 
-class TextProps(TypedDict):
+class TextProps(RangeProps):
     """Text properties."""
 
-    left: Length | LiteralLength
-    top: Length | LiteralLength
-    width: Length | LiteralLength
-    height: Length | LiteralLength
     size: NotRequired[Length | LiteralLength]
     bold: NotRequired[bool]
     italic: NotRequired[bool]

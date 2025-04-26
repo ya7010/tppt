@@ -5,6 +5,7 @@ from typing import Literal, TypeAlias
 
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 
+from tppt._pptx.shape import RangeProps as _RangeProps
 from tppt._pptx.shape.table import TableCellStyle as TableCellStyle
 
 from ._color import Color as Color
@@ -26,6 +27,7 @@ from ._length import (
 
 FilePath = str | pathlib.Path
 ShapeType: TypeAlias = MSO_AUTO_SHAPE_TYPE
+Range: TypeAlias = _RangeProps
 
 SlideLayoutType: TypeAlias = Literal[
     "TITLE",

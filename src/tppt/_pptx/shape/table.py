@@ -12,10 +12,10 @@ from tppt._features import (
     PolarsDataFrame,
     PolarsLazyFrame,
 )
-from tppt.types._length import Length, LiteralLength, LiteralPoint, Point
+from tppt.types._length import LiteralPoint, Point
 
 from ..converter import to_pptx_length
-from . import Shape
+from . import RangeProps, Shape
 
 # Define DataFrame type alias
 DataFrame: TypeAlias = (
@@ -34,13 +34,9 @@ class TableCellStyle(TypedDict):
     font_name: NotRequired[str]
 
 
-class TableProps(TypedDict):
+class TableProps(RangeProps):
     """Table properties."""
 
-    left: Length | LiteralLength
-    top: Length | LiteralLength
-    width: Length | LiteralLength
-    height: Length | LiteralLength
     cell_styles: NotRequired[list[list[TableCellStyle]]]
     first_row_header: NotRequired[bool]
 
