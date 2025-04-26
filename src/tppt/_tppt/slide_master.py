@@ -1,7 +1,7 @@
 from typing import TypeVar
 
 
-class tpptSlideMaster: ...
+class TpptSlideMaster: ...
 
 
-GenerictpptSlideMaster = TypeVar("GenerictpptSlideMaster", bound=tpptSlideMaster)
+GenericTpptSlideMaster = TypeVar("GenericTpptSlideMaster", bound=TpptSlideMaster)

@@ -6,7 +6,7 @@ from typing import IO, Any, Generic, Self
 from pptx.presentation import Presentation as PptxPresentation
 
 from tppt._pptx.tree import presentation_to_dict
-from tppt._tppt.slide_master import GenerictpptSlideMaster
+from tppt._tppt.slide_master import GenericTpptSlideMaster
 from tppt.types import FilePath
 
 from .converter import PptxConvertible
@@ -40,8 +40,8 @@ class Presentation(PptxConvertible[PptxPresentation]):
 
     @classmethod
     def builder(
-        cls, slide_master: GenerictpptSlideMaster | None = None
-    ) -> "PresentationBuilder[GenerictpptSlideMaster]":
+        cls, slide_master: GenericTpptSlideMaster | None = None
+    ) -> "PresentationBuilder[GenericTpptSlideMaster]":
         """Get a builder for the presentation."""
         return PresentationBuilder(slide_master)
 
@@ -61,10 +61,10 @@ class Presentation(PptxConvertible[PptxPresentation]):
         return cls(pptx_obj)
 
 
-class PresentationBuilder(Generic[GenerictpptSlideMaster]):
+class PresentationBuilder(Generic[GenericTpptSlideMaster]):
     """Builder for presentations."""
 
-    def __init__(self, slide_master: GenerictpptSlideMaster | None = None) -> None:
+    def __init__(self, slide_master: GenericTpptSlideMaster | None = None) -> None:
         """Initialize the builder."""
         import pptx
 
@@ -82,3 +82,7 @@ class PresentationBuilder(Generic[GenerictpptSlideMaster]):
         """Build the presentation."""
 
         return Presentation(self._pptx)
+
+    def save(self, file: FilePath | IO[bytes]) -> None:
+        """Save the presentation to a file."""
+        self.build().save(file)
