@@ -1,20 +1,33 @@
 from inspect import isclass
-from typing import Annotated, Any, ClassVar, get_type_hints
+from typing import Annotated, Any, ClassVar, TypeVar, get_type_hints
 
 from typing_extensions import dataclass_transform, get_args, get_origin
 
+T = TypeVar("T")
+AnyType = TypeVar("AnyType")
 
-class Placeholder:
+
+# 型チェック用のクラス定義
+class _Placeholder:
     """プレースホルダーを表すクラス。
 
     Annotatedと共に使用して、フィールドがプレースホルダーであることを示します。
+    または、Placeholder[型]として直接使用することもできます。
     """
 
     def __init__(self, description: str = ""):
         self.description = description
+        self.value = None
 
     def __repr__(self) -> str:
         return f"Placeholder({self.description!r})"
+
+    @classmethod
+    def __class_getitem__(cls, item: Any) -> Any:
+        return Annotated[item, cls()]
+
+
+Placeholder = Annotated[AnyType, _Placeholder]
 
 
 class TpptSlideLayoutMeta(type):
@@ -36,13 +49,30 @@ class TpptSlideLayoutMeta(type):
             # Annotatedフィールドを検索
             if get_origin(field_type) is Annotated:
                 args = get_args(field_type)
-                # Placeholderメタデータを持つフィールドを検索
-                for arg in args[1:]:
-                    if isinstance(arg, Placeholder) or (
-                        isclass(arg) and issubclass(arg, Placeholder)
+                # メタデータのチェック
+                metadata_args = args[1:]
+
+                # Placeholderとして直接マークされたフィールドを検索
+                if any(
+                    arg is _Placeholder
+                    or (isclass(arg) and arg.__name__ == "_Placeholder")
+                    for arg in metadata_args
+                ):
+                    placeholders[field_name] = args[0]  # 実際の型
+                    continue
+
+                # ネストされたAnnotatedのチェック (Placeholder[T]パターン)
+                # Placeholder[T] = Annotated[T, _Placeholder]のパターンを検出
+                base_type = args[0]
+                if get_origin(base_type) is Annotated:
+                    nested_args = get_args(base_type)
+                    if any(
+                        arg is _Placeholder
+                        or (isclass(arg) and arg.__name__ == "_Placeholder")
+                        for arg in nested_args[1:]
                     ):
-                        placeholders[field_name] = args[0]  # 実際の型
-                        break
+                        placeholders[field_name] = nested_args[0]  # 実際の型
+                        continue
 
         # プレースホルダー情報をクラスに保存
         setattr(cls, "__placeholders__", placeholders)
@@ -62,7 +92,10 @@ class TpptSlideLayout(metaclass=TpptSlideLayoutMeta):
     def __init__(self, **kwargs) -> None:
         # すべてのフィールドに値を設定
         for field_name, field_value in kwargs.items():
-            if field_name in self.__class__.__annotations__:
+            if field_name in self.__class__.__placeholders__:
+                # プレースホルダーフィールドの場合
+                setattr(self, field_name, field_value)
+            elif field_name in self.__class__.__annotations__:
                 setattr(self, field_name, field_value)
             else:
                 raise TypeError(
@@ -71,9 +104,9 @@ class TpptSlideLayout(metaclass=TpptSlideLayoutMeta):
 
 
 class MySlideLayout(TpptSlideLayout):
-    title: Annotated[str, Placeholder]
+    title: Annotated[str, _Placeholder]  # 直接_Placeholderを使用
     dummy: str
-    text: Annotated[str, Placeholder]
+    text: Annotated[str, _Placeholder]
 
 
 def get_placeholders(
@@ -105,3 +138,14 @@ assert myslide.dummy == "dummy"
 assert myslide.text == "b"
 assert get_placeholders(myslide) == {"title": "a", "text": "b"}
 
+
+# Placeholder[T]形式での使用方法
+class MySlideLayout2(TpptSlideLayout):
+    title: Placeholder[str]  # Annotated[str, _Placeholder]に展開される
+    dummy: str
+    text: Placeholder[str]
+
+
+myslide2 = MySlideLayout2(title="a", dummy="dummy", text="b")
+myslide2.dummy = "dummy2"
+assert get_placeholders(myslide2) == {"title": "a", "text": "b"}
