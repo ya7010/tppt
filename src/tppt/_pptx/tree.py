@@ -9,13 +9,13 @@ def color_format_to_dict(color_format: Any) -> dict[str, Any]:
     data = {}
 
     try:
-        if rgb := getattr(color_format, "rgb"):
+        if rgb := getattr(color_format, "rgb", None):
             data["rgb"] = str(rgb)
 
-        if theme_color := getattr(color_format, "theme_color"):
+        if theme_color := getattr(color_format, "theme_color", None):
             data["theme_color"] = str(theme_color)
 
-        if brightness := getattr(color_format, "brightness"):
+        if brightness := getattr(color_format, "brightness", None):
             data["brightness"] = brightness
     except Exception:
         pass
@@ -36,20 +36,20 @@ def text_frame_to_dict(text_frame: Any) -> dict[str, Any]:
         for run in p.runs:
             run_data = {"text": run.text}
 
-            if font := getattr(run, "font"):
+            if font := getattr(run, "font", None):
                 font_data = {}
-                if name := getattr(font, "name"):
+                if name := getattr(font, "name", None):
                     font_data["name"] = name
-                if size := getattr(font, "size"):
+                if size := getattr(font, "size", None):
                     font_data["size"] = size.pt if hasattr(size, "pt") else size
-                if bold := getattr(font, "bold"):
+                if bold := getattr(font, "bold", None):
                     font_data["bold"] = bold
-                if italic := getattr(font, "italic"):
+                if italic := getattr(font, "italic", None):
                     font_data["italic"] = italic
-                if underline := getattr(font, "underline"):
+                if underline := getattr(font, "underline", None):
                     font_data["underline"] = underline
 
-                if color := getattr(font, "color"):
+                if color := getattr(font, "color", None):
                     font_data["color"] = color_format_to_dict(color)
 
                 run_data["font"] = font_data
@@ -131,10 +131,10 @@ def placeholder_to_dict(placeholder: Any) -> dict[str, Any]:
     # Add placeholder-specific information
     try:
         placeholder_data["placeholder_type"] = getattr(
-            placeholder.placeholder_format, "type"
+            placeholder.placeholder_format, "type", None
         )
         placeholder_data["placeholder_idx"] = getattr(
-            placeholder.placeholder_format, "idx"
+            placeholder.placeholder_format, "idx", None
         )
     except Exception:
         pass
@@ -192,15 +192,15 @@ def slide_to_dict(slide: Any) -> dict[str, Any]:
     }
 
     # Add placeholder information
-    if placeholders := getattr(slide, "placeholders"):
+    if placeholders := getattr(slide, "placeholders", None):
         slide_data["placeholders"] = [
             placeholder_to_dict(placeholder) for placeholder in placeholders
         ]
 
     # Add notes information
-    if notes_slide := getattr(slide, "notes_slide"):
+    if notes_slide := getattr(slide, "notes_slide", None):
         notes_placeholders = []
-        if placeholders := getattr(notes_slide, "placeholders"):
+        if placeholders := getattr(notes_slide, "placeholders", None):
             notes_placeholders = [
                 placeholder_to_dict(placeholder) for placeholder in placeholders
             ]
@@ -220,14 +220,14 @@ def ppt2dict(ppt: PptxPresentation) -> dict[str, Any]:
     slide_width = None
     slide_height = None
 
-    if slide_width := getattr(ppt, "slide_width"):
-        if pt := getattr(slide_width, "pt"):
+    if slide_width := getattr(ppt, "slide_width", None):
+        if pt := getattr(slide_width, "pt", None):
             slide_width = pt
         else:
             slide_width = slide_width
 
-    if slide_height := getattr(ppt, "slide_height"):
-        if pt := getattr(slide_height, "pt"):
+    if slide_height := getattr(ppt, "slide_height", None):
+        if pt := getattr(slide_height, "pt", None):
             slide_height = pt
         else:
             slide_height = ppt.slide_height
@@ -243,9 +243,9 @@ def ppt2dict(ppt: PptxPresentation) -> dict[str, Any]:
     }
 
     # Add note master information
-    if notes_master := getattr(ppt, "notes_master"):
+    if notes_master := getattr(ppt, "notes_master", None):
         notes_placeholders = []
-        if placeholders := getattr(notes_master, "placeholders"):
+        if placeholders := getattr(notes_master, "placeholders", None):
             notes_placeholders = [
                 placeholder_to_dict(placeholder) for placeholder in placeholders
             ]
