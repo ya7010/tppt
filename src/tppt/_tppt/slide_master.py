@@ -60,5 +60,4 @@ class DefaultSlideMaster(TpptSlideMaster):
 GenericTpptSlideMaster = TypeVar(
     "GenericTpptSlideMaster",
     bound=TpptSlideMaster,
-    default=DefaultSlideMaster,
 )

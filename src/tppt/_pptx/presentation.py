@@ -1,12 +1,16 @@
 """Presentation wrapper implementation."""
 
 import os
-from typing import IO, Any, Generic, Self
+from typing import IO, Any, Callable, Generic, Self, overload
 
 from pptx.presentation import Presentation as PptxPresentation
 
 from tppt._pptx.tree import ppt2dict
-from tppt._tppt.slide_master import GenericTpptSlideMaster
+from tppt._tppt.slide_layout import TpptSlideLayout
+from tppt._tppt.slide_master import (
+    DefaultSlideMaster,
+    GenericTpptSlideMaster,
+)
 from tppt.types import FilePath
 
 from .converter import PptxConvertible
@@ -38,11 +42,28 @@ class Presentation(PptxConvertible[PptxPresentation]):
         """Get the node tree of the presentation."""
         return ppt2dict(self._pptx)
 
+    @overload
     @classmethod
     def builder(
-        cls, slide_master: "GenericTpptSlideMaster | None" = None
-    ) -> "PresentationBuilder[GenericTpptSlideMaster]":
+        cls,
+    ) -> "PresentationBuilder[DefaultSlideMaster]": ...
+
+    @overload
+    @classmethod
+    def builder(
+        cls,
+        slide_master: "type[GenericTpptSlideMaster]",
+    ) -> "PresentationBuilder[GenericTpptSlideMaster]": ...
+
+    @classmethod
+    def builder(
+        cls,
+        slide_master=None,
+    ):
         """Get a builder for the presentation."""
+
+        if slide_master is None:
+            slide_master = DefaultSlideMaster
         return PresentationBuilder(slide_master)
 
     def save(self, file: FilePath | IO[bytes]) -> None:
@@ -64,17 +85,33 @@ class Presentation(PptxConvertible[PptxPresentation]):
 class PresentationBuilder(Generic[GenericTpptSlideMaster]):
     """Builder for presentations."""
 
-    def __init__(self, slide_master: "GenericTpptSlideMaster | None" = None) -> None:
+    def __init__(
+        self,
+        slide_master: "type[GenericTpptSlideMaster]",
+    ) -> None:
         """Initialize the builder."""
         import pptx
 
         self._pptx = pptx.Presentation()
         self._slide_master = slide_master
 
-    def slide(self, slide: SlideBuilder, /) -> Self:
+    def slide(
+        self,
+        slide: SlideBuilder
+        | Callable[[type[GenericTpptSlideMaster]], SlideBuilder | TpptSlideLayout],
+        /,
+    ) -> Self:
         """Add a slide to the presentation."""
-
-        slide._build(self)
+        if isinstance(slide, SlideBuilder):
+            slide._build(self)
+        else:
+            slide_layout = slide(self._slide_master)
+            slide_builder = (
+                slide_layout.builder()
+                if isinstance(slide_layout, TpptSlideLayout)
+                else slide_layout
+            )
+            slide_builder._build(self)
 
         return self
 

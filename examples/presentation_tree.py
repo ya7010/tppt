@@ -10,7 +10,12 @@ def main() -> None:
     presentation = (
         tppt.Presentation.builder()
         .slide(
-            tppt.SlideBuilder().text(
+            lambda layout: layout.Master(
+                title="Hello, world!",
+                text="Hello, world!",
+            )
+            .builder()
+            .text(
                 "Hello, world!",
                 left=(100, "pt"),
                 top=(100, "pt"),

@@ -7,4 +7,5 @@ from tppt._pptx.slide import Slide as Slide
 from tppt._pptx.slide import SlideBuilder as SlideBuilder
 from tppt._pptx.slide_layout import SlideLayout as SlideLayout
 from tppt._pptx.slide_master import SlideMaster as SlideMaster
+from tppt._tppt.slide_layout import TpptSlideLayout as TpptSlideLayout
 from tppt._tppt.slide_master import TpptSlideMaster as TpptSlideMaster

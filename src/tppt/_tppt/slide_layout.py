@@ -1,5 +1,8 @@
 import datetime
-from typing import Any, Self, overload
+from typing import TYPE_CHECKING, Any, Self, overload
+
+if TYPE_CHECKING:
+    from tppt._pptx.slide import SlideBuilder
 
 
 class TpptSlideLayout:
@@ -17,6 +20,11 @@ class TpptSlideLayout:
 
         else:
             return self
+
+    def builder(self) -> "SlideBuilder":
+        from tppt._pptx.slide import SlideBuilder
+
+        return SlideBuilder()
 
 
 class DefaultMasterSlide(TpptSlideLayout):
