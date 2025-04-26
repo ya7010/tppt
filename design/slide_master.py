@@ -16,6 +16,7 @@ class TpptSlideMasterMeta(type):
 
         raise AttributeError(f"属性 {key} は存在しません")
 
+
 @dataclass_transform(
     eq_default=True,
     order_default=False,

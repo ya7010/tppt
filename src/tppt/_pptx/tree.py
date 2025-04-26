@@ -146,9 +146,6 @@ def slide_layout_to_dict(slide_layout: Any) -> dict[str, Any]:
     """Convert slide layout to dictionary"""
     layout_data = {
         "name": slide_layout.name,
-        "slide_master_id": id(slide_layout.slide_master)
-        if hasattr(slide_layout, "slide_master")
-        else None,
         "shapes": [shape_to_dict(shape) for shape in slide_layout.shapes],
         "placeholders": [
             placeholder_to_dict(placeholder)

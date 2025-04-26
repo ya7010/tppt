@@ -683,7 +683,6 @@
       "slide_layouts": [
         {
           "name": "Title Slide",
-          "slide_master_id": 4437300432,
           "shapes": [
             {
               "name": "Title 1",
@@ -969,7 +968,6 @@
         },
         {
           "name": "Title and Content",
-          "slide_master_id": 4437300432,
           "shapes": [
             {
               "name": "Title 1",
@@ -1351,7 +1349,6 @@
         },
         {
           "name": "Section Header",
-          "slide_master_id": 4437300432,
           "shapes": [
             {
               "name": "Title 1",
@@ -1637,7 +1634,6 @@
         },
         {
           "name": "Two Content",
-          "slide_master_id": 4437300432,
           "shapes": [
             {
               "name": "Title 1",
@@ -2179,7 +2175,6 @@
         },
         {
           "name": "Comparison",
-          "slide_master_id": 4437300432,
           "shapes": [
             {
               "name": "Title 1",
@@ -2849,7 +2844,6 @@
         },
         {
           "name": "Title Only",
-          "slide_master_id": 4437300432,
           "shapes": [
             {
               "name": "Title 1",
@@ -3071,7 +3065,6 @@
         },
         {
           "name": "Blank",
-          "slide_master_id": 4437300432,
           "shapes": [
             {
               "name": "Date Placeholder 1",
@@ -3229,7 +3222,6 @@
         },
         {
           "name": "Content with Caption",
-          "slide_master_id": 4437300432,
           "shapes": [
             {
               "name": "Title 1",
@@ -3675,7 +3667,6 @@
         },
         {
           "name": "Picture with Caption",
-          "slide_master_id": 4437300432,
           "shapes": [
             {
               "name": "Title 1",
@@ -4011,7 +4002,6 @@
         },
         {
           "name": "Title and Vertical Text",
-          "slide_master_id": 4437300432,
           "shapes": [
             {
               "name": "Title 1",
@@ -4393,7 +4383,6 @@
         },
         {
           "name": "Vertical Title and Text",
-          "slide_master_id": 4437300432,
           "shapes": [
             {
               "name": "Vertical Title 1",
