@@ -1,4 +1,4 @@
-from typing import ClassVar, TypeVar
+from typing import TypeVar
 
 from typing_extensions import dataclass_transform
 
@@ -27,12 +27,7 @@ class TpptSlideMasterMeta(type):
     order_default=False,
     field_specifiers=(),
 )
-class TpptSlideMaster(metaclass=TpptSlideMasterMeta):
-    _template_path: ClassVar[str | None] = None
-
-    @classmethod
-    def get_template_path(cls) -> str | None:
-        return cls._template_path
+class TpptSlideMaster(metaclass=TpptSlideMasterMeta): ...
 
 
 GenericTpptSlideMaster = TypeVar("GenericTpptSlideMaster", bound=TpptSlideMaster)
