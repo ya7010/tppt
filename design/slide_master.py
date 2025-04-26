@@ -60,9 +60,9 @@ class TpptSlideLayout(metaclass=TpptSlideLayoutMeta):
     __placeholders__: ClassVar[dict[str, Any]] = {}
 
     def __init__(self, **kwargs) -> None:
-        # プレースホルダーフィールドの値を設定
+        # すべてのフィールドに値を設定
         for field_name, field_value in kwargs.items():
-            if field_name in self.__class__.__placeholders__:
+            if field_name in self.__class__.__annotations__:
                 setattr(self, field_name, field_value)
             else:
                 raise TypeError(
@@ -72,6 +72,7 @@ class TpptSlideLayout(metaclass=TpptSlideLayoutMeta):
 
 class MySlideLayout(TpptSlideLayout):
     title: Annotated[str, Placeholder]
+    dummy: str
     text: Annotated[str, Placeholder]
 
 
@@ -97,6 +98,10 @@ def get_placeholders(
 
 # TODO: 以下のアサーションが通るようにせよ
 Myslide: type[TpptSlideLayout] = MySlideLayout
-myslide = Myslide(title="a", text="b")
+myslide = MySlideLayout(title="a", text="b", dummy="dummy")
 
+assert myslide.title == "a"
+assert myslide.dummy == "dummy"
+assert myslide.text == "b"
 assert get_placeholders(myslide) == {"title": "a", "text": "b"}
+
