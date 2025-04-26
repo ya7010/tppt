@@ -4,6 +4,7 @@ from typing_extensions import TypeVar, dataclass_transform
 
 from tppt.exception import (
     MasterLayoutNotFoundError,
+    MultipleMasterLayoutsError,
     SlideMasterAttributeMustBeSlideLayoutError,
     SlideMasterAttributeNotFoundError,
 )
@@ -107,15 +108,25 @@ GenericTpptSlideMaster = TypeVar(
 
 def get_master_layout(slide_master: type[SlideMaster]) -> type[SlideLayout]:
     """Get the slide tagged with MasterLayout."""
+    master_layouts = []
+    master_layout_names = []
+
     for attr_name, annotation in slide_master.__annotations__.items():
         origin = get_origin(annotation)
         if origin is Annotated:
             args = get_args(annotation)
             # Check the class name instead of directly checking the type of args[1]
             if len(args) > 1 and args[1].__class__.__name__ == "MasterLayout":
-                return getattr(slide_master, attr_name)
+                master_layouts.append(getattr(slide_master, attr_name))
+                master_layout_names.append(attr_name)
 
-    raise MasterLayoutNotFoundError(slide_master.__name__)
+    if not master_layouts:
+        raise MasterLayoutNotFoundError(slide_master.__name__)
+
+    if len(master_layouts) > 1:
+        raise MultipleMasterLayoutsError(slide_master.__name__, master_layout_names)
+
+    return master_layouts[0]
 
 
 def get_layouts(slide_master: type[SlideMaster]) -> list[type[SlideLayout]]:

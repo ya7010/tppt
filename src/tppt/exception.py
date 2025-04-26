@@ -73,3 +73,15 @@ class MasterLayoutNotFoundError(TpptException, ValueError):
     @property
     def message(self) -> str:
         return f"No slide with MasterLayout tag found in {self.slide_master_name}"
+
+
+class MultipleMasterLayoutsError(TpptException, ValueError):
+    """Multiple master layouts defined."""
+
+    def __init__(self, slide_master_name: str, layout_names: list[str]) -> None:
+        self.slide_master_name = slide_master_name
+        self.layout_names = layout_names
+
+    @property
+    def message(self) -> str:
+        return f"Multiple master layouts defined in {self.slide_master_name}: {', '.join(self.layout_names)}"
