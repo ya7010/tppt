@@ -1,7 +1,7 @@
 """Presentation wrapper implementation."""
 
 import os
-from typing import IO, Any, Callable, Generic, Self, overload
+from typing import IO, TYPE_CHECKING, Any, Callable, Generic, Self, overload
 
 from pptx.presentation import Presentation as PptxPresentation
 
@@ -17,6 +17,9 @@ from .converter import PptxConvertible
 from .slide import SlideBuilder
 from .slide_master import SlideMaster
 
+if TYPE_CHECKING:
+    from tppt._pptx.slide import Slide
+
 
 class Presentation(PptxConvertible[PptxPresentation]):
     """Presentation wrapper with type safety."""
@@ -27,6 +30,13 @@ class Presentation(PptxConvertible[PptxPresentation]):
     ) -> None:
         """Initialize presentation."""
         self._pptx = presentation
+
+    @property
+    def slides(self) -> "list[Slide]":
+        """Get the slides."""
+        from tppt._pptx.slide import Slide
+
+        return [Slide.from_pptx(slide) for slide in self._pptx.slides]
 
     @property
     def slide_master(self) -> SlideMaster:
