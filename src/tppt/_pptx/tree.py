@@ -8,7 +8,7 @@ from pptx.enum.shapes import MSO_SHAPE_TYPE
 
 
 def color_format_to_dict(color_format: Any) -> Dict[str, Any]:
-    """カラーフォーマットを辞書に変換する"""
+    """Convert color format to dictionary"""
     data = {}
 
     try:
@@ -29,7 +29,7 @@ def color_format_to_dict(color_format: Any) -> Dict[str, Any]:
 
 
 def text_frame_to_dict(text_frame: Any) -> Dict[str, Any]:
-    """テキストフレームを辞書に変換する"""
+    """Convert text frame to dictionary"""
     if not hasattr(text_frame, "paragraphs"):
         return {"text": str(text_frame) if text_frame else ""}
 
@@ -71,7 +71,7 @@ def text_frame_to_dict(text_frame: Any) -> Dict[str, Any]:
 
 
 def shape_to_dict(shape: Any) -> Dict[str, Any]:
-    """Shape オブジェクトを辞書に変換する"""
+    """Convert Shape object to dictionary"""
     shape_data = {
         "name": shape.name,
         "shape_id": shape.shape_id,
@@ -134,7 +134,7 @@ def shape_to_dict(shape: Any) -> Dict[str, Any]:
 
 
 def placeholder_to_dict(placeholder: Any) -> Dict[str, Any]:
-    """プレースホルダーを辞書に変換する"""
+    """Convert placeholder to dictionary"""
     placeholder_data = shape_to_dict(placeholder)
 
     # プレースホルダー特有の情報を追加
@@ -156,7 +156,7 @@ def placeholder_to_dict(placeholder: Any) -> Dict[str, Any]:
 
 
 def slide_layout_to_dict(slide_layout: Any) -> Dict[str, Any]:
-    """スライドレイアウトを辞書に変換する"""
+    """Convert slide layout to dictionary"""
     layout_data = {
         "name": slide_layout.name,
         "slide_master_id": id(slide_layout.slide_master)
@@ -173,7 +173,7 @@ def slide_layout_to_dict(slide_layout: Any) -> Dict[str, Any]:
 
 
 def slide_master_to_dict(slide_master: Any) -> Dict[str, Any]:
-    """スライドマスターを辞書に変換する"""
+    """Convert slide master to dictionary"""
     master_data = {
         "id": id(slide_master),
         "shapes": [shape_to_dict(shape) for shape in slide_master.shapes],
@@ -194,7 +194,7 @@ def slide_master_to_dict(slide_master: Any) -> Dict[str, Any]:
 
 
 def slide_to_dict(slide: Any) -> Dict[str, Any]:
-    """スライドを辞書に変換する"""
+    """Convert slide to dictionary"""
     slide_data = {
         "slide_id": slide.slide_id,
         "slide_layout_name": slide.slide_layout.name
@@ -228,7 +228,7 @@ def slide_to_dict(slide: Any) -> Dict[str, Any]:
 
 
 def presentation_to_dict(pptx_path: str) -> Dict[str, Any]:
-    """プレゼンテーションの情報を辞書に変換する"""
+    """Convert presentation information to dictionary"""
     prs = Presentation(pptx_path)
 
     # スライドのサイズを安全に取得
@@ -277,17 +277,19 @@ def presentation_to_dict(pptx_path: str) -> Dict[str, Any]:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="PPTXファイルの構造をJSONに変換するツール"
+        description="Tool to convert PPTX file structure to JSON"
     )
-    parser.add_argument("pptx_file", help="変換するPPTXファイルのパス")
+    parser.add_argument("pptx_file", help="Path to the PPTX file to convert")
     parser.add_argument(
-        "-o", "--output", help="出力するJSONファイルのパス", default=None
+        "-o", "--output", help="Path to the output JSON file", default=None
     )
-    parser.add_argument("--indent", type=int, help="JSONの整形用インデント", default=2)
+    parser.add_argument(
+        "--indent", type=int, help="JSON indentation for formatting", default=2
+    )
     args = parser.parse_args()
 
     if not os.path.exists(args.pptx_file):
-        print(f"エラー: ファイル '{args.pptx_file}' が見つかりません。")
+        print(f"Error: File '{args.pptx_file}' not found.")
         return
 
     prs_data = presentation_to_dict(args.pptx_file)
@@ -302,7 +304,7 @@ def main():
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(prs_data, f, ensure_ascii=False, indent=args.indent)
 
-    print(f"'{args.pptx_file}' の構造を '{output_path}' に出力しました。")
+    print(f"Structure of '{args.pptx_file}' has been output to '{output_path}'.")
 
 
 if __name__ == "__main__":
