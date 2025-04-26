@@ -1,8 +1,11 @@
 """Sample script to output the presentation tree structure."""
 
 import json
+from pathlib import Path
 
 import tppt
+
+EXAMPLE_DIR = Path(__file__).parent
 
 
 def main() -> None:
@@ -19,6 +22,7 @@ def main() -> None:
         )
         .build()
     )
+    presentation.save(EXAMPLE_DIR / "presentation_tree.pptx")
 
     # Get and display the tree structure
     print(
