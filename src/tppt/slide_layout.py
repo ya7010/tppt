@@ -39,9 +39,9 @@ Placeholder = Annotated[_AnyType, _Placeholder]
 
 
 class TpptSlideLayoutMeta(type):
-    """TpptSlideLayoutのメタクラス
+    """Meta class for TpptSlideLayout.
 
-    プレースホルダーとして注釈されたフィールドを追跡します。
+    Tracks fields annotated as placeholders.
     """
 
     def __new__(
@@ -49,28 +49,28 @@ class TpptSlideLayoutMeta(type):
     ) -> type:
         cls = super().__new__(mcs, name, bases, namespace)
 
-        # プレースホルダーフィールドを収集
+        # Collect placeholder fields
         annotations = get_type_hints(cls, include_extras=True)
         placeholders = {}
 
         for field_name, field_type in annotations.items():
-            # Annotatedフィールドを検索
+            # Search for Annotated fields
             if get_origin(field_type) is Annotated:
                 args = get_args(field_type)
-                # メタデータのチェック
+                # Check metadata
                 metadata_args = args[1:]
 
-                # Placeholderとして直接マークされたフィールドを検索
+                # Search for fields directly marked as Placeholder
                 if any(
                     arg is _Placeholder
                     or (isclass(arg) and arg.__name__ == "_Placeholder")
                     for arg in metadata_args
                 ):
-                    placeholders[field_name] = args[0]  # 実際の型
+                    placeholders[field_name] = args[0]  # Actual type
                     continue
 
-                # ネストされたAnnotatedのチェック (Placeholder[T]パターン)
-                # Placeholder[T] = Annotated[T, _Placeholder]のパターンを検出
+                # Check nested Annotated (Placeholder[T] pattern)
+                # Detect the pattern Placeholder[T] = Annotated[T, _Placeholder]
                 base_type = args[0]
                 if get_origin(base_type) is Annotated:
                     nested_args = get_args(base_type)
@@ -79,10 +79,10 @@ class TpptSlideLayoutMeta(type):
                         or (isclass(arg) and arg.__name__ == "_Placeholder")
                         for arg in nested_args[1:]
                     ):
-                        placeholders[field_name] = nested_args[0]  # 実際の型
+                        placeholders[field_name] = nested_args[0]  # Actual type
                         continue
 
-        # プレースホルダー情報をクラスに保存
+        # Save placeholder information to the class
         setattr(cls, "__placeholders__", placeholders)
         return cls
 
@@ -93,15 +93,15 @@ class TpptSlideLayoutMeta(type):
     field_specifiers=(),
 )
 class TpptSlideLayout(metaclass=TpptSlideLayoutMeta):
-    """スライドレイアウトのベースクラス"""
+    """Base class for slide layouts"""
 
     __placeholders__: ClassVar[dict[str, Any]] = {}
 
     def __init__(self, **kwargs) -> None:
-        # すべてのフィールドに値を設定
+        # Set values for all fields
         for field_name, field_value in kwargs.items():
             if field_name in self.__class__.__placeholders__:
-                # プレースホルダーフィールドの場合
+                # For placeholder fields
                 setattr(self, field_name, field_value)
             elif field_name in self.__class__.__annotations__:
                 setattr(self, field_name, field_value)
