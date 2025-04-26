@@ -1,6 +1,4 @@
-from typing import TypeVar
-
-from typing_extensions import dataclass_transform
+from typing_extensions import TypeVar, dataclass_transform
 
 from tppt.exception import (
     SlideMasterAttributeMustBeSlideLayoutError,
@@ -44,8 +42,6 @@ class TpptSlideMasterMeta(type):
 class TpptSlideMaster(metaclass=TpptSlideMasterMeta): ...
 
 
-GenericTpptSlideMaster = TypeVar("GenericTpptSlideMaster", bound=TpptSlideMaster)
-
 class DefaultSlideMaster(TpptSlideMaster):
     Master: DefaultMasterSlide
     Title: DefaultTitleSlide
@@ -59,3 +55,10 @@ class DefaultSlideMaster(TpptSlideMaster):
     PictureWithCaption: DefaultPictureWithCaptionSlide
     TitleAndVerticalText: DefaultTitleAndVerticalTextSlide
     VerticalTitleAndText: DefaultVerticalTitleAndTextSlide
+
+
+GenericTpptSlideMaster = TypeVar(
+    "GenericTpptSlideMaster",
+    bound=TpptSlideMaster,
+    default=DefaultSlideMaster,
+)

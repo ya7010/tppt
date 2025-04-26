@@ -7,6 +7,7 @@ from pptx.slide import Slide as PptxSlide
 from pptx.slide import SlideLayout as PptxSlideLayout
 
 from tppt._pptx.placeholder import SlidePlaceholder
+from tppt._tppt.slide_master import GenericTpptSlideMaster
 from tppt.exception import SlideLayoutIndexError
 from tppt.types import FilePath
 
@@ -135,7 +136,7 @@ class SlideBuilder:
 
     def _build(
         self,
-        builder: "PresentationBuilder",
+        builder: "PresentationBuilder[GenericTpptSlideMaster]",
     ) -> Slide:
         if isinstance(self._slide_layout, int):
             try:
