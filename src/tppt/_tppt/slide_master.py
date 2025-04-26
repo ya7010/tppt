@@ -7,7 +7,21 @@ from tppt.exception import (
     SlideMasterAttributeNotFoundError,
 )
 
-from .slide_layout import TpptSlideLayout
+from .slide_layout import (
+    DefaultBlankSlide,
+    DefaultComparisonSlide,
+    DefaultContentWithCaptionSlide,
+    DefaultMasterSlide,
+    DefaultPictureWithCaptionSlide,
+    DefaultSectionHeaderSlide,
+    DefaultTitleAndContentSlide,
+    DefaultTitleAndVerticalTextSlide,
+    DefaultTitleOnlySlide,
+    DefaultTitleSlide,
+    DefaultTwoContentSlide,
+    DefaultVerticalTitleAndTextSlide,
+    TpptSlideLayout,
+)
 
 
 class TpptSlideMasterMeta(type):
@@ -31,3 +45,18 @@ class TpptSlideMaster(metaclass=TpptSlideMasterMeta): ...
 
 
 GenericTpptSlideMaster = TypeVar("GenericTpptSlideMaster", bound=TpptSlideMaster)
+
+
+class DefaultSlideMaster(TpptSlideMaster):
+    master: DefaultMasterSlide
+    title: DefaultTitleSlide
+    title_and_content: DefaultTitleAndContentSlide
+    section_header: DefaultSectionHeaderSlide
+    two_content: DefaultTwoContentSlide
+    comparison: DefaultComparisonSlide
+    title_only: DefaultTitleOnlySlide
+    blank: DefaultBlankSlide
+    content_with_caption: DefaultContentWithCaptionSlide
+    picture_with_caption: DefaultPictureWithCaptionSlide
+    title_and_vertical_text: DefaultTitleAndVerticalTextSlide
+    vertical_title_and_text: DefaultVerticalTitleAndTextSlide
