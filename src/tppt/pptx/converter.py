@@ -59,8 +59,13 @@ def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None:
         case _:
             assert_never(length)
 
+def to_tppt_length(length: PptxLength) -> Length:
+    return to_length((length.cm, "cm"))
 
 def to_pptx_color(color: Color | LiteralColor) -> PptxRGBColor:
     color = to_color(color)
 
     return PptxRGBColor(color.r, color.g, color.b)
+
+def to_tppt_color(color: PptxRGBColor) -> Color:
+    return Color(*color)
