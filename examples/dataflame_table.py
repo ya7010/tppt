@@ -1,19 +1,17 @@
 """Example of creating tables from Polars dataframe."""
 
-import sys
 from pathlib import Path
 
 import tppt
 from tppt.types import Color
 
 # Flag to determine whether to use Polars
-USE_POLARS = True
 EXAMPLE_DIR = Path(__file__).parent
 
 
 def main():
     """Run the sample."""
-    import polars as pl
+    import polars as pl  # type: ignore
 
     # Create dataframe with Polars
     df = pl.DataFrame(
@@ -80,10 +78,17 @@ def main():
 
 
 if __name__ == "__main__":
+    from tppt._features import USE_POLARS
+
     if USE_POLARS:
         main()
     else:
-        print(
-            "Polars is not installed. Please install it to run this example.",
-            file=sys.stderr,
-        )
+        tppt.Presentation.builder().slide(
+            tppt.SlideBuilder().text(
+                "Polars is not installed. Please install it to run this example.",
+                left=(50, "pt"),
+                top=(50, "pt"),
+                width=(500, "pt"),
+                height=(50, "pt"),
+            )
+        ).build().save(EXAMPLE_DIR / "dataflame_table.pptx")
