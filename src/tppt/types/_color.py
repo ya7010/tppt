@@ -1,8 +1,10 @@
 """Color types for tppt."""
 
-from typing import overload
+from typing import TypeAlias, overload
 
 from tppt.exception import ColorInvalidFormatError
+
+LiteralColor: TypeAlias = tuple[int, int, int] | str
 
 
 class Color:
@@ -49,3 +51,13 @@ class Color:
     def __repr__(self) -> str:
         """Return string representation."""
         return f"Color({self.r}, {self.g}, {self.b})"
+
+
+def to_color(color: Color | LiteralColor) -> Color:
+    if isinstance(color, Color):
+        return color
+    else:
+        if isinstance(color, tuple):
+            return Color(*color)
+        else:
+            return Color(color)

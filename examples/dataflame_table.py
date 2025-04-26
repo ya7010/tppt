@@ -3,7 +3,6 @@
 from pathlib import Path
 
 import tppt
-from tppt.types import Color
 
 # Flag to determine whether to use Polars
 EXAMPLE_DIR = Path(__file__).parent
@@ -44,7 +43,7 @@ def main():
                 height=(50, "pt"),
                 size=(44, "pt"),
                 bold=True,
-                color=Color("#0066CC"),
+                color="#0066CC",
             )
             .text(
                 "Easily convert Polars dataframes to presentations with tppt library",

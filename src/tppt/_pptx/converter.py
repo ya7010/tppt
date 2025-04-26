@@ -8,7 +8,7 @@ from pptx.util import Inches as PptxInches
 from pptx.util import Length as PptxLength
 from pptx.util import Pt as PptxPt
 
-from tppt.types._color import Color
+from tppt.types._color import Color, LiteralColor, to_color
 from tppt.types._length import (
     Centimeter,
     Inch,
@@ -60,5 +60,7 @@ def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None:
             assert_never(length)
 
 
-def to_pptx_color(color: Color) -> PptxRGBColor:
+def to_pptx_color(color: Color | LiteralColor) -> PptxRGBColor:
+    color = to_color(color)
+
     return PptxRGBColor(color.r, color.g, color.b)

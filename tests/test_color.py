@@ -3,7 +3,7 @@
 import unittest
 
 from tppt.exception import ColorInvalidFormatError
-from tppt.types._color import Color
+from tppt.types._color import Color, to_color
 
 
 class TestColor(unittest.TestCase):
@@ -44,3 +44,37 @@ class TestColor(unittest.TestCase):
         """Test string representation."""
         color = Color(10, 20, 30)
         assert repr(color) == "Color(10, 20, 30)"
+
+
+class TestToColor(unittest.TestCase):
+    """Test cases for to_color function."""
+
+    def test_to_color_with_color_instance(self):
+        """Test to_color with a Color instance."""
+        original = Color(10, 20, 30)
+        result = to_color(original)
+        assert result is original
+
+    def test_to_color_with_tuple(self):
+        """Test to_color with a RGB tuple."""
+        result = to_color((10, 20, 30))
+        assert isinstance(result, Color)
+        assert result.r == 10
+        assert result.g == 20
+        assert result.b == 30
+
+    def test_to_color_with_str(self):
+        """Test to_color with a hex string."""
+        result = to_color("#123456")
+        assert isinstance(result, Color)
+        assert result.r == 0x12
+        assert result.g == 0x34
+        assert result.b == 0x56
+
+    def test_to_color_with_short_hex(self):
+        """Test to_color with a short hex string."""
+        result = to_color("#123")
+        assert isinstance(result, Color)
+        assert result.r == 0x11
+        assert result.g == 0x22
+        assert result.b == 0x33
