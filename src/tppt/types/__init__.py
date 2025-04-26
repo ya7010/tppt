@@ -5,8 +5,8 @@ from typing import Literal, TypeAlias
 
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 
-from tppt._pptx.shape import RangeProps as _RangeProps
-from tppt._pptx.shape.table import TableCellStyle as TableCellStyle
+from tppt.pptx.shape import RangeProps as _RangeProps
+from tppt.pptx.shape.table import TableCellStyle as TableCellStyle
 
 from ._color import Color as Color
 from ._length import (

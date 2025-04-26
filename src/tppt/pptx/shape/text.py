@@ -3,7 +3,7 @@ from typing import Literal, NotRequired, Self
 from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 from pptx.shapes.autoshape import Shape as PptxShape
 
-from tppt._pptx.converter import to_pptx_color, to_pptx_length
+from tppt.pptx.converter import to_pptx_color, to_pptx_length
 from tppt.types._color import Color, LiteralColor
 from tppt.types._length import Length, LiteralLength
 

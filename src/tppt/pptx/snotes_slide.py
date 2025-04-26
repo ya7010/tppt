@@ -2,7 +2,7 @@ from typing import Self
 
 from pptx.slide import NotesSlide as PptxNotesSlide
 
-from tppt._pptx.converter import PptxConvertible
+from tppt.pptx.converter import PptxConvertible
 
 
 class NotesSlide(PptxConvertible[PptxNotesSlide]):

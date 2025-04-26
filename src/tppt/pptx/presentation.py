@@ -5,7 +5,7 @@ from typing import IO, TYPE_CHECKING, Any, Callable, Generic, Self, overload
 
 from pptx.presentation import Presentation as PptxPresentation
 
-from tppt._pptx.tree import ppt2dict
+from tppt.pptx.tree import ppt2dict
 from tppt.slide_layout import TpptSlideLayout
 from tppt.slide_master import (
     DefaultSlideMaster,
@@ -18,7 +18,7 @@ from .slide import SlideBuilder
 from .slide_master import SlideMaster
 
 if TYPE_CHECKING:
-    from tppt._pptx.slide import Slide
+    from tppt.pptx.slide import Slide
 
 
 class Presentation(PptxConvertible[PptxPresentation]):
@@ -34,7 +34,7 @@ class Presentation(PptxConvertible[PptxPresentation]):
     @property
     def slides(self) -> "list[Slide]":
         """Get the slides."""
-        from tppt._pptx.slide import Slide
+        from tppt.pptx.slide import Slide
 
         return [Slide.from_pptx(slide) for slide in self._pptx.slides]
 

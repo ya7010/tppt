@@ -3,7 +3,7 @@ from typing import Self
 from pptx.shapes.placeholder import LayoutPlaceholder as PptxLayoutPlaceholder
 from pptx.shapes.placeholder import SlidePlaceholder as PptxSlidePlaceholder
 
-from tppt._pptx.presentation import PptxConvertible
+from tppt.pptx.presentation import PptxConvertible
 
 
 class SlidePlaceholder(PptxConvertible[PptxSlidePlaceholder]):

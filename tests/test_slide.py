@@ -3,7 +3,7 @@
 import pytest
 
 import tppt
-from tppt._pptx.placeholder import LayoutPlaceholder, SlidePlaceholder
+from tppt.pptx.placeholder import LayoutPlaceholder, SlidePlaceholder
 
 
 def test_slide_placeholders() -> None:

@@ -5,7 +5,7 @@ from typing import Self, TypedDict
 from pptx.shapes.base import BaseShape as PptxBaseShape
 from typing_extensions import TypeVar
 
-from tppt._pptx.converter import PptxConvertible
+from tppt.pptx.converter import PptxConvertible
 from tppt.types._length import Length, LiteralLength
 
 GenericPptxShape = TypeVar(

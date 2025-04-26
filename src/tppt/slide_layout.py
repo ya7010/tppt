@@ -17,7 +17,7 @@ from typing import (
 from tppt.types import FilePath
 
 if TYPE_CHECKING:
-    from tppt._pptx.slide import SlideBuilder
+    from tppt.pptx.slide import SlideBuilder
 
 _AnyType = TypeVar("_AnyType")
 
@@ -124,7 +124,7 @@ class TpptSlideLayout(metaclass=TpptSlideLayoutMeta):
             return self
 
     def builder(self) -> "SlideBuilder":
-        from tppt._pptx.slide import SlideBuilder
+        from tppt.pptx.slide import SlideBuilder
 
         return SlideBuilder()
 

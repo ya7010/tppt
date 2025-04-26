@@ -2,7 +2,7 @@ from typing import Self
 
 from pptx.slide import _Background as PptxBackground
 
-from tppt._pptx.converter import PptxConvertible
+from tppt.pptx.converter import PptxConvertible
 
 
 class Background(PptxConvertible[PptxBackground]):

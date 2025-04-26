@@ -1,7 +1,8 @@
 from typing import Self
 
 from pptx.slide import SlideMaster as PptxSlideMaster
-from tppt._pptx.converter import PptxConvertible
+
+from tppt.pptx.converter import PptxConvertible
 
 from .slide_layout import SlideLayout
 
