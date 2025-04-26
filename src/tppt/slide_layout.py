@@ -20,7 +20,7 @@ from tppt.types import FilePath
 if TYPE_CHECKING:
     from tppt.pptx.slide import SlideBuilder
 
-_AnyType = TypeVar("_AnyType")
+AnyType = TypeVar("AnyType")
 
 
 class _Placeholder:
@@ -36,7 +36,7 @@ class _Placeholder:
         return Annotated[item, cls()]
 
 
-Placeholder: TypeAlias = Annotated[_AnyType, _Placeholder]
+Placeholder: TypeAlias = Annotated[AnyType, _Placeholder]
 
 
 class _SlideLayoutMeta(type):
