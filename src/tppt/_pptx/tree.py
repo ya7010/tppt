@@ -1,10 +1,10 @@
-from typing import Any, Dict
+from typing import Any
 
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.presentation import Presentation as PptxPresentation
 
 
-def color_format_to_dict(color_format: Any) -> Dict[str, Any]:
+def color_format_to_dict(color_format: Any) -> dict[str, Any]:
     """Convert color format to dictionary"""
     data = {}
 
@@ -23,7 +23,7 @@ def color_format_to_dict(color_format: Any) -> Dict[str, Any]:
     return data
 
 
-def text_frame_to_dict(text_frame: Any) -> Dict[str, Any]:
+def text_frame_to_dict(text_frame: Any) -> dict[str, Any]:
     """Convert text frame to dictionary"""
     if not hasattr(text_frame, "paragraphs"):
         return {"text": str(text_frame) if text_frame else ""}
@@ -61,7 +61,7 @@ def text_frame_to_dict(text_frame: Any) -> Dict[str, Any]:
     return result
 
 
-def shape_to_dict(shape: Any) -> Dict[str, Any]:
+def shape_to_dict(shape: Any) -> dict[str, Any]:
     """Convert Shape object to dictionary"""
     shape_data = {
         "name": shape.name,
@@ -124,7 +124,7 @@ def shape_to_dict(shape: Any) -> Dict[str, Any]:
     return shape_data
 
 
-def placeholder_to_dict(placeholder: Any) -> Dict[str, Any]:
+def placeholder_to_dict(placeholder: Any) -> dict[str, Any]:
     """Convert placeholder to dictionary"""
     placeholder_data = shape_to_dict(placeholder)
 
@@ -142,7 +142,7 @@ def placeholder_to_dict(placeholder: Any) -> Dict[str, Any]:
     return placeholder_data
 
 
-def slide_layout_to_dict(slide_layout: Any) -> Dict[str, Any]:
+def slide_layout_to_dict(slide_layout: Any) -> dict[str, Any]:
     """Convert slide layout to dictionary"""
     layout_data = {
         "name": slide_layout.name,
@@ -159,7 +159,7 @@ def slide_layout_to_dict(slide_layout: Any) -> Dict[str, Any]:
     return layout_data
 
 
-def slide_master_to_dict(slide_master: Any) -> Dict[str, Any]:
+def slide_master_to_dict(slide_master: Any) -> dict[str, Any]:
     """Convert slide master to dictionary"""
     master_data = {
         "id": id(slide_master),
@@ -180,7 +180,7 @@ def slide_master_to_dict(slide_master: Any) -> Dict[str, Any]:
     return master_data
 
 
-def slide_to_dict(slide: Any) -> Dict[str, Any]:
+def slide_to_dict(slide: Any) -> dict[str, Any]:
     """Convert slide to dictionary"""
     slide_data = {
         "slide_id": slide.slide_id,
@@ -213,7 +213,7 @@ def slide_to_dict(slide: Any) -> Dict[str, Any]:
     return slide_data
 
 
-def presentation_to_dict(ppt: PptxPresentation) -> Dict[str, Any]:
+def ppt2dict(ppt: PptxPresentation) -> dict[str, Any]:
     """Convert presentation information to dictionary"""
 
     # Safely get the slide size

@@ -5,7 +5,7 @@ from typing import IO, Any, Generic, Self
 
 from pptx.presentation import Presentation as PptxPresentation
 
-from tppt._pptx.tree import presentation_to_dict
+from tppt._pptx.tree import ppt2dict
 from tppt._tppt.slide_master import GenericTpptSlideMaster
 from tppt.types import FilePath
 
@@ -36,7 +36,7 @@ class Presentation(PptxConvertible[PptxPresentation]):
     @property
     def tree(self) -> dict[str, Any]:
         """Get the node tree of the presentation."""
-        return presentation_to_dict(self._pptx)
+        return ppt2dict(self._pptx)
 
     @classmethod
     def builder(
