@@ -1,20 +1,16 @@
-from typing import Any, ClassVar, Self, overload
+from typing import Annotated
 
 from typing_extensions import dataclass_transform
 
 
-class TpptSlideMasterMeta(type):
-    """TpptSlideMasterのメタクラス"""
+class Placeholder:
+    pass
 
-    def __getattr__(self, key: str) -> "type[TpptSlideLayout]":
-        if key in self.__annotations__:
-            annotation = self.__annotations__[key]
-            if issubclass(annotation, TpptSlideLayout):
-                return annotation
-            else:
-                raise AttributeError(f"属性 {key} は {annotation} ではありません")
 
-        raise AttributeError(f"属性 {key} は存在しません")
+class TpptSlideLayoutMeta(type):
+    """TpptSlideLayoutのメタクラス"""
+
+    ...
 
 
 @dataclass_transform(
@@ -22,55 +18,16 @@ class TpptSlideMasterMeta(type):
     order_default=False,
     field_specifiers=(),
 )
-class TpptSlideMaster(metaclass=TpptSlideMasterMeta):
-    """スライドマスターのベースクラス"""
-
-    _template_path: ClassVar[str | None] = None
-
-    @classmethod
-    def get_template_path(cls) -> str | None:
-        """
-        テンプレートパスを取得する
-        """
-        return cls._template_path
-
-
-class TpptSlideLayout:
+class TpptSlideLayout(metaclass=TpptSlideLayoutMeta):
     """スライドレイアウトのベースクラス"""
 
-    @overload
-    def __get__(self, instance: None, objtype: type[Any]) -> type[Self]: ...
-
-    @overload
-    def __get__(self, instance: object, objtype: type[Any]) -> Self: ...
-
-    def __get__(self, instance: object | None, objtype: type[Any]) -> type[Self] | Self:
-        if instance is None:
-            return type(self)
-
-        else:
-            return self
+    ...
 
 
-class MyMasterSlide(TpptSlideLayout):
-    def __init__(self, a: int, b: str): ...
+class MySlideLayout(TpptSlideLayout):
+    title: Annotated[str, Placeholder]
+    text: Annotated[str, Placeholder]
 
 
-class MyTitleSlide(TpptSlideLayout): ...
-
-
-class MyContentSlide(TpptSlideLayout): ...
-
-
-class MySlideMaster(TpptSlideMaster):
-    master: MyMasterSlide
-    title: MyTitleSlide
-    totle_and_content: MyContentSlide
-
-
-# 以下のアサーションが通るようにせよ
-master: type[TpptSlideMaster] = MySlideMaster
-assert MySlideMaster.master == MyMasterSlide
-assert MySlideMaster.title == MyTitleSlide
-assert MySlideMaster.totle_and_content == MyContentSlide
-MySlideMaster.master(a=1, b="a")
+myslide: type[TpptSlideLayout] = MySlideLayout
+myslide(title="a", text="b")
