@@ -7,8 +7,8 @@ from pptx.slide import Slide as PptxSlide
 from pptx.slide import SlideLayout as PptxSlideLayout
 
 from tppt._pptx.placeholder import SlidePlaceholder
-from tppt._tppt.slide_master import GenericTpptSlideMaster
 from tppt.exception import SlideLayoutIndexError
+from tppt.slide_master import GenericTpptSlideMaster
 from tppt.types import FilePath
 
 from .converter import PptxConvertible, to_pptx_length

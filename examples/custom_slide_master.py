@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import tppt
-from tppt._tppt.slide_layout import DefaultMasterSlide, DefaultTitleSlide
+from tppt.slide_layout import DefaultMasterSlide, DefaultTitleSlide
 
 
 def main():

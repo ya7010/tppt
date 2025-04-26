@@ -6,8 +6,8 @@ from typing import IO, Any, Callable, Generic, Self, overload
 from pptx.presentation import Presentation as PptxPresentation
 
 from tppt._pptx.tree import ppt2dict
-from tppt._tppt.slide_layout import TpptSlideLayout
-from tppt._tppt.slide_master import (
+from tppt.slide_layout import TpptSlideLayout
+from tppt.slide_master import (
     DefaultSlideMaster,
     GenericTpptSlideMaster,
 )
