@@ -173,8 +173,7 @@ def slide_master_to_dict(slide_master: Any) -> dict[str, Any]:
     # Add slide layout information
     for layout in slide_master.slide_layouts:
         layout_dict = slide_layout_to_dict(layout)
-        if slide_layouts := master_data.get("slide_layouts"):
-            slide_layouts.append(layout_dict)  # type: ignore
+        master_data["slide_layouts"].append(layout_dict)
 
     return master_data
 
