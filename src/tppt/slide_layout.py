@@ -130,15 +130,6 @@ class SlideLayout(metaclass=_SlideLayoutMeta):
         return SlideBuilder()
 
 
-class DefaultMasterSlide(SlideLayout):
-    """Default master slide layout."""
-
-    title: Placeholder[str]
-    text: Placeholder[str]
-    date: Placeholder[datetime.date | None] = None
-    footer: Placeholder[str | None] = None
-
-
 class DefaultTitleSlide(SlideLayout):
     """Title slide layout."""
 

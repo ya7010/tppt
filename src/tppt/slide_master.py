@@ -3,10 +3,9 @@ from typing import TYPE_CHECKING, Annotated, TypeAlias, get_args, get_origin
 from typing_extensions import TypeVar, dataclass_transform
 
 from tppt.exception import (
-    MasterLayoutNotFoundError,
-    MultipleMasterLayoutsError,
     SlideMasterAttributeMustBeSlideLayoutError,
     SlideMasterAttributeNotFoundError,
+    SlideMasterDoesNotHaveAttributesError,
 )
 
 from .slide_layout import (
@@ -14,7 +13,6 @@ from .slide_layout import (
     DefaultBlankSlide,
     DefaultComparisonSlide,
     DefaultContentWithCaptionSlide,
-    DefaultMasterSlide,
     DefaultPictureWithCaptionSlide,
     DefaultSectionHeaderSlide,
     DefaultTitleAndContentSlide,
@@ -23,6 +21,7 @@ from .slide_layout import (
     DefaultTitleSlide,
     DefaultTwoContentSlide,
     DefaultVerticalTitleAndTextSlide,
+    Placeholder,
     SlideLayout,
 )
 
@@ -36,28 +35,32 @@ class _SlideMasterMeta(type):
                 return value
 
         # 2. Check annotations
-        if hasattr(self, "__annotations__") and key in self.__annotations__:
-            annotation = self.__annotations__[key]
-
-            # Extract from Annotated type
-            origin = get_origin(annotation)
-            if origin is Annotated:
-                args = get_args(annotation)
-                if (
-                    args
-                    and isinstance(args[0], type)
-                    and issubclass(args[0], SlideLayout)
+        if annotations := getattr(self, "__annotations__", None):
+            if annotation := annotations.get(key):
+                # Extract from Annotated type
+                # Extract from Annotated type
+                origin = get_origin(annotation)
+                if origin is Annotated:
+                    args = get_args(annotation)
+                    if (
+                        args
+                        and isinstance(args[0], type)
+                        and issubclass(args[0], SlideLayout)
+                    ):
+                        return args[0]
+                    else:
+                        raise SlideMasterAttributeMustBeSlideLayoutError(key)
+                # Direct check for class type
+                elif isinstance(annotation, type) and issubclass(
+                    annotation, SlideLayout
                 ):
-                    return args[0]
+                    return annotation
                 else:
-                    raise SlideMasterAttributeMustBeSlideLayoutError(key)
-            # Direct check for class type
-            elif isinstance(annotation, type) and issubclass(annotation, SlideLayout):
-                return annotation
+                    return annotation
             else:
-                raise SlideMasterAttributeMustBeSlideLayoutError(key)
-
-        raise SlideMasterAttributeNotFoundError(key)
+                raise SlideMasterAttributeNotFoundError(key)
+        else:
+            raise SlideMasterDoesNotHaveAttributesError(self)
 
 
 @dataclass_transform(
@@ -78,16 +81,10 @@ else:
             return Annotated[item, cls()]
 
 
-if TYPE_CHECKING:
-    MasterLayout: TypeAlias = Annotated[AnyType, ...]
-else:
-
-    class MasterLayout(Layout):
-        pass
-
-
 class DefaultSlideMaster(SlideMaster):
-    Master: MasterLayout[DefaultMasterSlide]
+    title: Placeholder[str]
+    text: Placeholder[str]
+
     Title: Layout[DefaultTitleSlide]
     TitleAndContent: Layout[DefaultTitleAndContentSlide]
     SectionHeader: Layout[DefaultSectionHeaderSlide]
@@ -106,28 +103,6 @@ GenericTpptSlideMaster = TypeVar(
     bound=SlideMaster,
 )
 
-def get_master_layout(slide_master: type[SlideMaster]) -> type[SlideLayout]:
-    """Get the slide tagged with MasterLayout."""
-    master_layouts = []
-    master_layout_names = []
-
-    for attr_name, annotation in slide_master.__annotations__.items():
-        origin = get_origin(annotation)
-        if origin is Annotated:
-            args = get_args(annotation)
-            # Check the class name instead of directly checking the type of args[1]
-            if len(args) > 1 and args[1].__class__.__name__ == "MasterLayout":
-                master_layouts.append(getattr(slide_master, attr_name))
-                master_layout_names.append(attr_name)
-
-    if not master_layouts:
-        raise MasterLayoutNotFoundError(slide_master.__name__)
-
-    if len(master_layouts) > 1:
-        raise MultipleMasterLayoutsError(slide_master.__name__, master_layout_names)
-
-    return master_layouts[0]
-
 
 def get_layouts(slide_master: type[SlideMaster]) -> list[type[SlideLayout]]:
     """Get an array of slides tagged with Layout."""
@@ -141,8 +116,5 @@ def get_layouts(slide_master: type[SlideMaster]) -> list[type[SlideLayout]]:
             if len(args) > 1:
                 if args[1].__class__.__name__ == "Layout":
                     layouts.append(getattr(slide_master, attr_name))
-                elif args[1].__class__.__name__ == "MasterLayout":
-                    # Exclude MasterLayout
-                    pass
 
     return layouts

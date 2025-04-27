@@ -1,9 +1,7 @@
-
 from tppt.slide_layout import (
     DefaultBlankSlide,
     DefaultComparisonSlide,
     DefaultContentWithCaptionSlide,
-    DefaultMasterSlide,
     DefaultPictureWithCaptionSlide,
     DefaultSectionHeaderSlide,
     DefaultTitleAndContentSlide,
@@ -13,13 +11,7 @@ from tppt.slide_layout import (
     DefaultTwoContentSlide,
     DefaultVerticalTitleAndTextSlide,
 )
-from tppt.slide_master import DefaultSlideMaster, get_layouts, get_master_layout
-
-
-def test_get_master_layout():
-    """Test that get_master_layout function correctly retrieves the MasterLayout"""
-    master_layout = get_master_layout(DefaultSlideMaster)
-    assert master_layout == DefaultMasterSlide
+from tppt.slide_master import DefaultSlideMaster, get_layouts
 
 
 def test_get_layouts():
@@ -45,4 +37,4 @@ def test_get_layouts():
     assert set(layouts) == set(expected_layouts)
 
     # Verify that MasterLayout is not included
-    assert DefaultMasterSlide not in layouts
+    assert str not in layouts

@@ -1,7 +1,8 @@
 from abc import abstractmethod
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from pptx.slide import SlideLayouts as PptxSlideLayouts
+if TYPE_CHECKING:
+    from pptx.slide import SlideLayouts as PptxSlideLayouts
 
 
 class TpptException(Exception):
@@ -33,7 +34,7 @@ class ColorInvalidFormatError(TpptException, ValueError):
 class SlideLayoutIndexError(TpptException, IndexError):
     """Slide layout index is out of range."""
 
-    def __init__(self, index: int, slide_layouts: PptxSlideLayouts) -> None:
+    def __init__(self, index: int, slide_layouts: "PptxSlideLayouts") -> None:
         self.index = index
         self.slide_layouts = slide_layouts
 
@@ -53,6 +54,17 @@ class SlideMasterAttributeMustBeSlideLayoutError(TpptException, ValueError):
         return f"The slide master attribute must be a slide layout. The {self.slide_layout_name} layout is not a slide layout."
 
 
+class SlideMasterDoesNotHaveAttributesError(TpptException, ValueError):
+    """Slide master does not have an attribute."""
+
+    def __init__(self, slide_layout: "type") -> None:
+        self.slide_layout_name = slide_layout.__name__
+
+    @property
+    def message(self) -> str:
+        return f"The slide master does not have an attribute for the {self.slide_layout_name} layout"
+
+
 class SlideMasterAttributeNotFoundError(TpptException, ValueError):
     """Slide master attribute not found."""
 
@@ -62,26 +74,3 @@ class SlideMasterAttributeNotFoundError(TpptException, ValueError):
     @property
     def message(self) -> str:
         return f"The slide master does not have an attribute for the {self.slide_layout_name} layout"
-
-
-class MasterLayoutNotFoundError(TpptException, ValueError):
-    """Slide with MasterLayout tag not found."""
-
-    def __init__(self, slide_master_name: str) -> None:
-        self.slide_master_name = slide_master_name
-
-    @property
-    def message(self) -> str:
-        return f"No slide with MasterLayout tag found in {self.slide_master_name}"
-
-
-class MultipleMasterLayoutsError(TpptException, ValueError):
-    """Multiple master layouts defined."""
-
-    def __init__(self, slide_master_name: str, layout_names: list[str]) -> None:
-        self.slide_master_name = slide_master_name
-        self.layout_names = layout_names
-
-    @property
-    def message(self) -> str:
-        return f"Multiple master layouts defined in {self.slide_master_name}: {', '.join(self.layout_names)}"
