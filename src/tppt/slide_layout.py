@@ -41,6 +41,8 @@ class _SlideLayoutMeta(type):
     Tracks fields annotated as placeholders.
     """
 
+    __placeholders__: ClassVar[OrderedDict[str, Any]] = OrderedDict()
+
     def __new__(
         mcs, name: str, bases: tuple[type, ...], namespace: dict[str, Any]
     ) -> type:
@@ -48,7 +50,7 @@ class _SlideLayoutMeta(type):
 
         # Collect placeholder fields
         annotations = get_type_hints(cls, include_extras=True)
-        placeholders = {}
+        placeholders = OrderedDict()
 
         # Inherit placeholders from base classes
         for base in bases:
@@ -96,8 +98,6 @@ class _SlideLayoutMeta(type):
 )
 class SlideLayout(metaclass=_SlideLayoutMeta):
     """Base class for slide layouts"""
-
-    __placeholders__: ClassVar[OrderedDict[str, Any]] = OrderedDict()
 
     def __init__(self, **kwargs) -> None:
         # Set values for all fields
