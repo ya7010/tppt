@@ -1,10 +1,10 @@
 import pytest
 
 from tppt.types._length import (
-    Centimeters,
+    CentiMeters,
     EnglishMetricUnits,
     Inchs,
-    Millimeters,
+    MilliMeters,
     Points,
     to_centimeter,
     to_emu,
@@ -27,11 +27,11 @@ def test_to_centimeter():
     assert to_centimeter((72, "pt")).value == 2.54
 
     # Test from centimeters
-    assert to_centimeter(Centimeters(2.54)).value == 2.54
+    assert to_centimeter(CentiMeters(2.54)).value == 2.54
     assert to_centimeter((2.54, "cm")).value == 2.54
 
     # Test from millimeters
-    assert to_centimeter(Millimeters(25.4)).value == 2.54
+    assert to_centimeter(MilliMeters(25.4)).value == 2.54
     assert to_centimeter((25.4, "mm")).value == 2.54
 
     # Test from EMU
@@ -50,11 +50,11 @@ def test_to_inche():
     assert to_inche((72, "pt")).value == 1.0
 
     # Test from centimeters
-    assert to_inche(Centimeters(2.54)).value == 1.0
+    assert to_inche(CentiMeters(2.54)).value == 1.0
     assert to_inche((2.54, "cm")).value == 1.0
 
     # Test from millimeters
-    assert to_inche(Millimeters(25.4)).value == 1.0
+    assert to_inche(MilliMeters(25.4)).value == 1.0
     assert to_inche((25.4, "mm")).value == 1.0
 
     # Test from EMU
@@ -73,11 +73,11 @@ def test_to_point():
     assert to_point((72, "pt")).value == 72
 
     # Test from centimeters
-    assert to_point(Centimeters(2.54)).value == 72
+    assert to_point(CentiMeters(2.54)).value == 72
     assert to_point((2.54, "cm")).value == 72
 
     # Test from millimeters
-    assert to_point(Millimeters(25.4)).value == 72
+    assert to_point(MilliMeters(25.4)).value == 72
     assert to_point((25.4, "mm")).value == 72
 
     # Test from EMU
@@ -96,11 +96,11 @@ def test_to_millimeter():
     assert to_millimeter((72, "pt")).value == 25.4
 
     # Test from centimeters
-    assert to_millimeter(Centimeters(2.54)).value == 25.4
+    assert to_millimeter(CentiMeters(2.54)).value == 25.4
     assert to_millimeter((2.54, "cm")).value == 25.4
 
     # Test from millimeters
-    assert to_millimeter(Millimeters(25.4)).value == 25.4
+    assert to_millimeter(MilliMeters(25.4)).value == 25.4
     assert to_millimeter((25.4, "mm")).value == 25.4
 
     # Test from EMU
@@ -119,11 +119,11 @@ def test_to_emu():
     assert to_emu((72, "pt")).value == 914400
 
     # Test from centimeters
-    assert to_emu(Centimeters(2.54)).value == 914400
+    assert to_emu(CentiMeters(2.54)).value == 914400
     assert to_emu((2.54, "cm")).value == 914400
 
     # Test from millimeters
-    assert to_emu(Millimeters(25.4)).value == 914400
+    assert to_emu(MilliMeters(25.4)).value == 914400
     assert to_emu((25.4, "mm")).value == 914400
 
     # Test from EMU
@@ -136,43 +136,43 @@ def test_internal_length_operations():
     # Test addition
     assert (Inchs(1) + Inchs(1)).value == 2.0
     assert (Points(72) + Points(72)).value == 144
-    assert (Centimeters(2.54) + Centimeters(2.54)).value == 5.08
-    assert (Millimeters(25.4) + Millimeters(25.4)).value == 50.8
+    assert (CentiMeters(2.54) + CentiMeters(2.54)).value == 5.08
+    assert (MilliMeters(25.4) + MilliMeters(25.4)).value == 50.8
     assert (EnglishMetricUnits(914400) + EnglishMetricUnits(914400)).value == 1828800
 
     # Test addition with Length tuples
     assert (Inchs(1) + (1.0, "in")).value == 2.0
     assert (Points(72) + (72, "pt")).value == 144
-    assert (Centimeters(2.54) + (2.54, "cm")).value == 5.08
-    assert (Millimeters(25.4) + (25.4, "mm")).value == 50.8
+    assert (CentiMeters(2.54) + (2.54, "cm")).value == 5.08
+    assert (MilliMeters(25.4) + (25.4, "mm")).value == 50.8
     assert (EnglishMetricUnits(914400) + (914400, "emu")).value == 1828800
 
     # Test subtraction
     assert (Inchs(2) - Inchs(1)).value == 1.0
     assert (Points(144) - Points(72)).value == 72
-    assert (Centimeters(5.08) - Centimeters(2.54)).value == 2.54
-    assert (Millimeters(50.8) - Millimeters(25.4)).value == 25.4
+    assert (CentiMeters(5.08) - CentiMeters(2.54)).value == 2.54
+    assert (MilliMeters(50.8) - MilliMeters(25.4)).value == 25.4
     assert (EnglishMetricUnits(1828800) - EnglishMetricUnits(914400)).value == 914400
 
     # Test subtraction with Length tuples
     assert (Inchs(2) - (1.0, "in")).value == 1.0
     assert (Points(144) - (72, "pt")).value == 72
-    assert (Centimeters(5.08) - (2.54, "cm")).value == 2.54
-    assert (Millimeters(50.8) - (25.4, "mm")).value == 25.4
+    assert (CentiMeters(5.08) - (2.54, "cm")).value == 2.54
+    assert (MilliMeters(50.8) - (25.4, "mm")).value == 25.4
     assert (EnglishMetricUnits(1828800) - (914400, "emu")).value == 914400
 
     # Test multiplication
     assert (Inchs(1) * 2).value == 2.0
     assert (Points(72) * 2).value == 144
-    assert (Centimeters(2.54) * 2).value == 5.08
-    assert (Millimeters(25.4) * 2).value == 50.8
+    assert (CentiMeters(2.54) * 2).value == 5.08
+    assert (MilliMeters(25.4) * 2).value == 50.8
     assert (EnglishMetricUnits(914400) * 2).value == 1828800
 
     # Test division
     assert (Inchs(2) / 2).value == 1.0
     assert (Points(144) / 2).value == 72
-    assert (Centimeters(5.08) / 2).value == 2.54
-    assert (Millimeters(50.8) / 2).value == 25.4
+    assert (CentiMeters(5.08) / 2).value == 2.54
+    assert (MilliMeters(50.8) / 2).value == 25.4
     assert (EnglishMetricUnits(1828800) / 2).value == 914400
 
     # Test in-place operations with Length tuples
@@ -184,11 +184,11 @@ def test_internal_length_operations():
     point += (72, "pt")
     assert point.value == 144
 
-    cm = Centimeters(2.54)
+    cm = CentiMeters(2.54)
     cm += (2.54, "cm")
     assert cm.value == 5.08
 
-    mm = Millimeters(25.4)
+    mm = MilliMeters(25.4)
     mm += (25.4, "mm")
     assert mm.value == 50.8
 
@@ -204,11 +204,11 @@ def test_internal_length_operations():
     point -= (72, "pt")
     assert point.value == 72
 
-    cm = Centimeters(5.08)
+    cm = CentiMeters(5.08)
     cm -= (2.54, "cm")
     assert cm.value == 2.54
 
-    mm = Millimeters(50.8)
+    mm = MilliMeters(50.8)
     mm -= (25.4, "mm")
     assert mm.value == 25.4
 
@@ -252,35 +252,35 @@ def test_conversion_between_units():
     assert to_emu((72, "pt")).value == 914400
 
     # Test centimeter to inch
-    assert to_inche(Centimeters(2.54)).value == 1.0
+    assert to_inche(CentiMeters(2.54)).value == 1.0
     assert to_inche((2.54, "cm")).value == 1.0
 
     # Test centimeter to point
-    assert to_point(Centimeters(2.54)).value == 72
+    assert to_point(CentiMeters(2.54)).value == 72
     assert to_point((2.54, "cm")).value == 72
 
     # Test centimeter to millimeter
-    assert to_millimeter(Centimeters(2.54)).value == 25.4
+    assert to_millimeter(CentiMeters(2.54)).value == 25.4
     assert to_millimeter((2.54, "cm")).value == 25.4
 
     # Test centimeter to EMU
-    assert to_emu(Centimeters(2.54)).value == 914400
+    assert to_emu(CentiMeters(2.54)).value == 914400
     assert to_emu((2.54, "cm")).value == 914400
 
     # Test millimeter to inch
-    assert to_inche(Millimeters(25.4)).value == 1.0
+    assert to_inche(MilliMeters(25.4)).value == 1.0
     assert to_inche((25.4, "mm")).value == 1.0
 
     # Test millimeter to point
-    assert to_point(Millimeters(25.4)).value == 72
+    assert to_point(MilliMeters(25.4)).value == 72
     assert to_point((25.4, "mm")).value == 72
 
     # Test millimeter to centimeter
-    assert to_centimeter(Millimeters(25.4)).value == 2.54
+    assert to_centimeter(MilliMeters(25.4)).value == 2.54
     assert to_centimeter((25.4, "mm")).value == 2.54
 
     # Test millimeter to EMU
-    assert to_emu(Millimeters(25.4)).value == 914400
+    assert to_emu(MilliMeters(25.4)).value == 914400
     assert to_emu((25.4, "mm")).value == 914400
 
     # Test EMU to inch
@@ -319,20 +319,20 @@ def test_internal_to_public_conversion():
     assert to_literal_length(Points(72), "emu") == (914400, "emu")
 
     # Test centimeter conversion
-    assert to_length((2.54, "cm")) == Centimeters(2.54)
-    assert to_literal_length(Centimeters(2.54), "in") == (1.0, "in")
-    assert to_literal_length(Centimeters(2.54), "cm") == (2.54, "cm")
-    assert to_literal_length(Centimeters(2.54), "pt") == (72, "pt")
-    assert to_literal_length(Centimeters(2.54), "mm") == (25.4, "mm")
-    assert to_literal_length(Centimeters(2.54), "emu") == (914400, "emu")
+    assert to_length((2.54, "cm")) == CentiMeters(2.54)
+    assert to_literal_length(CentiMeters(2.54), "in") == (1.0, "in")
+    assert to_literal_length(CentiMeters(2.54), "cm") == (2.54, "cm")
+    assert to_literal_length(CentiMeters(2.54), "pt") == (72, "pt")
+    assert to_literal_length(CentiMeters(2.54), "mm") == (25.4, "mm")
+    assert to_literal_length(CentiMeters(2.54), "emu") == (914400, "emu")
 
     # Test millimeter conversion
-    assert to_length((25.4, "mm")) == Millimeters(25.4)
-    assert to_literal_length(Millimeters(25.4), "in") == (1.0, "in")
-    assert to_literal_length(Millimeters(25.4), "cm") == (2.54, "cm")
-    assert to_literal_length(Millimeters(25.4), "pt") == (72, "pt")
-    assert to_literal_length(Millimeters(25.4), "mm") == (25.4, "mm")
-    assert to_literal_length(Millimeters(25.4), "emu") == (914400, "emu")
+    assert to_length((25.4, "mm")) == MilliMeters(25.4)
+    assert to_literal_length(MilliMeters(25.4), "in") == (1.0, "in")
+    assert to_literal_length(MilliMeters(25.4), "cm") == (2.54, "cm")
+    assert to_literal_length(MilliMeters(25.4), "pt") == (72, "pt")
+    assert to_literal_length(MilliMeters(25.4), "mm") == (25.4, "mm")
+    assert to_literal_length(MilliMeters(25.4), "emu") == (914400, "emu")
 
     # Test EMU conversion
     assert to_length((914400, "emu")) == EnglishMetricUnits(914400)

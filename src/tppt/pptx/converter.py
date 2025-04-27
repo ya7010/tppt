@@ -12,12 +12,12 @@ from pptx.util import Pt as PptxPt
 
 from tppt.types._color import Color, LiteralColor, to_color
 from tppt.types._length import (
-    Centimeters,
+    CentiMeters,
     EnglishMetricUnits,
     Inchs,
     Length,
     LiteralLength,
-    Millimeters,
+    MilliMeters,
     Points,
     to_length,
 )
@@ -54,11 +54,11 @@ def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None:
     match length:
         case Inchs():
             return PptxInches(length.value)
-        case Centimeters():
+        case CentiMeters():
             return PptxCm(length.value)
         case Points():
             return PptxPt(length.value)
-        case Millimeters():
+        case MilliMeters():
             return PptxMm(length.value)
         case EnglishMetricUnits():
             return PptxEmu(length.value)
@@ -68,11 +68,30 @@ def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None:
             assert_never(length)
 
 
-def to_tppt_length(length: PptxLength) -> Length:
-    return to_length((length.emu, "emu"))
+@overload
+def to_tppt_length(length: PptxLength) -> Length: ...
 
 
-def to_pptx_color(color: Color | LiteralColor) -> PptxRGBColor:
+@overload
+def to_tppt_length(length: PptxLength | None) -> Length | None: ...
+
+
+def to_tppt_length(length: PptxLength | None) -> Length | None:
+    return to_length((length.emu, "emu")) if length else None
+
+
+@overload
+def to_pptx_color(color: Color | LiteralColor) -> PptxRGBColor: ...
+
+
+@overload
+def to_pptx_color(color: Color | LiteralColor | None) -> PptxRGBColor | None: ...
+
+
+def to_pptx_color(color: Color | LiteralColor | None) -> PptxRGBColor | None:
+    if color is None:
+        return None
+
     color = to_color(color)
 
     return PptxRGBColor(color.r, color.g, color.b)

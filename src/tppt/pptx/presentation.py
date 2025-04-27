@@ -13,8 +13,9 @@ from tppt.template.slide_master import (
     SlideMasterProxy,
 )
 from tppt.types import FilePath
+from tppt.types._length import Length
 
-from .converter import PptxConvertible
+from .converter import PptxConvertible, to_pptx_length, to_tppt_length
 from .slide import SlideBuilder
 from .slide_master import SlideMaster
 
@@ -47,6 +48,22 @@ class Presentation(PptxConvertible[PptxPresentation]):
         This tool supports only one slide master.
         """
         return SlideMaster.from_pptx(self._pptx.slide_masters[0])
+
+    @property
+    def slide_width(self) -> Length | None:
+        return to_tppt_length(self._pptx.slide_width)
+
+    @slide_width.setter
+    def slide_width(self, value: Length) -> None:
+        self._pptx.slide_width = to_pptx_length(value)
+
+    @property
+    def slide_height(self) -> Length | None:
+        return to_tppt_length(self._pptx.slide_height)
+
+    @slide_height.setter
+    def slide_height(self, value: Length) -> None:
+        self._pptx.slide_height = to_pptx_length(value)
 
     @property
     def tree(self) -> dict[str, Any]:

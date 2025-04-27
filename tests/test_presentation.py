@@ -30,6 +30,13 @@ def test_create_presentation(output: pathlib.Path) -> None:
     presentation.save(output / "text_only.pptx")
 
 
+def test_presentation_width_and_height(output: pathlib.Path) -> None:
+    """Test setting the width and height of a presentation."""
+    presentation = tppt.Presentation.builder().build()
+    assert presentation.slide_width == tppt.types.EnglishMetricUnits(9144000)
+    assert presentation.slide_height == tppt.types.EnglishMetricUnits(6858000)
+
+
 def test_create_presentation_with_table(output: pathlib.Path) -> None:
     """Test creating a presentation with a table."""
     table_data = [
