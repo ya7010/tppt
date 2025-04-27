@@ -112,9 +112,9 @@ def get_layouts(slide_master: type[SlideMaster]) -> list[type[SlideLayout]]:
         origin = get_origin(annotation)
         if origin is Annotated:
             args = get_args(annotation)
-            # Identify Layout and MasterLayout using class names
+            # Identify Layout using class comparison instead of string name
             if len(args) > 1:
-                if args[1].__class__.__name__ == "Layout":
+                if args[1].__class__ is Layout:
                     layouts.append(getattr(slide_master, attr_name))
 
     return layouts
