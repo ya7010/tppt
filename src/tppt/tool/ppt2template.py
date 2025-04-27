@@ -5,7 +5,7 @@ import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 
 from pptx import Presentation as PptxPresentation
 
@@ -114,116 +114,6 @@ def clean_field_name(name: str) -> str:
     return name
 
 
-def get_field_name_from_layout_context(
-    ph: PlaceholderInfo,
-    placeholder_type_map: Dict[int, List[PlaceholderInfo]],
-    layout_name: str,
-    seen_names: Set[str],
-) -> str:
-    """Get appropriate field name based on layout context and placeholder type."""
-    placeholder_type = ph.type
-    ph_name = ph.name.lower()
-    layout_name_lower = layout_name.lower()
-
-    # Start with basic name from placeholder type
-    base_name = clean_field_name(ph.name)
-
-    # Use standard names for common placeholder types
-    if placeholder_type == 1:  # Title
-        base_name = "title"
-    elif placeholder_type == 2:  # Body/Content
-        if "content" in layout_name_lower or "text" in layout_name_lower:
-            base_name = "content"
-        else:
-            base_name = "body"
-    elif placeholder_type == 3:  # CenteredTitle
-        base_name = "title"  # Simplified to just "title"
-    elif placeholder_type == 4:  # Subtitle
-        base_name = "subtitle"
-    elif placeholder_type == 7:  # Chart
-        if "chart" in ph_name:
-            base_name = "chart"
-        else:
-            base_name = "content"  # Often used for regular content despite being type 7
-    elif placeholder_type == 8:  # Table
-        base_name = "table"
-    elif placeholder_type == 13:  # SlideNumber
-        base_name = "slide_number"
-    elif placeholder_type == 15:  # Footer
-        base_name = "footer"
-    elif placeholder_type == 16:  # Date
-        base_name = "date"
-    elif placeholder_type == 18:  # Picture
-        base_name = "picture"
-    elif placeholder_type == 19:  # VerticalTitle
-        base_name = "vertical_title"
-    elif placeholder_type == 20:  # VerticalBody
-        base_name = "vertical_text"
-
-    # Handle specific layout types
-    if "two content" in layout_name_lower and placeholder_type in [2, 7]:
-        same_type_phs = placeholder_type_map.get(placeholder_type, [])
-        if len(same_type_phs) > 1:
-            idx = same_type_phs.index(ph)
-            if idx == 0:
-                base_name = "left_content"
-            elif idx == 1:
-                base_name = "right_content"
-
-    # Handle comparison layout
-    elif "comparison" in layout_name_lower:
-        same_type_phs = placeholder_type_map.get(placeholder_type, [])
-        if placeholder_type == 1:  # Title
-            base_name = "title"
-        elif placeholder_type in [2, 7]:  # Content/Body/Chart
-            if len(same_type_phs) > 1:
-                idx = same_type_phs.index(ph)
-                if idx == 0:
-                    base_name = "left_title" if "title" in ph_name else "left_content"
-                elif idx == 1:
-                    base_name = "left_body" if "body" in ph_name else "left_content"
-                elif idx == 2:
-                    base_name = "right_title" if "title" in ph_name else "right_content"
-                elif idx == 3:
-                    base_name = "right_body" if "body" in ph_name else "right_content"
-                else:
-                    base_name = f"content_{idx + 1}"
-
-    # Custom handling for vertical layouts
-    elif "vertical" in layout_name_lower:
-        if placeholder_type == 19:  # VerticalTitle
-            base_name = "vertical_title"
-        elif placeholder_type == 20:  # VerticalBody
-            base_name = "vertical_text"
-        elif placeholder_type in [
-            2,
-            7,
-        ]:  # Sometimes regular content in vertical layouts
-            base_name = "content"
-
-    # Generic handling for multiple placeholders of same type
-    else:
-        same_type_phs = placeholder_type_map.get(placeholder_type, [])
-        if len(same_type_phs) > 1 and placeholder_type not in [
-            13,
-            15,
-            16,
-        ]:  # Not for common elements
-            idx = same_type_phs.index(ph)
-            if idx > 0:
-                base_name = f"{base_name}_{idx + 1}"
-
-    # Ensure uniqueness by adding numeric suffix if needed
-    if base_name in seen_names:
-        counter = 1
-        while f"{base_name}_{counter}" in seen_names:
-            counter += 1
-        base_name = f"{base_name}_{counter}"
-
-    seen_names.add(base_name)
-    return base_name
-
-
 def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
     """Analyze layout and determine class name and field information."""
 
@@ -237,25 +127,163 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
     processed_placeholders = []
     seen_field_names = set()
     placeholder_type_map = {}
+    layout_name_lower = layout.name.lower()
 
-    # First pass - identify placeholder types
+    # 同じ種類のプレースホルダー名をカウント (例：contentという名前が何個あるか)
+    placeholder_base_name_counts = {}
+
+    # First pass - identify placeholder types and count base names
     for ph in layout.placeholders:
         if ph.type not in placeholder_type_map:
             placeholder_type_map[ph.type] = []
         placeholder_type_map[ph.type].append(ph)
 
-    # Second pass - generate field names and types
+        # クリーニングされた基本名をカウント
+        base_name = clean_field_name(ph.name)
+        if ph.type in [2, 7]:  # content/bodyタイプのプレースホルダー
+            if "content" in layout_name_lower or "text" in layout_name_lower:
+                base_name = "content"
+            else:
+                base_name = "body"
+
+        placeholder_base_name_counts[base_name] = (
+            placeholder_base_name_counts.get(base_name, 0) + 1
+        )
+
+    # 同じ種類のプレースホルダーに対してベース名を決める
+    type_base_names = {}
+    for ph_type, phs in placeholder_type_map.items():
+        # タイプごとにベース名を決定
+        if len(phs) == 0:
+            continue
+
+        sample_ph = phs[0]
+        base_name = ""
+
+        # タイプに基づいてベース名を決定
+        if ph_type == 1:  # Title
+            base_name = "title"
+        elif ph_type == 2:  # Body/Content
+            if "content" in layout_name_lower or "text" in layout_name_lower:
+                base_name = "content"
+            else:
+                base_name = "body"
+        elif ph_type == 3:  # CenteredTitle
+            base_name = "title"
+        elif ph_type == 4:  # Subtitle
+            base_name = "subtitle"
+        elif ph_type == 7:  # Chart
+            if "chart" in sample_ph.name.lower():
+                base_name = "chart"
+            else:
+                base_name = "content"
+        elif ph_type == 8:  # Table
+            base_name = "table"
+        elif ph_type == 13:  # SlideNumber
+            base_name = "slide_number"
+        elif ph_type == 15:  # Footer
+            base_name = "footer"
+        elif ph_type == 16:  # Date
+            base_name = "date"
+        elif ph_type == 18:  # Picture
+            base_name = "picture"
+        elif ph_type == 19:  # VerticalTitle
+            base_name = "vertical_title"
+        elif ph_type == 20:  # VerticalBody
+            base_name = "vertical_text"
+        else:
+            # その他のタイプはプレースホルダー名をクリーニングして使用
+            base_name = clean_field_name(sample_ph.name)
+
+        # すべてのタイプのプレースホルダーについて処理
+        if ph_type not in [
+            1,
+            3,
+            4,
+            13,
+            15,
+            16,
+            19,
+            20,
+        ]:  # タイトル、サブタイトル、日付、フッターなどは連番を付けない
+            # 特定のレイアウトタイプの特別処理
+            if (
+                "two content" in layout_name_lower
+                and ph_type in [2, 7]
+                and len(phs) == 2
+            ):
+                type_base_names[ph_type] = ["left_content", "right_content"]
+            elif (
+                "comparison" in layout_name_lower
+                and ph_type in [2, 7]
+                and len(phs) >= 4
+            ):
+                special_names = [
+                    "left_title" if "title" in phs[0].name.lower() else "left_content",
+                    "left_body" if "body" in phs[1].name.lower() else "left_content",
+                    "right_title"
+                    if "title" in phs[2].name.lower()
+                    else "right_content",
+                    "right_body" if "body" in phs[3].name.lower() else "right_content",
+                ]
+                type_base_names[ph_type] = special_names
+
+                # 残りがあれば、content5, content6...
+                for i in range(4, len(phs)):
+                    type_base_names[ph_type].append(f"content{i + 1}")
+            else:
+                # 同じ種類のプレースホルダーが複数ある場合のみ連番をつける
+                if len(phs) > 1:
+                    base_name_without_numbers = re.sub(
+                        r"\d+$", "", base_name
+                    )  # 名前から末尾の数字を取り除く
+                    type_base_names[ph_type] = [
+                        f"{base_name_without_numbers}{i + 1}" for i in range(len(phs))
+                    ]
+                else:
+                    # 単一のプレースホルダーの場合は連番なし
+                    type_base_names[ph_type] = [base_name]
+        else:
+            # 日付、フッター、スライド番号などには連番を付けない
+            type_base_names[ph_type] = [base_name]
+
+    # Second pass - 実際に各プレースホルダーにフィールド名を割り当てる
+    processed_placeholders = []
+
     for ph in layout.placeholders:
         if not ph.name:
             continue
 
-        # Generate more context-aware field name
-        field_name = get_field_name_from_layout_context(
-            ph, placeholder_type_map, layout.name, seen_field_names
-        )
+        placeholder_type = ph.type
+
+        # このタイプのプレースホルダーの何番目か
+        same_type_phs = placeholder_type_map.get(placeholder_type, [])
+        idx = same_type_phs.index(ph)
+
+        # フィールド名の決定
+        if placeholder_type in type_base_names and idx < len(
+            type_base_names[placeholder_type]
+        ):
+            field_name = type_base_names[placeholder_type][idx]
+        else:
+            # フォールバック: 元の名前をクリーニング
+            field_name = clean_field_name(ph.name)
+
+        # 名前の重複を避ける
+        if field_name in seen_field_names:
+            # Content with Captionレイアウトの場合は特別処理
+            if layout.name == "Content with Caption" and placeholder_type == 2:
+                # ここでは何もしない（上ですでに正しい名前を設定）
+                pass
+            else:
+                counter = 1
+                while f"{field_name}{counter}" in seen_field_names:
+                    counter += 1
+                field_name = f"{field_name}{counter}"
+
+        seen_field_names.add(field_name)
 
         # Determine field type
-        placeholder_type = ph.type
         required = False
 
         if "date" in field_name or placeholder_type == 16:  # Date
@@ -311,10 +339,23 @@ def generate_layout_class(layout: LayoutInfo) -> str:
     class_name = layout.class_name or f"Custom{layout.name.replace(' ', '')}Layout"
     class_docstring = f'"""{layout.name} layout."""'
 
+    # 重複するフィールド名を削除する
+    unique_fields = {}
+    for ph in layout.placeholders:
+        if not ph.field_name or not ph.field_type:
+            continue
+
+        # 同じフィールド名が存在する場合は上書き（最後のものを使用）
+        unique_fields[ph.field_name] = ph
+
     # 元のインデックス順を維持する（ソートしない）
     placeholder_definitions = []
     for ph in layout.placeholders:
         if not ph.field_name or not ph.field_type:
+            continue
+
+        # 重複を避けるため、最後に処理されたフィールドだけを出力
+        if unique_fields.get(ph.field_name) is not ph:
             continue
 
         if ph.required:
