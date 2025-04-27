@@ -10,6 +10,7 @@ from tppt.slide_layout import SlideLayout
 from tppt.slide_master import (
     DefaultSlideMaster,
     GenericTpptSlideMaster,
+    SlideMasterProxy,
 )
 from tppt.types import FilePath
 
@@ -111,12 +112,15 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
         /,
     ) -> Self:
         """Add a slide to the presentation."""
-        slide_layout = slide(self._slide_master)
+        slide_master = SlideMasterProxy(self._slide_master, Presentation(self._pptx))
+        slide_layout = slide(slide_master)  # type: ignore
+
         slide_builder = (
             slide_layout.builder()
             if isinstance(slide_layout, SlideLayout)
             else slide_layout
         )
+
         slide_builder._build(self)
 
         return self

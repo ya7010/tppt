@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from typing import (
     TYPE_CHECKING,
     Annotated,
@@ -33,7 +34,12 @@ from .slide_layout import (
     DefaultTwoContentSlideLayout,
     DefaultVerticalTitleAndTextSlideLayout,
     SlideLayout,
+    SlideLayoutProxy,
 )
+
+if TYPE_CHECKING:
+    from .pptx.presentation import Presentation
+
 
 GenericSlideMaster = TypeVar("GenericSlideMaster", bound="type[SlideMaster]")
 
@@ -114,6 +120,23 @@ def slide_master(
     return decorator
 
 
+class SlideMasterProxy:
+    def __init__(self, origin: type[SlideMaster], presentation: "Presentation") -> None:
+        self._slide_master = origin
+        self._presentation = presentation
+
+    def __getattr__(self, key: str) -> SlideLayoutProxy:
+        for i, (key2, slide_layout) in enumerate(
+            get_slide_layouts(self._slide_master).items()
+        ):
+            if key2 == key:
+                return SlideLayoutProxy(
+                    slide_layout, self._presentation.slide_master.slide_layouts[i]
+                )
+        else:
+            raise SlideMasterAttributeNotFoundError(key)
+
+
 @slide_master("default")
 class DefaultSlideMaster(SlideMaster):
     TitleLayout: Layout[DefaultTitleSlideLayout]
@@ -135,9 +158,11 @@ GenericTpptSlideMaster = TypeVar(
 )
 
 
-def get_layouts(slide_master: type[SlideMaster]) -> list[type[SlideLayout]]:
+def get_slide_layouts(
+    slide_master: type[SlideMaster],
+) -> OrderedDict[str, type[SlideLayout]]:
     """Get an array of slides tagged with Layout."""
-    layouts = []
+    layouts = OrderedDict()
 
     for attr_name, annotation in slide_master.__annotations__.items():
         origin = get_origin(annotation)
@@ -146,6 +171,6 @@ def get_layouts(slide_master: type[SlideMaster]) -> list[type[SlideLayout]]:
             # Identify Layout using class comparison instead of string name
             if len(args) > 1:
                 if args[1].__class__ is Layout:
-                    layouts.append(getattr(slide_master, attr_name))
+                    layouts[attr_name] = getattr(slide_master, attr_name)
 
     return layouts

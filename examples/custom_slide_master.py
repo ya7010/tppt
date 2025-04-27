@@ -12,9 +12,10 @@ def main():
         title: tppt.Placeholder[str]
         subtitle: tppt.Placeholder[str | None] = None
 
+    @tppt.slide_master("default")
     class CustomSlideMaster(tppt.SlideMaster):
-        MasterLayout = tppt.Layout[CustomMasterSlideLayout]
-        TitleLayout = tppt.Layout[CustomTitleSlideLayout]
+        MasterLayout: tppt.Layout[CustomMasterSlideLayout]
+        TitleLayout: tppt.Layout[CustomTitleSlideLayout]
 
     presentation = (
         tppt.Presentation.builder(CustomSlideMaster)

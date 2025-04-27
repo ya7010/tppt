@@ -12,7 +12,7 @@ from tppt.slide_layout import (
     DefaultVerticalTitleAndTextSlideLayout,
     Placeholder,
 )
-from tppt.slide_master import DefaultSlideMaster, Layout, get_layouts
+from tppt.slide_master import DefaultSlideMaster, Layout, get_slide_layouts
 
 
 class TestSlideMaster(DefaultSlideMaster):
@@ -34,7 +34,7 @@ class TestSlideMaster(DefaultSlideMaster):
 
 def test_get_layouts():
     """Test that get_layouts function correctly retrieves the list of Layouts"""
-    layouts = get_layouts(TestSlideMaster)
+    layouts = [layout for layout in get_slide_layouts(TestSlideMaster).values()]
 
     # Verify that all Layouts are included
     expected_layouts = [

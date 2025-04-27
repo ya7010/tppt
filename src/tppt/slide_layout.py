@@ -15,11 +15,11 @@ from typing import (
     overload,
 )
 
-from tppt.types import FilePath
+from .types import FilePath
 
 if TYPE_CHECKING:
-    from tppt.pptx.slide import SlideBuilder
-    from tppt.pptx.slide_layout import SlideLayout as PptxConvertibleSlideLayout
+    from .pptx.slide import SlideBuilder
+    from .pptx.slide_layout import SlideLayout as PptxConvertibleSlideLayout
 
 
 AnyType = TypeVar("AnyType")
@@ -134,19 +134,22 @@ class SlideLayout(metaclass=_SlideLayoutMeta):
 class SlideLayoutProxy:
     def __init__(
         self,
-        origin: type[SlideLayout],
-        slide_layout: "PptxConvertibleSlideLayout",
+        slide_layout: type[SlideLayout],
+        convertible_slide_layout: "PptxConvertibleSlideLayout",
     ) -> None:
-        self._slide_layout = origin
-        self._pptx = slide_layout
+        self._slide_layout = slide_layout
+        self._convertible_slide_layout = convertible_slide_layout
+
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        return self._slide_layout(*args, **kwargs)
 
     def __getattr__(self, item: str) -> Any:
         return getattr(self._slide_layout, item)
 
     def builder(self) -> "SlideBuilder":
-        self._presentation.slide_master.slide_layouts
-
-        return SlideBuilder(self._pptx)
+        return SlideBuilder(
+            self._convertible_slide_layout,
+        )
 
 
 class DefaultTitleSlideLayout(SlideLayout):
