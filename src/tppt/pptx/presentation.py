@@ -129,6 +129,14 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
 
         self._slide_master = slide_master
 
+    def slide_width(self, value: Length | LiteralLength) -> Self:
+        self._pptx.slide_width = to_pptx_length(value)
+        return self
+
+    def slide_height(self, value: Length | LiteralLength) -> Self:
+        self._pptx.slide_height = to_pptx_length(value)
+        return self
+
     def slide(
         self,
         slide: Callable[[type[GenericTpptSlideMaster]], SlideBuilder | SlideLayout],
