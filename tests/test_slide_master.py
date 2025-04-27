@@ -1,18 +1,19 @@
-from tppt.template.slide_layout import (
+from tppt.template.default import (
     DefaultBlankSlideLayout,
     DefaultComparisonSlideLayout,
     DefaultContentWithCaptionSlideLayout,
     DefaultPictureWithCaptionSlideLayout,
     DefaultSectionHeaderSlideLayout,
+    DefaultSlideMaster,
     DefaultTitleAndContentSlideLayout,
     DefaultTitleAndVerticalTextSlideLayout,
     DefaultTitleOnlySlideLayout,
     DefaultTitleSlideLayout,
     DefaultTwoContentSlideLayout,
     DefaultVerticalTitleAndTextSlideLayout,
-    Placeholder,
 )
-from tppt.template.slide_master import DefaultSlideMaster, Layout, get_slide_layouts
+from tppt.template.slide_layout import Placeholder
+from tppt.template.slide_master import Layout, get_slide_layouts
 
 
 class TestSlideMaster(DefaultSlideMaster):

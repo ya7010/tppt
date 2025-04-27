@@ -23,17 +23,6 @@ from tppt.types import FilePath
 
 from .slide_layout import (
     AnyType,
-    DefaultBlankSlideLayout,
-    DefaultComparisonSlideLayout,
-    DefaultContentWithCaptionSlideLayout,
-    DefaultPictureWithCaptionSlideLayout,
-    DefaultSectionHeaderSlideLayout,
-    DefaultTitleAndContentSlideLayout,
-    DefaultTitleAndVerticalTextSlideLayout,
-    DefaultTitleOnlySlideLayout,
-    DefaultTitleSlideLayout,
-    DefaultTwoContentSlideLayout,
-    DefaultVerticalTitleAndTextSlideLayout,
     SlideLayout,
     SlideLayoutProxy,
 )
@@ -152,21 +141,6 @@ class SlideMasterProxy:
                 )
         else:
             raise SlideMasterAttributeNotFoundError(key)
-
-
-@slide_master("default")
-class DefaultSlideMaster(SlideMaster):
-    TitleLayout: Layout[DefaultTitleSlideLayout]
-    TitleAndContentLayout: Layout[DefaultTitleAndContentSlideLayout]
-    SectionHeaderLayout: Layout[DefaultSectionHeaderSlideLayout]
-    TwoContentLayout: Layout[DefaultTwoContentSlideLayout]
-    ComparisonLayout: Layout[DefaultComparisonSlideLayout]
-    TitleOnlyLayout: Layout[DefaultTitleOnlySlideLayout]
-    BlankLayout: Layout[DefaultBlankSlideLayout]
-    ContentWithCaptionLayout: Layout[DefaultContentWithCaptionSlideLayout]
-    PictureWithCaptionLayout: Layout[DefaultPictureWithCaptionSlideLayout]
-    TitleAndVerticalTextLayout: Layout[DefaultTitleAndVerticalTextSlideLayout]
-    VerticalTitleAndTextLayout: Layout[DefaultVerticalTitleAndTextSlideLayout]
 
 
 GenericTpptSlideMaster = TypeVar(
