@@ -188,8 +188,6 @@ def generate_template_file(
     else:
         print(content)
 
-    print(f"Template file generated at: {output_path or 'standard output'}")
-
 
 if __name__ == "__main__":
     try:
