@@ -1,7 +1,7 @@
 from typing import Annotated, Any, ClassVar
 
 from tppt.slide_layout import (
-    DefaultTitleSlide,
+    DefaultTitleSlideLayout,
     Placeholder,
     SlideLayout,
     get_placeholders,
@@ -14,7 +14,7 @@ class TestSlideLayoutGetPlaceholders:
     def test_get_placeholders(self):
         """Test get_placeholders function returns the correct placeholders for a layout."""
         # Test with existing layout
-        placeholders = get_placeholders(DefaultTitleSlide)
+        placeholders = get_placeholders(DefaultTitleSlideLayout)
         assert "title" in placeholders
         assert "subtitle" in placeholders
         assert "date" in placeholders

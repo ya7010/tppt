@@ -21,17 +21,17 @@ from tppt.types import FilePath
 
 from .slide_layout import (
     AnyType,
-    DefaultBlankSlide,
-    DefaultComparisonSlide,
-    DefaultContentWithCaptionSlide,
-    DefaultPictureWithCaptionSlide,
-    DefaultSectionHeaderSlide,
-    DefaultTitleAndContentSlide,
-    DefaultTitleAndVerticalTextSlide,
-    DefaultTitleOnlySlide,
-    DefaultTitleSlide,
-    DefaultTwoContentSlide,
-    DefaultVerticalTitleAndTextSlide,
+    DefaultBlankSlideLayout,
+    DefaultComparisonSlideLayout,
+    DefaultContentWithCaptionSlideLayout,
+    DefaultPictureWithCaptionSlideLayout,
+    DefaultSectionHeaderSlideLayout,
+    DefaultTitleAndContentSlideLayout,
+    DefaultTitleAndVerticalTextSlideLayout,
+    DefaultTitleOnlySlideLayout,
+    DefaultTitleSlideLayout,
+    DefaultTwoContentSlideLayout,
+    DefaultVerticalTitleAndTextSlideLayout,
     SlideLayout,
 )
 
@@ -116,17 +116,17 @@ def slide_master(
 
 @slide_master("default")
 class DefaultSlideMaster(SlideMaster):
-    TitleLayout: Layout[DefaultTitleSlide]
-    TitleAndContentLayout: Layout[DefaultTitleAndContentSlide]
-    SectionHeaderLayout: Layout[DefaultSectionHeaderSlide]
-    TwoContentLayout: Layout[DefaultTwoContentSlide]
-    ComparisonLayout: Layout[DefaultComparisonSlide]
-    TitleOnlyLayout: Layout[DefaultTitleOnlySlide]
-    BlankLayout: Layout[DefaultBlankSlide]
-    ContentWithCaptionLayout: Layout[DefaultContentWithCaptionSlide]
-    PictureWithCaptionLayout: Layout[DefaultPictureWithCaptionSlide]
-    TitleAndVerticalTextLayout: Layout[DefaultTitleAndVerticalTextSlide]
-    VerticalTitleAndTextLayout: Layout[DefaultVerticalTitleAndTextSlide]
+    TitleLayout: Layout[DefaultTitleSlideLayout]
+    TitleAndContentLayout: Layout[DefaultTitleAndContentSlideLayout]
+    SectionHeaderLayout: Layout[DefaultSectionHeaderSlideLayout]
+    TwoContentLayout: Layout[DefaultTwoContentSlideLayout]
+    ComparisonLayout: Layout[DefaultComparisonSlideLayout]
+    TitleOnlyLayout: Layout[DefaultTitleOnlySlideLayout]
+    BlankLayout: Layout[DefaultBlankSlideLayout]
+    ContentWithCaptionLayout: Layout[DefaultContentWithCaptionSlideLayout]
+    PictureWithCaptionLayout: Layout[DefaultPictureWithCaptionSlideLayout]
+    TitleAndVerticalTextLayout: Layout[DefaultTitleAndVerticalTextSlideLayout]
+    VerticalTitleAndTextLayout: Layout[DefaultVerticalTitleAndTextSlideLayout]
 
 
 GenericTpptSlideMaster = TypeVar(

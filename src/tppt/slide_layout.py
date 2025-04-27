@@ -149,7 +149,7 @@ class SlideLayoutProxy:
         return SlideBuilder(self._pptx)
 
 
-class DefaultTitleSlide(SlideLayout):
+class DefaultTitleSlideLayout(SlideLayout):
     """Title slide layout."""
 
     title: Placeholder[str]
@@ -158,7 +158,7 @@ class DefaultTitleSlide(SlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultTitleAndContentSlide(SlideLayout):
+class DefaultTitleAndContentSlideLayout(SlideLayout):
     """Title and content slide layout."""
 
     title: Placeholder[str]
@@ -167,7 +167,7 @@ class DefaultTitleAndContentSlide(SlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultSectionHeaderSlide(SlideLayout):
+class DefaultSectionHeaderSlideLayout(SlideLayout):
     """Section header slide layout."""
 
     title: Placeholder[str]
@@ -176,7 +176,7 @@ class DefaultSectionHeaderSlide(SlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultTwoContentSlide(SlideLayout):
+class DefaultTwoContentSlideLayout(SlideLayout):
     """Two content slide layout."""
 
     title: Placeholder[str]
@@ -186,7 +186,7 @@ class DefaultTwoContentSlide(SlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultComparisonSlide(SlideLayout):
+class DefaultComparisonSlideLayout(SlideLayout):
     """Comparison slide layout."""
 
     title: Placeholder[str]
@@ -198,7 +198,7 @@ class DefaultComparisonSlide(SlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultTitleOnlySlide(SlideLayout):
+class DefaultTitleOnlySlideLayout(SlideLayout):
     """Title only slide layout."""
 
     title: Placeholder[str]
@@ -206,14 +206,14 @@ class DefaultTitleOnlySlide(SlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultBlankSlide(SlideLayout):
+class DefaultBlankSlideLayout(SlideLayout):
     """Blank slide layout."""
 
     date: Placeholder[datetime.date | None] = None
     footer: Placeholder[str | None] = None
 
 
-class DefaultContentWithCaptionSlide(SlideLayout):
+class DefaultContentWithCaptionSlideLayout(SlideLayout):
     """Content with caption slide layout."""
 
     title: Placeholder[str]
@@ -222,7 +222,7 @@ class DefaultContentWithCaptionSlide(SlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultPictureWithCaptionSlide(SlideLayout):
+class DefaultPictureWithCaptionSlideLayout(SlideLayout):
     """Picture with caption slide layout."""
 
     title: Placeholder[str]
@@ -231,7 +231,7 @@ class DefaultPictureWithCaptionSlide(SlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultTitleAndVerticalTextSlide(SlideLayout):
+class DefaultTitleAndVerticalTextSlideLayout(SlideLayout):
     """Title and vertical text slide layout."""
 
     title: Placeholder[str]
@@ -240,7 +240,7 @@ class DefaultTitleAndVerticalTextSlide(SlideLayout):
     footer: Placeholder[str | None] = None
 
 
-class DefaultVerticalTitleAndTextSlide(SlideLayout):
+class DefaultVerticalTitleAndTextSlideLayout(SlideLayout):
     """Vertical title and text slide layout."""
 
     vertical_title: Placeholder[str]
