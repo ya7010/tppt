@@ -3,48 +3,43 @@
 import argparse
 import os
 import re
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
 from pptx import Presentation as PptxPresentation
-from pydantic import BaseModel, Field
 
 import tppt
 
 
-class PlaceholderInfo(BaseModel):
+@dataclass
+class PlaceholderInfo:
     """Information about a placeholder."""
 
-    name: str = Field(description="Name of the placeholder")
-    type: int = Field(description="Type ID of the placeholder")
-    field_name: Optional[str] = Field(default=None, description="Python field name")
-    field_type: Optional[str] = Field(
-        default=None, description="Python field type definition"
-    )
-    required: bool = Field(default=False, description="Whether the field is required")
-    idx: Optional[int] = Field(default=None, description="Index within the layout")
+    name: str
+    type: int
+    field_name: Optional[str] = None
+    field_type: Optional[str] = None
+    required: bool = False
+    idx: Optional[int] = None
 
 
-class LayoutInfo(BaseModel):
+@dataclass
+class LayoutInfo:
     """Information about a slide layout."""
 
-    name: str = Field(description="Name of the layout")
-    placeholders: List[PlaceholderInfo] = Field(
-        description="List of placeholders in the layout"
-    )
-    class_name: Optional[str] = Field(
-        default=None, description="Python class name for this layout"
-    )
+    name: str
+    placeholders: List[PlaceholderInfo]
+    class_name: Optional[str] = None
 
 
-class MasterInfo(BaseModel):
+@dataclass
+class MasterInfo:
     """Information about a slide master."""
 
-    name: str = Field(description="Name of the slide master")
-    layouts: List[LayoutInfo] = Field(description="Layouts in this master")
-    class_name: Optional[str] = Field(
-        default=None, description="Python class name for this master"
-    )
+    name: str
+    layouts: List[LayoutInfo]
+    class_name: Optional[str] = None
 
 
 def extract_master_info(tree: Dict[str, Any]) -> MasterInfo:
