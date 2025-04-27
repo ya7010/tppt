@@ -85,9 +85,11 @@ class SlideBuilder:
     def __init__(
         self,
         slide_layout: SlideLayout,
+        placeholder_registry: Callable[[Slide], None],
     ) -> None:
         self._slide_layout = slide_layout
         self._shape_registry: list[Callable[[Slide], Shape[Any]]] = []
+        self._placeholder_registry = placeholder_registry
 
     def text(self, text: str, **kwargs: Unpack[TextProps]) -> Self:
         data = TextData(type="text", text=text, **kwargs)
@@ -153,6 +155,8 @@ class SlideBuilder:
 
     def build(self, slide: PptxSlide) -> Slide:
         tppt_slide = Slide(slide)
+
+        self._placeholder_registry(tppt_slide)
         for register in self._shape_registry:
             register(tppt_slide)
 

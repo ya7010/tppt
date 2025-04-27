@@ -1,3 +1,4 @@
+import datetime
 from typing import Annotated, Any, ClassVar
 
 from tppt import Presentation
@@ -16,16 +17,23 @@ class TestSlideLayoutGetPlaceholders:
     def test_get_placeholders(self):
         """Test get_placeholders function returns the correct placeholders for a layout."""
         # Test with existing layout
-        placeholders = get_placeholders(DefaultTitleSlideLayout)
+        placeholders = get_placeholders(
+            DefaultTitleSlideLayout(
+                title="title",
+                subtitle="subtitle",
+                date=datetime.date(2021, 1, 1),
+                footer="footer",
+            )
+        )
         assert "title" in placeholders
         assert "subtitle" in placeholders
         assert "date" in placeholders
         assert "footer" in placeholders
 
         # Instead of direct type comparison, we check that the types match what we expect
-        assert placeholders["title"] is str
+        assert isinstance(placeholders["title"], str)
         # For union types, we need a different approach
-        assert "subtitle" in placeholders
+        assert isinstance(placeholders["subtitle"], str | None)
 
     def test_get_placeholders_custom_layout(self):
         """Test get_placeholders with custom layout classes."""
@@ -45,13 +53,24 @@ class TestSlideLayoutGetPlaceholders:
             optional: Placeholder[bool | None] = None
 
         # Check simple layout
-        simple_placeholders = get_placeholders(SimpleLayout)
+        simple_placeholders = get_placeholders(
+            SimpleLayout(
+                title="title",
+            )
+        )
         assert len(simple_placeholders) == 1
         assert "title" in simple_placeholders
-        assert simple_placeholders["title"] is str
+        assert isinstance(simple_placeholders["title"], str)
 
         # Check complex layout
-        complex_placeholders = get_placeholders(ComplexLayout)
+        complex_placeholders = get_placeholders(
+            ComplexLayout(
+                title="title",
+                count=1,
+                items=["item1", "item2"],
+                direct={"key": "value"},
+            )
+        )
         # The direct field is now correctly recognized
         assert len(complex_placeholders) == 5
         assert "title" in complex_placeholders
@@ -69,16 +88,25 @@ class TestSlideLayoutGetPlaceholders:
         class DerivedLayout(BaseLayout):
             derived_field: Placeholder[int]
 
-        base_placeholders = get_placeholders(BaseLayout)
+        base_placeholders = get_placeholders(
+            BaseLayout(
+                base_field="base_field",
+            )
+        )
         assert len(base_placeholders) == 1
         assert "base_field" in base_placeholders
 
-        derived_placeholders = get_placeholders(DerivedLayout)
+        derived_placeholders = get_placeholders(
+            DerivedLayout(
+                base_field="base_field",
+                derived_field=1,
+            )
+        )
         assert len(derived_placeholders) == 2
         assert "base_field" in derived_placeholders
         assert "derived_field" in derived_placeholders
-        assert derived_placeholders["base_field"] is str
-        assert derived_placeholders["derived_field"] is int
+        assert isinstance(derived_placeholders["base_field"], str)
+        assert isinstance(derived_placeholders["derived_field"], int)
 
     def test_non_placeholder_fields(self):
         """Test that non-placeholder fields are not included in the result."""
@@ -96,7 +124,15 @@ class TestSlideLayoutGetPlaceholders:
             # Class variable (should also be ignored)
             class_var: ClassVar[bool] = True
 
-        placeholders = get_placeholders(MixedLayout)
+        placeholders = get_placeholders(
+            MixedLayout(
+                title="title",
+                subtitle="subtitle",
+                regular_str="regular_str",
+                regular_int=42,
+                regular_list=[],
+            )
+        )
 
         # Only placeholder fields should be included
         assert len(placeholders) == 2

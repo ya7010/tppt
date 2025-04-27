@@ -73,3 +73,17 @@ class SlideMasterAttributeNotFoundError(TpptException, AttributeError):
         return (
             f"The slide master does not have an attribute of the {self.attribute_name}"
         )
+
+
+class InvalidSetterTypeError(TpptException, TypeError):
+    """Invalid setter type."""
+
+    def __init__(
+        self, expected_type: type | tuple[type, ...], actual_type: type
+    ) -> None:
+        self.expected_type = expected_type
+        self.actual_type = actual_type
+
+    @property
+    def message(self) -> str:
+        return f"Invalid setter type. Expected type: {self.expected_type}, but got: {self.actual_type}."

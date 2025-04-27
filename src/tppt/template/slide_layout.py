@@ -149,10 +149,17 @@ class SlideLayoutProxy:
         return getattr(self._slide_layout, item)
 
     def builder(self) -> "SlideBuilder":
-        from ..pptx.slide import SlideBuilder
+        from ..pptx.slide import Slide, SlideBuilder
+
+        def placeholder_registry(slide: Slide):
+            for placeholder, value in zip(
+                slide.placeholders, get_placeholders(self._slide_layout).values()
+            ):
+                placeholder.value = value
 
         return SlideBuilder(
             self._convertible_slide_layout,
+            placeholder_registry,
         )
 
 
@@ -256,5 +263,8 @@ class DefaultVerticalTitleAndTextSlideLayout(SlideLayout):
     footer: Placeholder[str | None]
 
 
-def get_placeholders(slide_layout: type[SlideLayout]) -> OrderedDict[str, Any]:
-    return slide_layout.__placeholders__
+def get_placeholders(slide_layout: SlideLayout) -> OrderedDict[str, Any]:
+    return OrderedDict(
+        (key, getattr(slide_layout, key))
+        for key in slide_layout.__class__.__placeholders__
+    )

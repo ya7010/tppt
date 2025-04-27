@@ -24,12 +24,19 @@
           "placeholder_type": 3,
           "placeholder_idx": 0,
           "text_frame": {
-            "text": "",
+            "text": "Hello, world!",
             "paragraphs": [
               {
-                "text": "",
+                "text": "Hello, world!",
                 "level": 0,
-                "runs": []
+                "runs": [
+                  {
+                    "text": "Hello, world!",
+                    "font": {
+                      "color": {}
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -106,12 +113,19 @@
           "placeholder_type": 3,
           "placeholder_idx": 0,
           "text_frame": {
-            "text": "",
+            "text": "Hello, world!",
             "paragraphs": [
               {
-                "text": "",
+                "text": "Hello, world!",
                 "level": 0,
-                "runs": []
+                "runs": [
+                  {
+                    "text": "Hello, world!",
+                    "font": {
+                      "color": {}
+                    }
+                  }
+                ]
               }
             ]
           }
