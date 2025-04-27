@@ -1,6 +1,16 @@
 """Table wrapper implementation."""
 
-from typing import Literal, NotRequired, Self, TypeAlias, TypedDict, cast
+import logging
+from dataclasses import fields, is_dataclass
+from typing import (
+    Any,
+    Literal,
+    NotRequired,
+    Self,
+    TypeAlias,
+    TypedDict,
+    cast,
+)
 
 from pptx.enum.text import MSO_VERTICAL_ANCHOR, PP_ALIGN
 from pptx.shapes.graphfrm import GraphicFrame
@@ -8,6 +18,7 @@ from pptx.shapes.graphfrm import GraphicFrame
 from tppt._features import (
     USE_PANDAS,
     USE_POLARS,
+    Dataclass,
     PandasDataFrame,
     PolarsDataFrame,
     PolarsLazyFrame,
@@ -17,9 +28,16 @@ from tppt.types._length import LiteralPoint, Points
 from ..converter import to_pptx_length
 from . import RangeProps, Shape
 
+logger = logging.getLogger(__name__)
+
+
 # Define DataFrame type alias
 DataFrame: TypeAlias = (
-    list[list[str]] | PandasDataFrame | PolarsDataFrame | PolarsLazyFrame
+    list[list[str]]
+    | list[Dataclass]
+    | PandasDataFrame
+    | PolarsDataFrame
+    | PolarsLazyFrame
 )
 
 
@@ -165,6 +183,24 @@ def dataframe2list(data: DataFrame) -> list[list[str]]:
         columns = pandas_df.columns.tolist()
         rows = pandas_df.values.tolist()
         return [columns] + rows
+
+    if isinstance(data, list):
+        if len(data) != 0:
+            # Convert list of dataclass instances to list of lists
+            first_instance = data[0]
+            if is_dataclass(first_instance):
+                columns = [field.name for field in fields(first_instance)]
+                rows = []
+                for instance in data:
+                    instance = cast(Any, instance)
+                    row = [
+                        str(getattr(instance, field.name)) for field in fields(instance)
+                    ]
+                    rows.append(row)
+                return [columns] + rows
+        else:
+            logger.warning("Empty data of table")
+            return []
 
     # Assume it's a list of lists
     return cast(list[list[str]], data)

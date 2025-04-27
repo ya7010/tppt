@@ -32,5 +32,5 @@ from ._length import (
 )
 
 FilePath = str | pathlib.Path
-ShapeType: TypeAlias = _MSO_AUTO_SHAPE_TYPE
+AutoShapeType: TypeAlias = _MSO_AUTO_SHAPE_TYPE
 Range: TypeAlias = _RangeProps

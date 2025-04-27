@@ -1,11 +1,12 @@
 """Tests for table module."""
 
 import pathlib
+from dataclasses import dataclass
 
 import pytest
 
 import tppt
-from tppt._features import USE_PANDAS, USE_POLARS
+from tppt._features import USE_PANDAS, USE_POLARS, Dataclass
 
 
 def test_create_table_with_list_data(output: pathlib.Path) -> None:
@@ -143,3 +144,41 @@ def test_create_table_with_polars_lazyframe(output: pathlib.Path) -> None:
         .build()
     )
     presentation.save(output / "table_polars_lazyframe_data.pptx")
+
+
+def test_create_table_with_dataclass(output: pathlib.Path) -> None:
+    """Test creating a table with dataclass."""
+
+    @dataclass
+    class Employee:
+        """Employee data class for testing."""
+
+        name: str
+        department: str
+        salary: int
+        join_date: str
+
+    # Create employee instances
+    employees: list[Dataclass] = [
+        Employee("山田太郎", "営業部", 500000, "2020-04-01"),
+        Employee("鈴木花子", "開発部", 600000, "2019-07-15"),
+        Employee("佐藤一郎", "人事部", 550000, "2021-01-10"),
+    ]
+
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(
+            lambda slide: slide.BlankLayout()
+            .builder()
+            .table(
+                employees,
+                left=(100, "pt"),
+                top=(100, "pt"),
+                width=(400, "pt"),
+                height=(200, "pt"),
+                first_row_header=True,
+            )
+        )
+        .build()
+    )
+    presentation.save(output / "table_dataclass_data.pptx")

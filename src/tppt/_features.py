@@ -1,4 +1,4 @@
-from typing import TypeVar
+from typing import ClassVar, Protocol, TypeVar
 
 from typing_extensions import TypeAlias
 
@@ -7,6 +7,12 @@ T = TypeVar("T")
 
 class _NotSupportFeature:
     pass
+
+
+class Dataclass(Protocol):
+    """Protocol for dataclass type."""
+
+    __dataclass_fields__: ClassVar[dict]
 
 
 try:
