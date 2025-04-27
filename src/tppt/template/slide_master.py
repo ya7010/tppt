@@ -47,43 +47,45 @@ GenericSlideMaster = TypeVar("GenericSlideMaster", bound="type[SlideMaster]")
 class _SlideMasterMeta(type):
     __slide_master_source__: ClassVar[Literal["default"] | FilePath]
 
-    def __getattr__(self, key: str) -> "type[SlideLayout]":
-        # 1. Check the class's own attributes
-        if key in self.__dict__:
-            value = self.__dict__[key]
-            if isinstance(value, type) and issubclass(value, SlideLayout):
-                return value
+    if not TYPE_CHECKING:
 
-        # 2. Check annotations
-        if annotations := getattr(self, "__annotations__", None):
-            if annotation := annotations.get(key):
-                # Extract from Annotated type
-                origin = get_origin(annotation)
-                if origin is Annotated:
-                    args = get_args(annotation)
-                    if (
-                        args
-                        and isinstance(args[0], type)
-                        and issubclass(args[0], SlideLayout)
+        def __getattr__(self, key: str):
+            # 1. Check the class's own attributes
+            if key in self.__dict__:
+                value = self.__dict__[key]
+                if isinstance(value, type) and issubclass(value, SlideLayout):
+                    return value
+
+            # 2. Check annotations
+            if annotations := getattr(self, "__annotations__", None):
+                if annotation := annotations.get(key):
+                    # Extract from Annotated type
+                    origin = get_origin(annotation)
+                    if origin is Annotated:
+                        args = get_args(annotation)
+                        if (
+                            args
+                            and isinstance(args[0], type)
+                            and issubclass(args[0], SlideLayout)
+                        ):
+                            return args[0]
+                        else:
+                            raise SlideMasterAttributeMustBeSlideLayoutError(key)
+                    # Direct check for class type
+                    elif isinstance(annotation, type) and issubclass(
+                        annotation, SlideLayout
                     ):
-                        return args[0]
+                        return annotation
                     else:
-                        raise SlideMasterAttributeMustBeSlideLayoutError(key)
-                # Direct check for class type
-                elif isinstance(annotation, type) and issubclass(
-                    annotation, SlideLayout
+                        return annotation
+                elif (attributes := getattr(self, "__annotations__", None)) and hasattr(
+                    attributes, key
                 ):
-                    return annotation
+                    return getattr(attributes, key)
                 else:
-                    return annotation
-            elif (attributes := getattr(self, "__annotations__", None)) and hasattr(
-                attributes, key
-            ):
-                return getattr(attributes, key)
+                    raise SlideMasterAttributeNotFoundError(key)
             else:
-                raise SlideMasterAttributeNotFoundError(key)
-        else:
-            raise SlideMasterDoesNotHaveAttributesError()
+                raise SlideMasterDoesNotHaveAttributesError()
 
 
 @dataclass_transform(
