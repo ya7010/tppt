@@ -1,9 +1,9 @@
-from typing import Self
+from typing import Callable, Self
 
 from pptx.text.text import Font as PptxFont
 
-from tppt.pptx.converter import PptxConvertible, to_pptx_length
-from tppt.pptx.dml.color import ColorFormat
+from tppt.pptx.converter import PptxConvertible, to_pptx_length, to_tppt_length
+from tppt.pptx.dml.color import ColorFormat, ColorFormatBuilder
 from tppt.types._length import Length, LiteralLength
 
 
@@ -11,8 +11,45 @@ class Font(PptxConvertible[PptxFont]):
     def __init__(self, pptx_obj: PptxFont) -> None:
         self._pptx = pptx_obj
 
-    def color(self) -> ColorFormat:
+    @property
+    def name(self) -> str | None:
+        return self._pptx.name
+
+    @name.setter
+    def name(self, name: str) -> None:
+        self._pptx.name = name
+
+    @property
+    def size(self) -> Length | None:
+        return to_tppt_length(self._pptx.size)
+
+    @size.setter
+    def size(self, size: Length) -> None:
+        self._pptx.size = to_pptx_length(size)
+
+    @property
+    def bold(self) -> bool | None:
+        return self._pptx.bold
+
+    @bold.setter
+    def bold(self, bold: bool) -> None:
+        self._pptx.bold = bold
+
+    @property
+    def italic(self) -> bool | None:
+        return self._pptx.italic
+
+    @italic.setter
+    def italic(self, italic: bool) -> None:
+        self._pptx.italic = italic
+
+    @property
+    def color(self) -> ColorFormat | None:
         return ColorFormat(self._pptx.color)
+
+    @color.setter
+    def color(self, color: ColorFormat) -> None:
+        self._pptx.color = color.to_pptx()
 
     def builder(self) -> "FontBuilder":
         return FontBuilder(self._pptx)
@@ -46,6 +83,15 @@ class FontBuilder:
 
     def italic(self, italic: bool) -> Self:
         self._pptx.italic = italic
+
+        return self
+
+    def color(
+        self, callable: Callable[[ColorFormat], ColorFormat | ColorFormatBuilder]
+    ) -> Self:
+        color = callable(ColorFormat(self._pptx.color))
+        if isinstance(color, ColorFormatBuilder):
+            color._build()
 
         return self
 

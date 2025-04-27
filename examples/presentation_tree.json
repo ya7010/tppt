@@ -7,68 +7,11 @@
   "slides": [
     {
       "slide_id": 256,
-      "slide_layout_name": "Title Slide",
+      "slide_layout_name": "Blank",
       "shapes": [
         {
-          "name": "Title 1",
+          "name": "TextBox 1",
           "shape_id": 2,
-          "shape_type": "PLACEHOLDER (14)",
-          "has_text_frame": true,
-          "has_table": false,
-          "has_chart": false,
-          "width": 612.0,
-          "height": 115.75,
-          "rotation": 0.0,
-          "left": 54.0,
-          "top": 167.75,
-          "placeholder_type": 3,
-          "placeholder_idx": 0,
-          "text_frame": {
-            "text": "Hello, world!",
-            "paragraphs": [
-              {
-                "text": "Hello, world!",
-                "level": 0,
-                "runs": [
-                  {
-                    "text": "Hello, world!",
-                    "font": {
-                      "color": {}
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "Subtitle 2",
-          "shape_id": 3,
-          "shape_type": "PLACEHOLDER (14)",
-          "has_text_frame": true,
-          "has_table": false,
-          "has_chart": false,
-          "width": 504.0,
-          "height": 138.0,
-          "rotation": 0.0,
-          "left": 108.0,
-          "top": 306.0,
-          "placeholder_type": 4,
-          "placeholder_idx": 1,
-          "text_frame": {
-            "text": "",
-            "paragraphs": [
-              {
-                "text": "",
-                "level": 0,
-                "runs": []
-              }
-            ]
-          }
-        },
-        {
-          "name": "TextBox 3",
-          "shape_id": 4,
           "shape_type": "TEXT_BOX (17)",
           "has_text_frame": true,
           "has_table": false,
@@ -97,65 +40,7 @@
           }
         }
       ],
-      "placeholders": [
-        {
-          "name": "Title 1",
-          "shape_id": 2,
-          "shape_type": "PLACEHOLDER (14)",
-          "has_text_frame": true,
-          "has_table": false,
-          "has_chart": false,
-          "width": 612.0,
-          "height": 115.75,
-          "rotation": 0.0,
-          "left": 54.0,
-          "top": 167.75,
-          "placeholder_type": 3,
-          "placeholder_idx": 0,
-          "text_frame": {
-            "text": "Hello, world!",
-            "paragraphs": [
-              {
-                "text": "Hello, world!",
-                "level": 0,
-                "runs": [
-                  {
-                    "text": "Hello, world!",
-                    "font": {
-                      "color": {}
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "Subtitle 2",
-          "shape_id": 3,
-          "shape_type": "PLACEHOLDER (14)",
-          "has_text_frame": true,
-          "has_table": false,
-          "has_chart": false,
-          "width": 504.0,
-          "height": 138.0,
-          "rotation": 0.0,
-          "left": 108.0,
-          "top": 306.0,
-          "placeholder_type": 4,
-          "placeholder_idx": 1,
-          "text_frame": {
-            "text": "",
-            "paragraphs": [
-              {
-                "text": "",
-                "level": 0,
-                "runs": []
-              }
-            ]
-          }
-        }
-      ],
+      "placeholders": [],
       "notes_slide": {
         "shapes": [
           {

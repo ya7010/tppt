@@ -1,7 +1,7 @@
 """Slide wrapper implementation."""
 
 import os
-from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack
+from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack, overload
 
 from pptx.slide import Slide as PptxSlide
 
@@ -9,10 +9,10 @@ from tppt.types import FilePath
 
 from .converter import PptxConvertible, to_pptx_length
 from .placeholder import SlidePlaceholder
-from .shape import Shape
+from .shape import RangeProps, Shape
 from .shape.picture import Picture, PictureData, PictureProps
 from .shape.table import DataFrame, Table, TableData, TableProps, dataframe2list
-from .shape.text import Text, TextData, TextProps
+from .shape.text import Text, TextBuilder, TextData, TextProps
 from .slide_layout import SlideLayout
 from .snotes_slide import NotesSlide
 
@@ -91,8 +91,27 @@ class SlideBuilder:
         self._shape_registry: list[Callable[[Slide], Shape[Any]]] = []
         self._placeholder_registry = placeholder_registry
 
-    def text(self, text: str, **kwargs: Unpack[TextProps]) -> Self:
-        data = TextData(type="text", text=text, **kwargs)
+    @overload
+    def text(self, text: str, **kwargs: Unpack[TextProps]) -> Self: ...
+
+    @overload
+    def text(
+        self, text: Callable[[Text], Text | TextBuilder], **kwargs: Unpack[RangeProps]
+    ) -> Self: ...
+
+    def text(
+        self,
+        text: str | Callable[[Text], Text | TextBuilder],
+        **kwargs: Unpack[TextProps],
+    ) -> Self:
+        data = TextData(
+            type="text",
+            text=text if isinstance(text, str) else "",
+            top=kwargs["top"],
+            left=kwargs["left"],
+            width=kwargs["width"],
+            height=kwargs["height"],
+        )
 
         self._shape_registry.append(
             lambda slide: Text(

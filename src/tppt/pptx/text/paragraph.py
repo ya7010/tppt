@@ -10,6 +10,10 @@ class Paragraph(PptxConvertible[PptxParagraph]):
     def __init__(self, pptx_obj: PptxParagraph) -> None:
         self._pptx = pptx_obj
 
+    @property
+    def runs(self) -> list[Run]:
+        return [Run(run) for run in self._pptx.runs]
+
     def builder(self) -> "ParagraphBuilder":
         return ParagraphBuilder(self._pptx)
 
