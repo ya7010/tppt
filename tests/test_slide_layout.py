@@ -1,4 +1,4 @@
-from typing import Annotated, Any
+from typing import Annotated, Any, ClassVar
 
 from tppt.slide_layout import (
     DefaultTitleSlide,
@@ -80,3 +80,34 @@ class TestSlideLayoutGetPlaceholders:
         assert "derived_field" in derived_placeholders
         assert derived_placeholders["base_field"] is str
         assert derived_placeholders["derived_field"] is int
+
+    def test_non_placeholder_fields(self):
+        """Test that non-placeholder fields are not included in the result."""
+
+        class MixedLayout(SlideLayout):
+            # Placeholder fields
+            title: Placeholder[str]
+            subtitle: Placeholder[str | None] = None
+
+            # Regular fields (not placeholders)
+            regular_str: str = "default"
+            regular_int: int = 42
+            regular_list: list[str] = []
+
+            # Class variable (should also be ignored)
+            class_var: ClassVar[bool] = True
+
+        placeholders = get_placeholders(MixedLayout)
+
+        # Only placeholder fields should be included
+        assert len(placeholders) == 2
+        assert "title" in placeholders
+        assert "subtitle" in placeholders
+
+        # Regular fields should not be included
+        assert "regular_str" not in placeholders
+        assert "regular_int" not in placeholders
+        assert "regular_list" not in placeholders
+
+        # Class variables should not be included
+        assert "class_var" not in placeholders
