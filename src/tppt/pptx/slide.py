@@ -154,10 +154,7 @@ class SlideBuilder:
         )
         return self
 
-    def _build(
-        self,
-        builder: "PresentationBuilder[GenericTpptSlideMaster]",
-    ) -> Slide:
+    def _build(self, builder: "PresentationBuilder[GenericTpptSlideMaster]") -> Slide:
         if isinstance(self._slide_layout, int):
             try:
                 slide_layout = builder._pptx.slide_layouts[self._slide_layout]
