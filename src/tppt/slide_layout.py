@@ -37,15 +37,6 @@ class _Placeholder:
 
 
 Placeholder: TypeAlias = Annotated[AnyType, _Placeholder]
-# if TYPE_CHECKING:
-#     Placeholder: TypeAlias = Annotated[AnyType, ...]
-# else:
-
-#     class Placeholder:
-#         @classmethod
-#         def __class_getitem__(cls, item: AnyType) -> AnyType:
-#             return Annotated[item, cls()]
-
 
 class _SlideLayoutMeta(type):
     """Meta class for TpptSlideLayout.
