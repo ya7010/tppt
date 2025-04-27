@@ -37,7 +37,6 @@ class _SlideMasterMeta(type):
         if annotations := getattr(self, "__annotations__", None):
             if annotation := annotations.get(key):
                 # Extract from Annotated type
-                # Extract from Annotated type
                 origin = get_origin(annotation)
                 if origin is Annotated:
                     args = get_args(annotation)

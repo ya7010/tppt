@@ -4,7 +4,6 @@ import os
 from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack, cast
 
 from pptx.slide import Slide as PptxSlide
-from pptx.slide import SlideLayout as PptxSlideLayout
 
 from tppt.exception import SlideLayoutIndexError
 from tppt.slide_master import GenericTpptSlideMaster
@@ -87,7 +86,7 @@ class SlideBuilder:
 
     def __init__(
         self,
-        slide_layout: PptxSlideLayout | int = 0,
+        slide_layout: SlideLayout | int = 0,
     ) -> None:
         self._slide_layout = slide_layout
         self._shape_registry: list[Callable[[PptxSlide], Shape[Any]]] = []
@@ -164,7 +163,7 @@ class SlideBuilder:
                     builder._pptx.slide_layouts,
                 )
         else:
-            slide_layout = self._slide_layout
+            slide_layout = self._slide_layout.to_pptx()
 
         slide = builder._pptx.slides.add_slide(slide_layout)
 

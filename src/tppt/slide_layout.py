@@ -19,6 +19,8 @@ from tppt.types import FilePath
 
 if TYPE_CHECKING:
     from tppt.pptx.slide import SlideBuilder
+    from tppt.pptx.slide_layout import SlideLayout as PptxConvertibleSlideLayout
+
 
 AnyType = TypeVar("AnyType")
 
@@ -127,6 +129,24 @@ class SlideLayout(metaclass=_SlideLayoutMeta):
         from tppt.pptx.slide import SlideBuilder
 
         return SlideBuilder()
+
+
+class SlideLayoutProxy:
+    def __init__(
+        self,
+        origin: type[SlideLayout],
+        slide_layout: "PptxConvertibleSlideLayout",
+    ) -> None:
+        self._slide_layout = origin
+        self._pptx = slide_layout
+
+    def __getattr__(self, item: str) -> Any:
+        return getattr(self._slide_layout, item)
+
+    def builder(self) -> "SlideBuilder":
+        self._presentation.slide_master.slide_layouts
+
+        return SlideBuilder(self._pptx)
 
 
 class DefaultTitleSlide(SlideLayout):
