@@ -116,17 +116,17 @@ def slide_master(
 
 @slide_master("default")
 class DefaultSlideMaster(SlideMaster):
-    Title: Layout[DefaultTitleSlide]
-    TitleAndContent: Layout[DefaultTitleAndContentSlide]
-    SectionHeader: Layout[DefaultSectionHeaderSlide]
-    TwoContent: Layout[DefaultTwoContentSlide]
-    Comparison: Layout[DefaultComparisonSlide]
-    TitleOnly: Layout[DefaultTitleOnlySlide]
-    Blank: Layout[DefaultBlankSlide]
-    ContentWithCaption: Layout[DefaultContentWithCaptionSlide]
-    PictureWithCaption: Layout[DefaultPictureWithCaptionSlide]
-    TitleAndVerticalText: Layout[DefaultTitleAndVerticalTextSlide]
-    VerticalTitleAndText: Layout[DefaultVerticalTitleAndTextSlide]
+    TitleLayout: Layout[DefaultTitleSlide]
+    TitleAndContentLayout: Layout[DefaultTitleAndContentSlide]
+    SectionHeaderLayout: Layout[DefaultSectionHeaderSlide]
+    TwoContentLayout: Layout[DefaultTwoContentSlide]
+    ComparisonLayout: Layout[DefaultComparisonSlide]
+    TitleOnlyLayout: Layout[DefaultTitleOnlySlide]
+    BlankLayout: Layout[DefaultBlankSlide]
+    ContentWithCaptionLayout: Layout[DefaultContentWithCaptionSlide]
+    PictureWithCaptionLayout: Layout[DefaultPictureWithCaptionSlide]
+    TitleAndVerticalTextLayout: Layout[DefaultTitleAndVerticalTextSlide]
+    VerticalTitleAndTextLayout: Layout[DefaultVerticalTitleAndTextSlide]
 
 
 GenericTpptSlideMaster = TypeVar(

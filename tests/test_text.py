@@ -15,7 +15,7 @@ def test_text_with_options(output) -> None:
     presentation = (
         tppt.Presentation.builder()
         .slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.BlankLayout()
             .builder()
             .text(
                 text_content,
@@ -52,7 +52,7 @@ def test_text_default_options(output) -> None:
     presentation = (
         tppt.Presentation.builder()
         .slide(
-            lambda slide: slide.Title(
+            lambda slide: slide.TitleLayout(
                 title="Title",
             )
             .builder()

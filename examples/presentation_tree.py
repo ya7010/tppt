@@ -10,7 +10,7 @@ def main() -> None:
     presentation = (
         tppt.Presentation.builder()
         .slide(
-            lambda slide: slide.TitleAndContent(
+            lambda slide: slide.TitleAndContentLayout(
                 title="Hello, world!",
                 content="Hello, world!",
             )

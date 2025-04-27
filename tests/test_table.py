@@ -19,7 +19,7 @@ def test_create_table_with_list_data(output: pathlib.Path) -> None:
     presentation = (
         tppt.Presentation.builder()
         .slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.BlankLayout()
             .builder()
             .table(
                 table_data,
@@ -54,7 +54,7 @@ def test_create_table_with_pandas_dataframe(output: pathlib.Path) -> None:
     presentation = (
         tppt.Presentation.builder()
         .slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.BlankLayout()
             .builder()
             .table(
                 table_data,  # 変換したリストを使用
@@ -90,7 +90,7 @@ def test_create_table_with_polars_dataframe(output: pathlib.Path) -> None:
     presentation = (
         tppt.Presentation.builder()
         .slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.BlankLayout()
             .builder()
             .table(
                 table_data,  # 変換したリストを使用
@@ -129,7 +129,7 @@ def test_create_table_with_polars_lazyframe(output: pathlib.Path) -> None:
     presentation = (
         tppt.Presentation.builder()
         .slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.BlankLayout()
             .builder()
             .table(
                 table_data,

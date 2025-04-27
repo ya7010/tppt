@@ -15,7 +15,7 @@ def test_create_presentation(output: pathlib.Path) -> None:
     presentation = (
         tppt.Presentation.builder()
         .slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.BlankLayout()
             .builder()
             .text(
                 "text",
@@ -41,7 +41,7 @@ def test_create_presentation_with_table(output: pathlib.Path) -> None:
     presentation = (
         tppt.Presentation.builder()
         .slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.BlankLayout()
             .builder()
             .table(
                 table_data,
@@ -85,7 +85,7 @@ def test_create_presentation_with_styled_table(output: pathlib.Path) -> None:
     presentation = (
         tppt.Presentation.builder()
         .slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.BlankLayout()
             .builder()
             .table(
                 data,

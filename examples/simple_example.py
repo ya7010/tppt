@@ -15,7 +15,7 @@ def main():
         tppt.Presentation.builder()
         # Slide 1: Title and Text
         .slide(
-            lambda slide: slide.Title(
+            lambda slide: slide.TitleLayout(
                 title="Title",
             )
             .builder()
@@ -47,7 +47,7 @@ def main():
         )
         # Slide 2: Python Logo Image
         .slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.BlankLayout()
             .builder()
             .text(
                 "Python Logo Example",
@@ -87,7 +87,7 @@ def main():
         )
         # Slide 3: Table example
         .slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.BlankLayout()
             .builder()
             .text(
                 "Table Example",

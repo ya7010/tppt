@@ -31,7 +31,7 @@ def main():
     presentation = (
         tppt.Presentation.builder()
         .slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.BlankLayout()
             .builder()
             .text(
                 "Polars DataFrame Example",
@@ -81,7 +81,7 @@ if __name__ == "__main__":
         main()
     else:
         tppt.Presentation.builder().slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.BlankLayout()
             .builder()
             .text(
                 "Polars is not installed. Please install it to run this example.",
