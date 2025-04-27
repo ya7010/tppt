@@ -21,7 +21,6 @@ from .slide_layout import (
     DefaultTitleSlide,
     DefaultTwoContentSlide,
     DefaultVerticalTitleAndTextSlide,
-    Placeholder,
     SlideLayout,
 )
 
@@ -57,10 +56,14 @@ class _SlideMasterMeta(type):
                     return annotation
                 else:
                     return annotation
+            elif (attributes := getattr(self, "__annotations__", None)) and hasattr(
+                attributes, key
+            ):
+                return getattr(attributes, key)
             else:
                 raise SlideMasterAttributeNotFoundError(key)
         else:
-            raise SlideMasterDoesNotHaveAttributesError(self)
+            raise SlideMasterDoesNotHaveAttributesError()
 
 
 @dataclass_transform(
@@ -82,9 +85,6 @@ else:
 
 
 class DefaultSlideMaster(SlideMaster):
-    title: Placeholder[str]
-    text: Placeholder[str]
-
     Title: Layout[DefaultTitleSlide]
     TitleAndContent: Layout[DefaultTitleAndContentSlide]
     SectionHeader: Layout[DefaultSectionHeaderSlide]

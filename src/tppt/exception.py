@@ -54,23 +54,22 @@ class SlideMasterAttributeMustBeSlideLayoutError(TpptException, ValueError):
         return f"The slide master attribute must be a slide layout. The {self.slide_layout_name} layout is not a slide layout."
 
 
-class SlideMasterDoesNotHaveAttributesError(TpptException, ValueError):
+class SlideMasterDoesNotHaveAttributesError(TpptException, AttributeError):
     """Slide master does not have an attribute."""
 
-    def __init__(self, slide_layout: "type") -> None:
-        self.slide_layout_name = slide_layout.__name__
-
     @property
     def message(self) -> str:
-        return f"The slide master does not have an attribute for the {self.slide_layout_name} layout"
+        return "The slide master does not have an attributes"
 
 
-class SlideMasterAttributeNotFoundError(TpptException, ValueError):
+class SlideMasterAttributeNotFoundError(TpptException, AttributeError):
     """Slide master attribute not found."""
 
-    def __init__(self, slide_layout_name: str) -> None:
-        self.slide_layout_name = slide_layout_name
+    def __init__(self, attribute_name: str) -> None:
+        self.attribute_name = attribute_name
 
     @property
     def message(self) -> str:
-        return f"The slide master does not have an attribute for the {self.slide_layout_name} layout"
+        return (
+            f"The slide master does not have an attribute of the {self.attribute_name}"
+        )

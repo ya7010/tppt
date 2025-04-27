@@ -10,13 +10,31 @@ from tppt.slide_layout import (
     DefaultTitleSlide,
     DefaultTwoContentSlide,
     DefaultVerticalTitleAndTextSlide,
+    Placeholder,
 )
-from tppt.slide_master import DefaultSlideMaster, get_layouts
+from tppt.slide_master import DefaultSlideMaster, Layout, get_layouts
+
+
+class TestSlideMaster(DefaultSlideMaster):
+    title: Placeholder[str]
+    content: Placeholder[str]
+
+    Title: Layout[DefaultTitleSlide]
+    TitleAndContent: Layout[DefaultTitleAndContentSlide]
+    SectionHeader: Layout[DefaultSectionHeaderSlide]
+    TwoContent: Layout[DefaultTwoContentSlide]
+    Comparison: Layout[DefaultComparisonSlide]
+    TitleOnly: Layout[DefaultTitleOnlySlide]
+    Blank: Layout[DefaultBlankSlide]
+    ContentWithCaption: Layout[DefaultContentWithCaptionSlide]
+    PictureWithCaption: Layout[DefaultPictureWithCaptionSlide]
+    TitleAndVerticalText: Layout[DefaultTitleAndVerticalTextSlide]
+    VerticalTitleAndText: Layout[DefaultVerticalTitleAndTextSlide]
 
 
 def test_get_layouts():
     """Test that get_layouts function correctly retrieves the list of Layouts"""
-    layouts = get_layouts(DefaultSlideMaster)
+    layouts = get_layouts(TestSlideMaster)
 
     # Verify that all Layouts are included
     expected_layouts = [
