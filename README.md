@@ -19,7 +19,9 @@ from tppt.types import Color
 presentation = (
     tppt.Presentation.builder()
     .slide(
-        tppt.SlideBuilder()
+        lambda slide: slide.TitleLayout(
+            title="Amazing Presentation",
+        )
         .text(
             "Amazing Presentation",
             left=(50, "pt"),
@@ -40,7 +42,10 @@ presentation = (
         )
     )
     .slide(
-        tppt.SlideBuilder()
+        lambda slide: slide.TitleAndContentLayout(
+            title="Image Example",
+            content="This is an example of an image on a slide.",
+        )
         .text(
             "Image Example",
             left=(50, "pt"),
