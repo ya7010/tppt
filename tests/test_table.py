@@ -7,7 +7,13 @@ import pytest
 from pydantic import BaseModel
 
 import tppt
-from tppt._features import USE_PANDAS, USE_POLARS, Dataclass, PydanticModel
+from tppt._features import (
+    USE_PANDAS,
+    USE_POLARS,
+    USE_PYDANTIC,
+    Dataclass,
+    PydanticModel,
+)
 
 
 def test_create_table_with_list_data(output: pathlib.Path) -> None:
@@ -185,6 +191,7 @@ def test_create_table_with_dataclass(output: pathlib.Path) -> None:
     presentation.save(output / "table_dataclass_data.pptx")
 
 
+@pytest.mark.skipif(not USE_PYDANTIC, reason="Pydantic not installed")
 def test_create_table_with_pydantic_model(output: pathlib.Path) -> None:
     """Test creating a table with Pydantic model."""
 
