@@ -47,32 +47,6 @@ class MasterInfo(BaseModel):
     )
 
 
-# Placeholder type constants based on MS Office documentation
-PLACEHOLDER_TYPES = {
-    1: "TITLE",
-    2: "BODY",
-    3: "CENTERED_TITLE",
-    4: "SUBTITLE",
-    5: "TITLE_AND_TEXT",
-    6: "TITLE_AND_BODY",
-    7: "CHART",
-    8: "TABLE",
-    9: "CLIP_ART",
-    10: "DIAGRAM",
-    11: "MEDIA",
-    12: "OBJECT",
-    13: "SLIDE_NUMBER",
-    14: "HEADER",
-    15: "FOOTER",
-    16: "DATE",
-    17: "SLIDE_IMAGE",
-    18: "PICTURE",
-    19: "VERTICAL_TITLE",
-    20: "VERTICAL_BODY",
-    21: "VERTICAL_OBJECT",
-}
-
-
 def extract_master_info(tree: Dict[str, Any]) -> MasterInfo:
     """Extract information about the slide master and its layouts."""
 
@@ -331,9 +305,6 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
         )
         processed_placeholders.append(new_ph)
 
-    # Sort placeholders by idx to maintain order
-    processed_placeholders.sort(key=lambda x: x.idx if x.idx is not None else 999)
-
     return LayoutInfo(
         name=layout.name, placeholders=processed_placeholders, class_name=class_name
     )
@@ -345,13 +316,9 @@ def generate_layout_class(layout: LayoutInfo) -> str:
     class_name = layout.class_name or f"Custom{layout.name.replace(' ', '')}Layout"
     class_docstring = f'"""{layout.name} layout."""'
 
-    # Sort placeholders - required ones first, then alphabetically
-    placeholders = sorted(
-        layout.placeholders, key=lambda ph: (not ph.required, ph.field_name or "")
-    )
-
+    # 元のインデックス順を維持する（ソートしない）
     placeholder_definitions = []
-    for ph in placeholders:
+    for ph in layout.placeholders:
         if not ph.field_name or not ph.field_type:
             continue
 
