@@ -16,8 +16,12 @@ def main():
         # Slide 1: Title and Text
         .slide(
             lambda slide: slide.TitleLayout(
-                title="Title",
+                title="Amazing Presentation",
+                subtitle="Example of using tppt library",
             )
+        )
+        .slide(
+            lambda slide: slide.BlankLayout()
             .builder()
             .text(
                 "Amazing Presentation",  # Title
