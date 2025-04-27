@@ -5,8 +5,6 @@ from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack, cast
 
 from pptx.slide import Slide as PptxSlide
 
-from tppt.exception import SlideLayoutIndexError
-from tppt.template.slide_master import GenericTpptSlideMaster
 from tppt.types import FilePath
 
 from .converter import PptxConvertible, to_pptx_length
@@ -19,7 +17,7 @@ from .slide_layout import SlideLayout
 from .snotes_slide import NotesSlide
 
 if TYPE_CHECKING:
-    from .presentation import PresentationBuilder
+    pass
 
 
 class Slide(PptxConvertible[PptxSlide]):
@@ -86,17 +84,17 @@ class SlideBuilder:
 
     def __init__(
         self,
-        slide_layout: SlideLayout | int = 0,
+        slide_layout: SlideLayout,
     ) -> None:
         self._slide_layout = slide_layout
-        self._shape_registry: list[Callable[[PptxSlide], Shape[Any]]] = []
+        self._shape_registry: list[Callable[[Slide], Shape[Any]]] = []
 
     def text(self, text: str, **kwargs: Unpack[TextProps]) -> Self:
         data = TextData(type="text", text=text, **kwargs)
 
         self._shape_registry.append(
             lambda slide: Text(
-                slide.shapes.add_textbox(
+                slide.to_pptx().shapes.add_textbox(
                     to_pptx_length(data["left"]),
                     to_pptx_length(data["top"]),
                     to_pptx_length(data["width"]),
@@ -120,7 +118,7 @@ class SlideBuilder:
 
         self._shape_registry.append(
             lambda slide: Picture(
-                slide.shapes.add_picture(
+                slide.to_pptx().shapes.add_picture(
                     image_file,
                     to_pptx_length(data["left"]),
                     to_pptx_length(data["top"]),
@@ -140,7 +138,7 @@ class SlideBuilder:
 
         self._shape_registry.append(
             lambda slide: Table(
-                slide.shapes.add_table(
+                slide.to_pptx().shapes.add_table(
                     rows,
                     cols,
                     to_pptx_length(table_data["left"]),
@@ -153,21 +151,9 @@ class SlideBuilder:
         )
         return self
 
-    def _build(self, builder: "PresentationBuilder[GenericTpptSlideMaster]") -> Slide:
-        if isinstance(self._slide_layout, int):
-            try:
-                slide_layout = builder._pptx.slide_layouts[self._slide_layout]
-            except IndexError:
-                raise SlideLayoutIndexError(
-                    self._slide_layout,
-                    builder._pptx.slide_layouts,
-                )
-        else:
-            slide_layout = self._slide_layout.to_pptx()
-
-        slide = builder._pptx.slides.add_slide(slide_layout)
-
+    def _build(self, slide: PptxSlide) -> Slide:
+        tppt_slide = Slide(slide)
         for register in self._shape_registry:
-            register(slide)
+            register(tppt_slide)
 
-        return Slide(slide)
+        return tppt_slide

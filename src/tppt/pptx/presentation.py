@@ -113,19 +113,22 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
     ) -> Self:
         """Add a slide to the presentation."""
         slide_master = SlideMasterProxy(self._slide_master, Presentation(self._pptx))
-        slide_layout = cast(
+        template_slide_layout = cast(
             SlideLayoutProxy,
             slide(cast(type[GenericTpptSlideMaster], slide_master)),
         )
 
         slide_builder = cast(
             SlideBuilder,
-            slide_layout.builder()
-            if isinstance(slide_layout, SlideLayoutProxy)
-            else slide_layout,
+            template_slide_layout.builder()
+            if isinstance(template_slide_layout, SlideLayoutProxy)
+            else template_slide_layout,
         )
 
-        slide_builder._build(self)
+        slide_layout = slide_builder._slide_layout.to_pptx()
+        new_slide = self._pptx.slides.add_slide(slide_layout)
+
+        slide_builder._build(new_slide)
 
         return self
 
