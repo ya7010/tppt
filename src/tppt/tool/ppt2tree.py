@@ -51,7 +51,17 @@ def save_ppt_tree(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Convert PPTX to tree structure JSON")
+    try:
+        from rich_argparse import RichHelpFormatter
+
+        formatter_class = RichHelpFormatter
+    except ImportError:
+        formatter_class = argparse.HelpFormatter
+
+    parser = argparse.ArgumentParser(
+        description="Convert PPTX to tree structure JSON",
+        formatter_class=formatter_class,
+    )
     parser.add_argument("pptx_path", help="Path to the PPTX file")
     parser.add_argument(
         "-o", "--output", default=None, help="Path to save the JSON file"

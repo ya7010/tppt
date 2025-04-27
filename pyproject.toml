@@ -27,8 +27,10 @@ classifiers = [
 [project.optional-dependencies]
 pandas = ["pandas>=2.0.0"]
 polars = ["polars>=0.20.0"]
+rich = ["rich>=14.0.0", "rich-argparse>=1.7.0"]
 
 [dependency-groups]
+rich = ["rich", "rich-argparse"]
 dataframes = [
   "pandas",
   "polars",
@@ -40,6 +42,7 @@ dev = [
   "ruff>=0.11.6",
   "taskipy>=1.14.1",
   "tombi>=0.3.27",
+  {include-group = "rich"},
 ]
 
 [build-system]
