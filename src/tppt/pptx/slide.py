@@ -151,11 +151,13 @@ class SlideBuilder:
         )
         return self
 
-    def build(self, slide: PptxSlide) -> Slide:
-        tppt_slide = Slide(slide)
+    if not TYPE_CHECKING:
 
-        self._placeholder_registry(tppt_slide)
-        for register in self._shape_registry:
-            register(tppt_slide)
+        def build(self, slide: PptxSlide) -> Slide:
+            tppt_slide = Slide(slide)
 
-        return tppt_slide
+            self._placeholder_registry(tppt_slide)
+            for register in self._shape_registry:
+                register(tppt_slide)
+
+            return tppt_slide
