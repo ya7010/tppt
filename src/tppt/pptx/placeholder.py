@@ -1,3 +1,4 @@
+import datetime
 from typing import Self
 
 from pptx.shapes.placeholder import LayoutPlaceholder as PptxLayoutPlaceholder
@@ -16,13 +17,18 @@ class SlidePlaceholder(PptxConvertible[PptxSlidePlaceholder]):
         return self._pptx.text
 
     @value.setter
-    def value(self, value: str | None):
-        if value is None:
-            return
-        if isinstance(value, str):
-            self._pptx.text = value
-        else:
-            raise InvalidSetterTypeError(str, type(value))
+    def value(self, value: str | int | datetime.date | None):
+        match value:
+            case None:
+                return
+            case str():
+                self._pptx.text = value
+            case int():
+                self._pptx.text = str(value)
+            case datetime.date():
+                self._pptx.text = value.isoformat()
+            case _:
+                raise InvalidSetterTypeError(str, type(value))
 
     def to_pptx(self) -> PptxSlidePlaceholder:
         return self._pptx
