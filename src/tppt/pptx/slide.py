@@ -111,12 +111,10 @@ class SlideBuilder:
     def picture(
         self, image_file: FilePath | IO[bytes], **kwargs: Unpack[PictureProps]
     ) -> Self:
-        data = PictureData(type="picture", image_file=image_file, **kwargs)
+        if isinstance(image_file, os.PathLike):
+            image_file = os.fspath(image_file)
 
-        if isinstance(data["image_file"], os.PathLike):
-            image_file = os.fspath(data["image_file"])
-        else:
-            image_file = data["image_file"]
+        data = PictureData(type="picture", image_file=image_file, **kwargs)
 
         self._shape_registry.append(
             lambda slide: Picture(
