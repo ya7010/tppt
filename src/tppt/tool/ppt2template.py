@@ -161,39 +161,40 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
         base_name = ""
 
         # Determine base name based on placeholder type
-        if ph_type == 1:  # Title
-            base_name = "title"
-        elif ph_type == 2:  # Body/Content
-            if "content" in layout_name_lower or "text" in layout_name_lower:
-                base_name = "content"
-            else:
-                base_name = "body"
-        elif ph_type == 3:  # CenteredTitle
-            base_name = "title"
-        elif ph_type == 4:  # Subtitle
-            base_name = "subtitle"
-        elif ph_type == 7:  # Chart
-            if "chart" in sample_ph.name.lower():
-                base_name = "chart"
-            else:
-                base_name = "content"
-        elif ph_type == 8:  # Table
-            base_name = "table"
-        elif ph_type == 13:  # SlideNumber
-            base_name = "slide_number"
-        elif ph_type == 15:  # Footer
-            base_name = "footer"
-        elif ph_type == 16:  # Date
-            base_name = "date"
-        elif ph_type == 18:  # Picture
-            base_name = "picture"
-        elif ph_type == 19:  # VerticalTitle
-            base_name = "vertical_title"
-        elif ph_type == 20:  # VerticalBody
-            base_name = "vertical_text"
-        else:
-            # For other types, use the cleaned placeholder name
-            base_name = clean_field_name(sample_ph.name)
+        match ph_type:
+            case 1:  # Title
+                base_name = "title"
+            case 2:  # Body/Content
+                if "content" in layout_name_lower or "text" in layout_name_lower:
+                    base_name = "content"
+                else:
+                    base_name = "body"
+            case 3:  # CenteredTitle
+                base_name = "title"
+            case 4:  # Subtitle
+                base_name = "subtitle"
+            case 7:  # Chart
+                if "chart" in sample_ph.name.lower():
+                    base_name = "chart"
+                else:
+                    base_name = "content"
+            case 8:  # Table
+                base_name = "table"
+            case 13:  # SlideNumber
+                base_name = "slide_number"
+            case 15:  # Footer
+                base_name = "footer"
+            case 16:  # Date
+                base_name = "date"
+            case 18:  # Picture
+                base_name = "picture"
+            case 19:  # VerticalTitle
+                base_name = "vertical_title"
+            case 20:  # VerticalBody
+                base_name = "vertical_text"
+            case _:
+                # For other types, use the cleaned placeholder name
+                base_name = clean_field_name(sample_ph.name)
 
         # Process all types of placeholders
         if ph_type not in [
@@ -285,38 +286,28 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
 
         # Determine field type
         required = False
-
-        if "date" in field_name or placeholder_type == 16:  # Date
-            field_type = "tppt.Placeholder[datetime.date | None]"
-        elif "number" in field_name or placeholder_type == 13:  # Slide number
-            field_type = 'tppt.Placeholder[Literal["‹#›"] | int | None]'
-        elif "title" in field_name or placeholder_type in [
-            1,
-            3,
-            19,
-        ]:  # Title, CenteredTitle, VerticalTitle
-            field_type = "tppt.Placeholder[str]"
-            required = True
-        elif "subtitle" in field_name or placeholder_type == 4:  # Subtitle
-            field_type = "tppt.Placeholder[str | None]"
-        elif (
-            "picture" in field_name or "image" in field_name or placeholder_type == 18
-        ):  # Picture
-            field_type = "tppt.Placeholder[tppt.types.FilePath | None]"
-        elif "chart" in field_name and placeholder_type == 7:  # Actual chart
-            field_type = "tppt.Placeholder[tppt.types.FilePath | None]"
-        elif "table" in field_name and placeholder_type == 8:  # Table
-            field_type = "tppt.Placeholder[str | None]"
-        elif placeholder_type in [
-            2,
-            7,
-            20,
-        ]:  # Body, Chart (used as content), VerticalBody
-            field_type = "tppt.Placeholder[str | None]"
-        elif "footer" in field_name or placeholder_type == 15:  # Footer
-            field_type = "tppt.Placeholder[str | None]"
-        else:
-            field_type = "tppt.Placeholder[str | None]"
+        match placeholder_type:
+            case 16:
+                field_type = "tppt.Placeholder[datetime.date | None]"
+            case 13:
+                field_type = 'tppt.Placeholder[Literal["‹#›"] | int | None]'
+            case 1 | 3 | 19:
+                field_type = "tppt.Placeholder[str]"
+                required = True
+            case 4:
+                field_type = "tppt.Placeholder[str | None]"
+            case 18:
+                field_type = "tppt.Placeholder[tppt.types.FilePath | None]"
+            case 7:
+                field_type = "tppt.Placeholder[tppt.types.FilePath | None]"
+            case 8:
+                field_type = "tppt.Placeholder[str | None]"
+            case 2 | 7 | 20:
+                field_type = "tppt.Placeholder[str | None]"
+            case 15:
+                field_type = "tppt.Placeholder[str | None]"
+            case _:
+                field_type = "tppt.Placeholder[str | None]"
 
         new_ph = PlaceholderInfo(
             name=ph.name,
