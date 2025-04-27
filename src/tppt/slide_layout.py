@@ -126,9 +126,9 @@ class SlideLayout(metaclass=_SlideLayoutMeta):
             return self
 
     def builder(self) -> "SlideBuilder":
-        from tppt.pptx.slide import SlideBuilder
-
-        return SlideBuilder()
+        raise NotImplementedError(
+            "SlideLayout is not instantiable. Use SlideLayoutProxy instead."
+        )
 
 
 class SlideLayoutProxy:
@@ -137,16 +137,20 @@ class SlideLayoutProxy:
         slide_layout: type[SlideLayout],
         convertible_slide_layout: "PptxConvertibleSlideLayout",
     ) -> None:
-        self._slide_layout = slide_layout
+        self._slide_layout_type = slide_layout
         self._convertible_slide_layout = convertible_slide_layout
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        return self._slide_layout(*args, **kwargs)
+        self._slide_layout = self._slide_layout_type(*args, **kwargs)
+
+        return self
 
     def __getattr__(self, item: str) -> Any:
         return getattr(self._slide_layout, item)
 
     def builder(self) -> "SlideBuilder":
+        from .pptx.slide import SlideBuilder
+
         return SlideBuilder(
             self._convertible_slide_layout,
         )

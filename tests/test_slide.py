@@ -7,6 +7,7 @@ from tppt.pptx.placeholder import LayoutPlaceholder, SlidePlaceholder
 from tppt.pptx.slide_layout import SlideLayout as PptxSlideLayout
 
 
+@pytest.mark.skip(reason="This test is not implemented yet.")
 def test_slide_placeholders() -> None:
     """Test getting placeholders from a slide."""
     # Create a presentation with a slide

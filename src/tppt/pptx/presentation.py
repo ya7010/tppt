@@ -1,12 +1,12 @@
 """Presentation wrapper implementation."""
 
 import os
-from typing import IO, TYPE_CHECKING, Any, Callable, Generic, Self, overload
+from typing import IO, TYPE_CHECKING, Any, Callable, Generic, Self, cast, overload
 
 from pptx.presentation import Presentation as PptxPresentation
 
 from tppt.pptx.tree import ppt2dict
-from tppt.slide_layout import SlideLayout
+from tppt.slide_layout import SlideLayout, SlideLayoutProxy
 from tppt.slide_master import (
     DefaultSlideMaster,
     GenericTpptSlideMaster,
@@ -113,12 +113,16 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
     ) -> Self:
         """Add a slide to the presentation."""
         slide_master = SlideMasterProxy(self._slide_master, Presentation(self._pptx))
-        slide_layout = slide(slide_master)  # type: ignore
+        slide_layout = cast(
+            SlideLayoutProxy,
+            slide(cast(type[GenericTpptSlideMaster], slide_master)),
+        )
 
-        slide_builder = (
+        slide_builder = cast(
+            SlideBuilder,
             slide_layout.builder()
-            if isinstance(slide_layout, SlideLayout)
-            else slide_layout
+            if isinstance(slide_layout, SlideLayoutProxy)
+            else slide_layout,
         )
 
         slide_builder._build(self)

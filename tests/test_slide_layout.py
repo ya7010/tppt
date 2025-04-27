@@ -1,9 +1,11 @@
 from typing import Annotated, Any, ClassVar
 
+from tppt import Presentation
 from tppt.slide_layout import (
     DefaultTitleSlideLayout,
     Placeholder,
     SlideLayout,
+    SlideLayoutProxy,
     get_placeholders,
 )
 
@@ -108,3 +110,17 @@ class TestSlideLayoutGetPlaceholders:
 
         # Class variables should not be included
         assert "class_var" not in placeholders
+
+
+def test_slide_layout_proxy_builder():
+    # SlideLayoutProxyのインスタンスを作成
+    presentation = Presentation.builder().build()
+    proxy = SlideLayoutProxy(
+        DefaultTitleSlideLayout, presentation.slide_master.slide_layouts[0]
+    )
+
+    # プロキシを呼び出して、スライドレイアウトインスタンスを設定
+    proxy(title="テストタイトル")
+
+    # builderメソッドを呼び出す
+    assert proxy.builder()
