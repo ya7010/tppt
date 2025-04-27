@@ -13,7 +13,7 @@ from tppt.template.slide_master import (
     SlideMasterProxy,
 )
 from tppt.types import FilePath
-from tppt.types._length import Length
+from tppt.types._length import Length, LiteralLength
 
 from .converter import PptxConvertible, to_pptx_length, to_tppt_length
 from .slide import SlideBuilder
@@ -54,7 +54,7 @@ class Presentation(PptxConvertible[PptxPresentation]):
         return to_tppt_length(self._pptx.slide_width)
 
     @slide_width.setter
-    def slide_width(self, value: Length) -> None:
+    def slide_width(self, value: Length | LiteralLength) -> None:
         self._pptx.slide_width = to_pptx_length(value)
 
     @property
@@ -62,7 +62,7 @@ class Presentation(PptxConvertible[PptxPresentation]):
         return to_tppt_length(self._pptx.slide_height)
 
     @slide_height.setter
-    def slide_height(self, value: Length) -> None:
+    def slide_height(self, value: Length | LiteralLength) -> None:
         self._pptx.slide_height = to_pptx_length(value)
 
     @property

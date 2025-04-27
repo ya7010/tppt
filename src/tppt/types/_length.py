@@ -59,9 +59,21 @@ class Inchs:
         return Inchs(self.value / other)
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Inchs):
-            raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
-        return self.value == other.value
+        match other:
+            case Inchs():
+                return self.value == other.value
+            case (
+                CentiMeters()
+                | Points()
+                | MilliMeters()
+                | EnglishMetricUnits()
+                | tuple()
+            ):
+                return self == to_inche(other)
+            case _:
+                raise NotImplementedError(
+                    f"Cannot compare {type(self)} with {type(other)}"
+                )
 
     def __repr__(self) -> str:
         return f"Inchs({self.value})"
@@ -102,9 +114,17 @@ class Points:
         return Points(int(self.value / other))
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Points):
-            raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
-        return self.value == other.value
+        match other:
+            case Points():
+                return self.value == other.value
+            case (
+                CentiMeters() | Inchs() | MilliMeters() | EnglishMetricUnits() | tuple()
+            ):
+                return self == to_point(other)
+            case _:
+                raise NotImplementedError(
+                    f"Cannot compare {type(self)} with {type(other)}"
+                )
 
     def __repr__(self) -> str:
         return f"Points({self.value})"
@@ -145,9 +165,15 @@ class CentiMeters:
         return CentiMeters(self.value / other)
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, CentiMeters):
-            raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
-        return self.value == other.value
+        match other:
+            case CentiMeters():
+                return self.value == other.value
+            case Inchs() | Points() | MilliMeters() | EnglishMetricUnits() | tuple():
+                return self == to_centimeter(other)
+            case _:
+                raise NotImplementedError(
+                    f"Cannot compare {type(self)} with {type(other)}"
+                )
 
     def __repr__(self) -> str:
         return f"CentiMeters({self.value})"
@@ -188,9 +214,15 @@ class MilliMeters:
         return MilliMeters(self.value / other)
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, MilliMeters):
-            raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
-        return self.value == other.value
+        match other:
+            case MilliMeters():
+                return self.value == other.value
+            case CentiMeters() | Inchs() | Points() | EnglishMetricUnits() | tuple():
+                return self == to_millimeter(other)
+            case _:
+                raise NotImplementedError(
+                    f"Cannot compare {type(self)} with {type(other)}"
+                )
 
     def __repr__(self) -> str:
         return f"MilliMeters({self.value})"
@@ -231,9 +263,15 @@ class EnglishMetricUnits:
         return EnglishMetricUnits(int(self.value / other))
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, EnglishMetricUnits):
-            raise NotImplementedError(f"Cannot compare {type(self)} with {type(other)}")
-        return self.value == other.value
+        match other:
+            case EnglishMetricUnits():
+                return self.value == other.value
+            case CentiMeters() | Inchs() | Points() | MilliMeters() | tuple():
+                return self == to_emu(other)
+            case _:
+                raise NotImplementedError(
+                    f"Cannot compare {type(self)} with {type(other)}"
+                )
 
     def __repr__(self) -> str:
         return f"EnglishMetricUnits({self.value})"

@@ -37,6 +37,15 @@ def test_presentation_width_and_height(output: pathlib.Path) -> None:
     assert presentation.slide_height == tppt.types.EnglishMetricUnits(6858000)
 
 
+def test_presentation_width_and_height_setter(output: pathlib.Path) -> None:
+    """Test setting the width and height of a presentation."""
+    presentation = tppt.Presentation.builder().build()
+    presentation.slide_width = (20, "cm")
+    presentation.slide_height = (10, "cm")
+    assert presentation.slide_width == (20, "cm")
+    assert presentation.slide_height == (10, "cm")
+
+
 def test_create_presentation_with_table(output: pathlib.Path) -> None:
     """Test creating a presentation with a table."""
     table_data = [
