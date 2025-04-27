@@ -22,6 +22,7 @@ from tppt._features import (
     PandasDataFrame,
     PolarsDataFrame,
     PolarsLazyFrame,
+    PydanticModel,
 )
 from tppt.types._length import LiteralPoint, Points
 
@@ -35,6 +36,7 @@ logger = logging.getLogger(__name__)
 DataFrame: TypeAlias = (
     list[list[str]]
     | list[Dataclass]
+    | list[PydanticModel]
     | PandasDataFrame
     | PolarsDataFrame
     | PolarsLazyFrame
@@ -196,6 +198,15 @@ def dataframe2list(data: DataFrame) -> list[list[str]]:
                     row = [
                         str(getattr(instance, field.name)) for field in fields(instance)
                     ]
+                    rows.append(row)
+                return [columns] + rows
+            # Convert list of Pydantic model instances to list of lists
+            elif isinstance(first_instance, PydanticModel):
+                columns = list(first_instance.__class__.model_fields.keys())
+                rows = []
+                for instance in data:
+                    instance = cast(Any, instance)
+                    row = [str(getattr(instance, field)) for field in columns]
                     rows.append(row)
                 return [columns] + rows
         else:

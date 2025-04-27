@@ -4,9 +4,10 @@ import pathlib
 from dataclasses import dataclass
 
 import pytest
+from pydantic import BaseModel
 
 import tppt
-from tppt._features import USE_PANDAS, USE_POLARS, Dataclass
+from tppt._features import USE_PANDAS, USE_POLARS, Dataclass, PydanticModel
 
 
 def test_create_table_with_list_data(output: pathlib.Path) -> None:
@@ -182,3 +183,40 @@ def test_create_table_with_dataclass(output: pathlib.Path) -> None:
         .build()
     )
     presentation.save(output / "table_dataclass_data.pptx")
+
+
+def test_create_table_with_pydantic_model(output: pathlib.Path) -> None:
+    """Test creating a table with Pydantic model."""
+
+    class Product(BaseModel):
+        """Product model for testing."""
+
+        name: str
+        category: str
+        price: int
+        stock: int
+
+    # Create product instances
+    products: list[PydanticModel] = [
+        Product(name="ノートPC", category="電子機器", price=150000, stock=10),
+        Product(name="スマートフォン", category="電子機器", price=80000, stock=20),
+        Product(name="タブレット", category="電子機器", price=50000, stock=15),
+    ]
+
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(
+            lambda slide: slide.BlankLayout()
+            .builder()
+            .table(
+                products,
+                left=(100, "pt"),
+                top=(100, "pt"),
+                width=(400, "pt"),
+                height=(200, "pt"),
+                first_row_header=True,
+            )
+        )
+        .build()
+    )
+    presentation.save(output / "table_pydantic_data.pptx")

@@ -27,6 +27,7 @@ dependencies = [
 [project.optional-dependencies]
 pandas = ["pandas>=2.0.0"]
 polars = ["polars>=0.20.0"]
+pydantic = ["pydantic>=2.0.0"]
 tool = [
   "rich>=14.0.0",
   "rich-argparse>=1.7.0",
@@ -36,6 +37,7 @@ tool = [
 dataframes = [
   "pandas",
   "polars",
+  "pydantic",
 ]
 dev = [
   "mypy>=1.15.0",
