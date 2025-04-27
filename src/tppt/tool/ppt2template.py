@@ -5,7 +5,7 @@ import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from pptx import Presentation as PptxPresentation
 
@@ -18,10 +18,10 @@ class PlaceholderInfo:
 
     name: str
     type: int
-    field_name: Optional[str] = None
-    field_type: Optional[str] = None
+    field_name: str | None = None
+    field_type: str | None = None
     required: bool = False
-    idx: Optional[int] = None
+    idx: int | None = None
 
 
 @dataclass
@@ -30,7 +30,7 @@ class LayoutInfo:
 
     name: str
     placeholders: List[PlaceholderInfo]
-    class_name: Optional[str] = None
+    class_name: str | None = None
 
 
 @dataclass
@@ -39,7 +39,7 @@ class MasterInfo:
 
     name: str
     layouts: List[LayoutInfo]
-    class_name: Optional[str] = None
+    class_name: str | None = None
 
 
 def extract_master_info(tree: Dict[str, Any]) -> MasterInfo:
