@@ -5,7 +5,7 @@ import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from pptx import Presentation as PptxPresentation
 
@@ -29,7 +29,7 @@ class LayoutInfo:
     """Information about a slide layout."""
 
     name: str
-    placeholders: List[PlaceholderInfo]
+    placeholders: list[PlaceholderInfo]
     class_name: str | None = None
 
 
@@ -38,11 +38,11 @@ class MasterInfo:
     """Information about a slide master."""
 
     name: str
-    layouts: List[LayoutInfo]
+    layouts: list[LayoutInfo]
     class_name: str | None = None
 
 
-def extract_master_info(tree: Dict[str, Any]) -> MasterInfo:
+def extract_master_info(tree: dict[str, Any]) -> MasterInfo:
     """Extract information about the slide master and its layouts."""
 
     master_name = Path(tree.get("name", "custom_template")).stem
