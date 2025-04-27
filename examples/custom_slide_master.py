@@ -25,7 +25,7 @@ def main():
             )
             .builder()
             .text(
-                "a",
+                "sample text",
                 left=(100, "pt"),
                 top=(100, "pt"),
                 width=(100, "pt"),
