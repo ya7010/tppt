@@ -30,7 +30,6 @@ polars = ["polars>=0.20.0"]
 tool = [
   "rich>=14.0.0",
   "rich-argparse>=1.7.0",
-  "pydantic-ai>=0.1.6",
 ]
 
 [dependency-groups]
