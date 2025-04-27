@@ -4,6 +4,7 @@ from typing import (
     Annotated,
     Any,
     ClassVar,
+    Literal,
     OrderedDict,
     Self,
     TypeAlias,
@@ -170,6 +171,7 @@ class DefaultTitleSlideLayout(SlideLayout):
     subtitle: Placeholder[str | None] = None
     date: Placeholder[datetime.date | None] = None
     footer: Placeholder[str | None] = None
+    slide_number: Placeholder[Literal["‹#›"] | int | None] = None
 
 
 class DefaultTitleAndContentSlideLayout(SlideLayout):
@@ -179,6 +181,7 @@ class DefaultTitleAndContentSlideLayout(SlideLayout):
     content: Placeholder[str]
     date: Placeholder[datetime.date | None] = None
     footer: Placeholder[str | None] = None
+    slide_number: Placeholder[Literal["‹#›"] | int | None] = None
 
 
 class DefaultSectionHeaderSlideLayout(SlideLayout):
@@ -188,6 +191,7 @@ class DefaultSectionHeaderSlideLayout(SlideLayout):
     text: Placeholder[str]
     date: Placeholder[datetime.date | None] = None
     footer: Placeholder[str | None] = None
+    slide_number: Placeholder[Literal["‹#›"] | int | None] = None
 
 
 class DefaultTwoContentSlideLayout(SlideLayout):
@@ -198,6 +202,7 @@ class DefaultTwoContentSlideLayout(SlideLayout):
     right_content: Placeholder[str]
     date: Placeholder[datetime.date | None] = None
     footer: Placeholder[str | None] = None
+    slide_number: Placeholder[Literal["‹#›"] | int | None] = None
 
 
 class DefaultComparisonSlideLayout(SlideLayout):
@@ -210,6 +215,7 @@ class DefaultComparisonSlideLayout(SlideLayout):
     right_content: Placeholder[str]
     date: Placeholder[datetime.date | None] = None
     footer: Placeholder[str | None] = None
+    slide_number: Placeholder[Literal["‹#›"] | int | None] = None
 
 
 class DefaultTitleOnlySlideLayout(SlideLayout):
@@ -218,6 +224,7 @@ class DefaultTitleOnlySlideLayout(SlideLayout):
     title: Placeholder[str]
     date: Placeholder[datetime.date | None] = None
     footer: Placeholder[str | None] = None
+    slide_number: Placeholder[Literal["‹#›"] | int | None] = None
 
 
 class DefaultBlankSlideLayout(SlideLayout):
@@ -225,6 +232,7 @@ class DefaultBlankSlideLayout(SlideLayout):
 
     date: Placeholder[datetime.date | None] = None
     footer: Placeholder[str | None] = None
+    slide_number: Placeholder[Literal["‹#›"] | int | None] = None
 
 
 class DefaultContentWithCaptionSlideLayout(SlideLayout):
@@ -234,6 +242,7 @@ class DefaultContentWithCaptionSlideLayout(SlideLayout):
     content: Placeholder[str]
     date: Placeholder[datetime.date | None] = None
     footer: Placeholder[str | None] = None
+    slide_number: Placeholder[Literal["‹#›"] | int | None] = None
 
 
 class DefaultPictureWithCaptionSlideLayout(SlideLayout):
@@ -243,6 +252,7 @@ class DefaultPictureWithCaptionSlideLayout(SlideLayout):
     picture_path: Placeholder[FilePath]
     date: Placeholder[datetime.date | None] = None
     footer: Placeholder[str | None] = None
+    slide_number: Placeholder[Literal["‹#›"] | int | None] = None
 
 
 class DefaultTitleAndVerticalTextSlideLayout(SlideLayout):
@@ -252,6 +262,7 @@ class DefaultTitleAndVerticalTextSlideLayout(SlideLayout):
     vertical_text: Placeholder[str]
     date: Placeholder[datetime.date | None] = None
     footer: Placeholder[str | None] = None
+    slide_number: Placeholder[Literal["‹#›"] | int | None] = None
 
 
 class DefaultVerticalTitleAndTextSlideLayout(SlideLayout):
@@ -261,6 +272,7 @@ class DefaultVerticalTitleAndTextSlideLayout(SlideLayout):
     text: Placeholder[str]
     date: Placeholder[datetime.date | None]
     footer: Placeholder[str | None]
+    slide_number: Placeholder[Literal["‹#›"] | int | None] = None
 
 
 def get_placeholders(slide_layout: SlideLayout) -> OrderedDict[str, Any]:
