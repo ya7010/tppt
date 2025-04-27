@@ -4,7 +4,7 @@ import tppt
 
 
 def main():
-    class CustomMasterSlideLayout(tppt.SlideLayout):
+    class CustomTitleAndTextSlideLayout(tppt.SlideLayout):
         title: tppt.Placeholder[str]
         text: tppt.Placeholder[str]
 
@@ -14,13 +14,13 @@ def main():
 
     @tppt.slide_master("default")
     class CustomSlideMaster(tppt.SlideMaster):
-        MasterLayout: tppt.Layout[CustomMasterSlideLayout]
+        TitleAndTextLayout: tppt.Layout[CustomTitleAndTextSlideLayout]
         TitleLayout: tppt.Layout[CustomTitleSlideLayout]
 
     presentation = (
         tppt.Presentation.builder(CustomSlideMaster)
         .slide(
-            lambda slide: slide.MasterLayout(
+            lambda slide: slide.TitleAndTextLayout(
                 title="Custom Master Title",
                 text="Custom Master Text",
             )
