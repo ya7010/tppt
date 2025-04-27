@@ -1,41 +1,41 @@
+import datetime
 from pathlib import Path
 
 import tppt
 
 
 def main():
-    class CustomTitleAndTextSlideLayout(tppt.SlideLayout):
-        title: tppt.Placeholder[str]
-        text: tppt.Placeholder[str]
-
     class CustomTitleSlideLayout(tppt.SlideLayout):
         title: tppt.Placeholder[str]
         subtitle: tppt.Placeholder[str | None] = None
+        date: tppt.Placeholder[datetime.date | None] = None
+        footer: tppt.Placeholder[str | None] = None
 
-    @tppt.slide_master("default")
+    class CustomTitleAndContentSlideLayout(tppt.SlideLayout):
+        title: tppt.Placeholder[str]
+        content: tppt.Placeholder[str]
+        date: tppt.Placeholder[datetime.date | None] = None
+        footer: tppt.Placeholder[str | None] = None
+
+    @tppt.slide_master("custom_slide_master_base.pptx")
     class CustomSlideMaster(tppt.SlideMaster):
-        TitleAndTextLayout: tppt.Layout[CustomTitleAndTextSlideLayout]
         TitleLayout: tppt.Layout[CustomTitleSlideLayout]
+        TitleAndContentLayout: tppt.Layout[CustomTitleAndContentSlideLayout]
 
     presentation = (
         tppt.Presentation.builder(CustomSlideMaster)
+        .slide(lambda slide: slide.TitleLayout(title="Custom Master Title"))
         .slide(
-            lambda slide: slide.TitleAndTextLayout(
-                title="Custom Master Title",
-                text="Custom Master Text",
-            )
-            .builder()
-            .text(
-                "sample text",
-                left=(100, "pt"),
-                top=(100, "pt"),
-                width=(100, "pt"),
-                height=(100, "pt"),
+            lambda slide: slide.TitleAndContentLayout(
+                title="Custom Title",
+                content="Custom Content",
             )
         )
-        .slide(lambda slide: slide.TitleLayout(title="Custom Title"))
         .build()
     )
+    top_slide = presentation.slides[0]
+    top_slide.placeholders[0].value = "Custom Master Top Title"
+    top_slide.placeholders[1].value = "Custom Master Top Subtitle"
 
     presentation.save(Path(__file__).with_suffix(".pptx"))
 

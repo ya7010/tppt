@@ -105,14 +105,14 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
 
         if (
             slide_master_source := slide_master.__slide_master_source__
-        ) and not "default":
+        ) and slide_master_source != "default":
             if isinstance(slide_master_source, os.PathLike):
                 slide_master_source = os.fspath(slide_master_source)
+
             self._pptx = pptx.Presentation(slide_master_source)
         else:
             self._pptx = pptx.Presentation()
 
-        self._pptx = pptx.Presentation()
         self._slide_master = slide_master
 
     def slide(

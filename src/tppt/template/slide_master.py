@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Annotated,
@@ -116,6 +117,20 @@ def slide_master(
     """
 
     def decorator(cls: GenericSlideMaster) -> GenericSlideMaster:
+        # If the source is a relative path, convert it to an absolute path
+        nonlocal source
+        if source != "default":
+            if isinstance(source, str):
+                source = Path(source)
+            if not source.is_absolute():
+                import inspect
+
+                # Get the caller's frame (where the decorator was called)
+                caller_frame = inspect.stack()[1]
+                caller_file = caller_frame.filename
+                caller_path = Path(caller_file).parent
+                source = caller_path / source
+
         setattr(cls, "__slide_master_source__", source)
         return cls
 
