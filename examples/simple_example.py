@@ -15,7 +15,9 @@ def main():
         tppt.Presentation.builder()
         # Slide 1: Title and Text
         .slide(
-            lambda slide: slide.Blank()
+            lambda slide: slide.Title(
+                title="Title",
+            )
             .builder()
             .text(
                 "Amazing Presentation",  # Title
