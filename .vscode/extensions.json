@@ -4,7 +4,6 @@
     "anysphere.pyright",
     "charliermarsh.ruff",
     "ms-python.python",
-    "ms-python.mypy-type-checker",
     "ms-pyright.pyright",
     "biomejs.biome",
     "naumovs.color-highlight"
