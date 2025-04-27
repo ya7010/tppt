@@ -4,6 +4,7 @@ from typing import (
     Annotated,
     Any,
     ClassVar,
+    OrderedDict,
     Self,
     TypeAlias,
     TypeVar,
@@ -94,7 +95,7 @@ class _SlideLayoutMeta(type):
 class SlideLayout(metaclass=_SlideLayoutMeta):
     """Base class for slide layouts"""
 
-    __placeholders__: ClassVar[dict[str, Any]] = {}
+    __placeholders__: ClassVar[OrderedDict[str, Any]] = OrderedDict()
 
     def __init__(self, **kwargs) -> None:
         # Set values for all fields
@@ -228,5 +229,5 @@ class DefaultVerticalTitleAndTextSlide(SlideLayout):
     footer: Placeholder[str | None]
 
 
-def get_placeholders(slide_layout: type[SlideLayout]) -> dict[str, Any]:
+def get_placeholders(slide_layout: type[SlideLayout]) -> OrderedDict[str, Any]:
     return slide_layout.__placeholders__
