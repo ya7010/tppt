@@ -129,7 +129,7 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
     placeholder_type_map = {}
     layout_name_lower = layout.name.lower()
 
-    # 同じ種類のプレースホルダー名をカウント (例：contentという名前が何個あるか)
+    # Count placeholder names of the same type (e.g., how many elements named "content")
     placeholder_base_name_counts = {}
 
     # First pass - identify placeholder types and count base names
@@ -138,9 +138,9 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
             placeholder_type_map[ph.type] = []
         placeholder_type_map[ph.type].append(ph)
 
-        # クリーニングされた基本名をカウント
+        # Count the cleaned base names
         base_name = clean_field_name(ph.name)
-        if ph.type in [2, 7]:  # content/bodyタイプのプレースホルダー
+        if ph.type in [2, 7]:  # content/body type placeholders
             if "content" in layout_name_lower or "text" in layout_name_lower:
                 base_name = "content"
             else:
@@ -150,17 +150,17 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
             placeholder_base_name_counts.get(base_name, 0) + 1
         )
 
-    # 同じ種類のプレースホルダーに対してベース名を決める
+    # Determine base names for placeholders of the same type
     type_base_names = {}
     for ph_type, phs in placeholder_type_map.items():
-        # タイプごとにベース名を決定
+        # Determine base name for each type
         if len(phs) == 0:
             continue
 
         sample_ph = phs[0]
         base_name = ""
 
-        # タイプに基づいてベース名を決定
+        # Determine base name based on placeholder type
         if ph_type == 1:  # Title
             base_name = "title"
         elif ph_type == 2:  # Body/Content
@@ -192,10 +192,10 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
         elif ph_type == 20:  # VerticalBody
             base_name = "vertical_text"
         else:
-            # その他のタイプはプレースホルダー名をクリーニングして使用
+            # For other types, use the cleaned placeholder name
             base_name = clean_field_name(sample_ph.name)
 
-        # すべてのタイプのプレースホルダーについて処理
+        # Process all types of placeholders
         if ph_type not in [
             1,
             3,
@@ -205,8 +205,8 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
             16,
             19,
             20,
-        ]:  # タイトル、サブタイトル、日付、フッターなどは連番を付けない
-            # 特定のレイアウトタイプの特別処理
+        ]:  # Don't add indexes to title, subtitle, date, footer, etc.
+            # Special handling for specific layout types
             if (
                 "two content" in layout_name_lower
                 and ph_type in [2, 7]
@@ -228,26 +228,26 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
                 ]
                 type_base_names[ph_type] = special_names
 
-                # 残りがあれば、content5, content6...
+                # For any remaining placeholders, use content5, content6...
                 for i in range(4, len(phs)):
                     type_base_names[ph_type].append(f"content{i + 1}")
             else:
-                # 同じ種類のプレースホルダーが複数ある場合のみ連番をつける
+                # Only add indexes when there are multiple placeholders of the same type
                 if len(phs) > 1:
                     base_name_without_numbers = re.sub(
                         r"\d+$", "", base_name
-                    )  # 名前から末尾の数字を取り除く
+                    )  # Remove any trailing numbers from the base name
                     type_base_names[ph_type] = [
                         f"{base_name_without_numbers}{i + 1}" for i in range(len(phs))
                     ]
                 else:
-                    # 単一のプレースホルダーの場合は連番なし
+                    # For single placeholders, don't add indexes
                     type_base_names[ph_type] = [base_name]
         else:
-            # 日付、フッター、スライド番号などには連番を付けない
+            # Don't add indexes to date, footer, slide number etc.
             type_base_names[ph_type] = [base_name]
 
-    # Second pass - 実際に各プレースホルダーにフィールド名を割り当てる
+    # Second pass - assign field names to each placeholder
     processed_placeholders = []
 
     for ph in layout.placeholders:
@@ -256,24 +256,24 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
 
         placeholder_type = ph.type
 
-        # このタイプのプレースホルダーの何番目か
+        # Determine which index this placeholder has within its type
         same_type_phs = placeholder_type_map.get(placeholder_type, [])
         idx = same_type_phs.index(ph)
 
-        # フィールド名の決定
+        # Determine field name
         if placeholder_type in type_base_names and idx < len(
             type_base_names[placeholder_type]
         ):
             field_name = type_base_names[placeholder_type][idx]
         else:
-            # フォールバック: 元の名前をクリーニング
+            # Fallback: use cleaned original name
             field_name = clean_field_name(ph.name)
 
-        # 名前の重複を避ける
+        # Avoid duplicate names
         if field_name in seen_field_names:
-            # Content with Captionレイアウトの場合は特別処理
+            # Special handling for Content with Caption layout
             if layout.name == "Content with Caption" and placeholder_type == 2:
-                # ここでは何もしない（上ですでに正しい名前を設定）
+                # Do nothing (the correct name is already set above)
                 pass
             else:
                 counter = 1
