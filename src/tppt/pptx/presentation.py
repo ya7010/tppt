@@ -128,7 +128,7 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
         slide_layout = slide_builder._slide_layout.to_pptx()
         new_slide = self._pptx.slides.add_slide(slide_layout)
 
-        slide_builder._build(new_slide)
+        slide_builder.build(new_slide)
 
         return self
 

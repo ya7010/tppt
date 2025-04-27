@@ -151,7 +151,7 @@ class SlideBuilder:
         )
         return self
 
-    def _build(self, slide: PptxSlide) -> Slide:
+    def build(self, slide: PptxSlide) -> Slide:
         tppt_slide = Slide(slide)
         for register in self._shape_registry:
             register(tppt_slide)
