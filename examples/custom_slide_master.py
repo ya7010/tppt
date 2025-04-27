@@ -4,22 +4,22 @@ import tppt
 
 
 def main():
-    class CustomMasterSlide(tppt.SlideLayout):
+    class CustomMasterSlideLayout(tppt.SlideLayout):
         title: tppt.Placeholder[str]
         text: tppt.Placeholder[str]
 
-    class CustomTitleSlide(tppt.SlideLayout):
+    class CustomTitleSlideLayout(tppt.SlideLayout):
         title: tppt.Placeholder[str]
         subtitle: tppt.Placeholder[str | None] = None
 
     class CustomSlideMaster(tppt.SlideMaster):
-        Master = CustomMasterSlide
-        Title = CustomTitleSlide
+        MasterLayout = tppt.Layout[CustomMasterSlideLayout]
+        TitleLayout = tppt.Layout[CustomTitleSlideLayout]
 
     presentation = (
         tppt.Presentation.builder(CustomSlideMaster)
         .slide(
-            lambda slide: slide.Master(
+            lambda slide: slide.MasterLayout(
                 title="Custom Master Title",
                 text="Custom Master Text",
             )
@@ -32,7 +32,7 @@ def main():
                 height=(100, "pt"),
             )
         )
-        .slide(lambda slide: slide.Title(title="Custom Title"))
+        .slide(lambda slide: slide.TitleLayout(title="Custom Title"))
         .build()
     )
 
