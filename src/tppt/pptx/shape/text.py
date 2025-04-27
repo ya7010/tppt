@@ -4,6 +4,7 @@ from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 from pptx.shapes.autoshape import Shape as PptxShape
 
 from tppt.pptx.converter import to_pptx_color, to_pptx_length
+from tppt.pptx.text.text_frame import TextFrame
 from tppt.types._color import Color, LiteralColor
 from tppt.types._length import Length, LiteralLength
 
@@ -68,6 +69,9 @@ class Text(Shape[PptxShape]):
                 p.level = level
 
         self._pptx = pptx_obj
+
+    def text_frame(self) -> TextFrame:
+        return TextFrame(self._pptx.text_frame)
 
     def to_pptx(self) -> PptxShape:
         """Convert to pptx shape."""
