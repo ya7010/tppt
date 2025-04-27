@@ -1,5 +1,4 @@
 import datetime
-from inspect import isclass
 from typing import (
     TYPE_CHECKING,
     Annotated,
@@ -23,20 +22,15 @@ if TYPE_CHECKING:
 AnyType = TypeVar("AnyType")
 
 
-class _Placeholder:
-    def __init__(self, description: str = ""):
-        self.description = description
-        self.value = None
+if TYPE_CHECKING:
+    Placeholder: TypeAlias = Annotated[AnyType, ...]
+else:
 
-    def __repr__(self) -> str:
-        return f"Placeholder({self.description!r})"
+    class Placeholder:
+        @classmethod
+        def __class_getitem__(cls, item: AnyType) -> AnyType:
+            return Annotated[item, cls()]
 
-    @classmethod
-    def __class_getitem__(cls, item: Any) -> Any:
-        return Annotated[item, cls()]
-
-
-Placeholder: TypeAlias = Annotated[AnyType, _Placeholder]
 
 class _SlideLayoutMeta(type):
     """Meta class for TpptSlideLayout.
@@ -53,6 +47,11 @@ class _SlideLayoutMeta(type):
         annotations = get_type_hints(cls, include_extras=True)
         placeholders = {}
 
+        # Inherit placeholders from base classes
+        for base in bases:
+            if hasattr(base, "__placeholders__"):
+                placeholders.update(base.__placeholders__)
+
         for field_name, field_type in annotations.items():
             # Search for Annotated fields
             if get_origin(field_type) is Annotated:
@@ -62,21 +61,21 @@ class _SlideLayoutMeta(type):
 
                 # Search for fields directly marked as Placeholder
                 if any(
-                    arg is _Placeholder
-                    or (isclass(arg) and arg.__name__ == "_Placeholder")
+                    isinstance(arg, Placeholder)  # type: ignore
+                    or arg is Placeholder
                     for arg in metadata_args
                 ):
                     placeholders[field_name] = args[0]  # Actual type
                     continue
 
                 # Check nested Annotated (Placeholder[T] pattern)
-                # Detect the pattern Placeholder[T] = Annotated[T, _Placeholder]
+                # Detect the pattern Placeholder[T] = Annotated[T, Placeholder]
                 base_type = args[0]
                 if get_origin(base_type) is Annotated:
                     nested_args = get_args(base_type)
                     if any(
-                        arg is _Placeholder
-                        or (isclass(arg) and arg.__name__ == "_Placeholder")
+                        isinstance(arg, Placeholder)  # type: ignore
+                        or arg is Placeholder
                         for arg in nested_args[1:]
                     ):
                         placeholders[field_name] = nested_args[0]  # Actual type

@@ -4,7 +4,6 @@ from tppt.slide_layout import (
     DefaultTitleSlide,
     Placeholder,
     SlideLayout,
-    _Placeholder,
     get_placeholders,
 )
 
@@ -39,7 +38,7 @@ class TestSlideLayoutGetPlaceholders:
             count: Placeholder[int]
             items: Placeholder[list[str]]
             # Direct use of Annotated
-            direct: Annotated[dict[str, Any], _Placeholder()]
+            direct: Annotated[dict[str, Any], Placeholder]
             # Field with default value should come last
             optional: Placeholder[bool | None] = None
 
@@ -51,15 +50,13 @@ class TestSlideLayoutGetPlaceholders:
 
         # Check complex layout
         complex_placeholders = get_placeholders(ComplexLayout)
-        # The test was expecting 5 but got 4 - the direct field might not be recognized correctly
-        # Adjust the expected count to match what actually happens
-        assert len(complex_placeholders) == 4
+        # The direct field is now correctly recognized
+        assert len(complex_placeholders) == 5
         assert "title" in complex_placeholders
         assert "count" in complex_placeholders
         assert "items" in complex_placeholders
+        assert "direct" in complex_placeholders
         assert "optional" in complex_placeholders
-        # The direct field using raw Annotated might not be properly detected
-        # assert "direct" in complex_placeholders
 
     def test_inheritance(self):
         """Test that inherited placeholders are properly tracked."""
