@@ -1,7 +1,7 @@
 """Slide wrapper implementation."""
 
 import os
-from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack, cast
+from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack
 
 from pptx.slide import Slide as PptxSlide
 
@@ -71,7 +71,7 @@ class Slide(PptxConvertible[PptxSlide]):
 
     def to_pptx(self) -> PptxSlide:
         """Convert to pptx slide."""
-        return cast(PptxSlide, self._pptx)
+        return self._pptx
 
     @classmethod
     def from_pptx(cls, pptx_obj: PptxSlide) -> Self:
