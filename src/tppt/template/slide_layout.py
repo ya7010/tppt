@@ -15,11 +15,11 @@ from typing import (
     overload,
 )
 
-from .types import FilePath
+from ..types import FilePath
 
 if TYPE_CHECKING:
-    from .pptx.slide import SlideBuilder
-    from .pptx.slide_layout import SlideLayout as PptxConvertibleSlideLayout
+    from ..pptx.slide import SlideBuilder
+    from ..pptx.slide_layout import SlideLayout as PptxConvertibleSlideLayout
 
 
 AnyType = TypeVar("AnyType")
@@ -149,7 +149,7 @@ class SlideLayoutProxy:
         return getattr(self._slide_layout, item)
 
     def builder(self) -> "SlideBuilder":
-        from .pptx.slide import SlideBuilder
+        from ..pptx.slide import SlideBuilder
 
         return SlideBuilder(
             self._convertible_slide_layout,

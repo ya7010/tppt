@@ -38,7 +38,7 @@ from .slide_layout import (
 )
 
 if TYPE_CHECKING:
-    from .pptx.presentation import Presentation
+    from ..pptx.presentation import Presentation
 
 
 GenericSlideMaster = TypeVar("GenericSlideMaster", bound="type[SlideMaster]")

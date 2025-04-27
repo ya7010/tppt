@@ -6,7 +6,7 @@ from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack, cast
 from pptx.slide import Slide as PptxSlide
 
 from tppt.exception import SlideLayoutIndexError
-from tppt.slide_master import GenericTpptSlideMaster
+from tppt.template.slide_master import GenericTpptSlideMaster
 from tppt.types import FilePath
 
 from .converter import PptxConvertible, to_pptx_length

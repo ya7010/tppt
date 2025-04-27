@@ -6,8 +6,8 @@ from typing import IO, TYPE_CHECKING, Any, Callable, Generic, Self, cast, overlo
 from pptx.presentation import Presentation as PptxPresentation
 
 from tppt.pptx.tree import ppt2dict
-from tppt.slide_layout import SlideLayout, SlideLayoutProxy
-from tppt.slide_master import (
+from tppt.template.slide_layout import SlideLayout, SlideLayoutProxy
+from tppt.template.slide_master import (
     DefaultSlideMaster,
     GenericTpptSlideMaster,
     SlideMasterProxy,

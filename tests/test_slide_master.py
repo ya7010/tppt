@@ -1,4 +1,4 @@
-from tppt.slide_layout import (
+from tppt.template.slide_layout import (
     DefaultBlankSlideLayout,
     DefaultComparisonSlideLayout,
     DefaultContentWithCaptionSlideLayout,
@@ -12,7 +12,7 @@ from tppt.slide_layout import (
     DefaultVerticalTitleAndTextSlideLayout,
     Placeholder,
 )
-from tppt.slide_master import DefaultSlideMaster, Layout, get_slide_layouts
+from tppt.template.slide_master import DefaultSlideMaster, Layout, get_slide_layouts
 
 
 class TestSlideMaster(DefaultSlideMaster):

@@ -1,7 +1,7 @@
 from typing import Annotated, Any, ClassVar
 
 from tppt import Presentation
-from tppt.slide_layout import (
+from tppt.template.slide_layout import (
     DefaultTitleSlideLayout,
     Placeholder,
     SlideLayout,
