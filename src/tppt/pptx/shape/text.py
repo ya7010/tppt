@@ -3,7 +3,7 @@ from typing import Literal, NotRequired, Self
 from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 from pptx.shapes.autoshape import Shape as PptxShape
 
-from tppt.pptx.converter import to_pptx_color, to_pptx_length
+from tppt.pptx.converter import to_pptx_length, to_pptx_rgb_color
 from tppt.pptx.text.text_frame import TextFrame
 from tppt.types._color import Color, LiteralColor
 from tppt.types._length import Length, LiteralLength
@@ -52,7 +52,7 @@ class Text(Shape[PptxShape]):
             if (italic := data.get("italic")) is not None:
                 font.italic = italic
             if (color := data.get("color")) is not None:
-                font.color.rgb = to_pptx_color(color)
+                font.color.rgb = to_pptx_rgb_color(color)
             if (margin_bottom := data.get("margin_bottom")) is not None:
                 p.space_after = to_pptx_length(margin_bottom)
             if (margin_left := data.get("margin_left")) is not None:

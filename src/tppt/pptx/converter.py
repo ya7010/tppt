@@ -81,14 +81,14 @@ def to_tppt_length(length: PptxLength | None) -> Length | None:
 
 
 @overload
-def to_pptx_color(color: Color | LiteralColor) -> PptxRGBColor: ...
+def to_pptx_rgb_color(color: Color | LiteralColor) -> PptxRGBColor: ...
 
 
 @overload
-def to_pptx_color(color: Color | LiteralColor | None) -> PptxRGBColor | None: ...
+def to_pptx_rgb_color(color: Color | LiteralColor | None) -> PptxRGBColor | None: ...
 
 
-def to_pptx_color(color: Color | LiteralColor | None) -> PptxRGBColor | None:
+def to_pptx_rgb_color(color: Color | LiteralColor | None) -> PptxRGBColor | None:
     if color is None:
         return None
 
