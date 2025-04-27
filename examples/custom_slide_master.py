@@ -19,7 +19,7 @@ def main():
     presentation = (
         tppt.Presentation.builder(CustomSlideMaster)
         .slide(
-            lambda layout: layout.Master(
+            lambda slide: slide.Master(
                 title="Custom Master Title",
                 text="Custom Master Text",
             )
@@ -32,7 +32,7 @@ def main():
                 height=(100, "pt"),
             )
         )
-        .slide(lambda layout: layout.Title(title="Custom Title"))
+        .slide(lambda slide: slide.Title(title="Custom Title"))
         .build()
     )
 

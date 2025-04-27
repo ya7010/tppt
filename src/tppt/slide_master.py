@@ -37,6 +37,7 @@ from .slide_layout import (
 
 GenericSlideMaster = TypeVar("GenericSlideMaster", bound="type[SlideMaster]")
 
+
 class _SlideMasterMeta(type):
     __slide_master_source__: ClassVar[Literal["default"] | FilePath]
 
