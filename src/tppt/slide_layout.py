@@ -37,6 +37,14 @@ class _Placeholder:
 
 
 Placeholder: TypeAlias = Annotated[AnyType, _Placeholder]
+# if TYPE_CHECKING:
+#     Placeholder: TypeAlias = Annotated[AnyType, ...]
+# else:
+
+#     class Placeholder:
+#         @classmethod
+#         def __class_getitem__(cls, item: AnyType) -> AnyType:
+#             return Annotated[item, cls()]
 
 
 class _SlideLayoutMeta(type):
@@ -228,3 +236,7 @@ class DefaultVerticalTitleAndTextSlide(SlideLayout):
     text: Placeholder[str]
     date: Placeholder[datetime.date | None]
     footer: Placeholder[str | None]
+
+
+def get_placeholders(slide_layout: type[SlideLayout]) -> dict[str, Any]:
+    return slide_layout.__placeholders__
