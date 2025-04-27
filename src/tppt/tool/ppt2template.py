@@ -330,22 +330,22 @@ def generate_layout_class(layout: LayoutInfo) -> str:
     class_name = layout.class_name or f"Custom{layout.name.replace(' ', '')}Layout"
     class_docstring = f'"""{layout.name} layout."""'
 
-    # 重複するフィールド名を削除する
+    # Remove duplicate field names
     unique_fields = {}
     for ph in layout.placeholders:
         if not ph.field_name or not ph.field_type:
             continue
 
-        # 同じフィールド名が存在する場合は上書き（最後のものを使用）
+        # Overwrite if the same field name exists (use the last one)
         unique_fields[ph.field_name] = ph
 
-    # 元のインデックス順を維持する（ソートしない）
+    # Maintain original index order (do not sort)
     placeholder_definitions = []
     for ph in layout.placeholders:
         if not ph.field_name or not ph.field_type:
             continue
 
-        # 重複を避けるため、最後に処理されたフィールドだけを出力
+        # Only output the last processed field to avoid duplicates
         if unique_fields.get(ph.field_name) is not ph:
             continue
 
