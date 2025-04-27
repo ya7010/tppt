@@ -103,6 +103,15 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
         """Initialize the builder."""
         import pptx
 
+        if (
+            slide_master_source := slide_master.__slide_master_source__
+        ) and not "default":
+            if isinstance(slide_master_source, os.PathLike):
+                slide_master_source = os.fspath(slide_master_source)
+            self._pptx = pptx.Presentation(slide_master_source)
+        else:
+            self._pptx = pptx.Presentation()
+
         self._pptx = pptx.Presentation()
         self._slide_master = slide_master
 
