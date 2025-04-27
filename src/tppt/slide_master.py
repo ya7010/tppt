@@ -1,4 +1,12 @@
-from typing import TYPE_CHECKING, Annotated, TypeAlias, get_args, get_origin
+from typing import (
+    TYPE_CHECKING,
+    Annotated,
+    ClassVar,
+    Literal,
+    TypeAlias,
+    get_args,
+    get_origin,
+)
 
 from typing_extensions import TypeVar, dataclass_transform
 
@@ -7,6 +15,7 @@ from tppt.exception import (
     SlideMasterAttributeNotFoundError,
     SlideMasterDoesNotHaveAttributesError,
 )
+from tppt.types import FilePath
 
 from .slide_layout import (
     AnyType,
@@ -26,6 +35,8 @@ from .slide_layout import (
 
 
 class _SlideMasterMeta(type):
+    __slide_master_source__: ClassVar[Literal["default"] | FilePath]
+
     def __getattr__(self, key: str) -> "type[SlideLayout]":
         # 1. Check the class's own attributes
         if key in self.__dict__:
@@ -83,6 +94,21 @@ else:
             return Annotated[item, cls()]
 
 
+def slide_master(source: Literal["default"] | FilePath):
+    """Decorator that sets the slide master source.
+
+    Args:
+        source: Either "default" or a path to a PowerPoint file containing the slide master
+    """
+
+    def decorator(cls: type[SlideMaster]) -> type[SlideMaster]:
+        setattr(cls, "__slide_master_source__", source)
+        return cls
+
+    return decorator
+
+
+@slide_master("default")
 class DefaultSlideMaster(SlideMaster):
     Title: Layout[DefaultTitleSlide]
     TitleAndContent: Layout[DefaultTitleAndContentSlide]
