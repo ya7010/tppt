@@ -11,9 +11,7 @@ pip install tppt
 ## Usage Example
 
 ```python
-from pathlib import Path
 import tppt
-from tppt.types import Color
 
 # Create a presentation using the builder pattern
 presentation = (
@@ -22,6 +20,7 @@ presentation = (
         lambda slide: slide.TitleLayout(
             title="Amazing Presentation",
         )
+        .builder()
         .text(
             "Amazing Presentation",
             left=(50, "pt"),
@@ -46,6 +45,7 @@ presentation = (
             title="Image Example",
             content="This is an example of an image on a slide.",
         )
+        .builder()
         .text(
             "Image Example",
             left=(50, "pt"),
@@ -62,7 +62,8 @@ presentation = (
         )
     )
     .slide(
-        tppt.SlideBuilder()
+        lambda slide: slide.BlankLayout()
+        .builder()
         .text(
             "Table Example",
             left=(50, "pt"),
