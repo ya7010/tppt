@@ -29,7 +29,7 @@ presentation = (
             size=(60, "pt"),
             bold=True,
             italic=True,
-            color=Color("#0000FF"),
+            color="#0000FF",
         )
         .text(
             "Example of using tppt library",
