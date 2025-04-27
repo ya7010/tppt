@@ -5,14 +5,7 @@ description = "Typed Python PowerPoint Tool"
 readme = "README.md"
 requires-python = ">=3.11.0"
 authors = [{ name = "yassun7010", email = "yassun7010@outlook.com" }]
-dependencies = [
-  "Pillow>=10.0.0",
-  "python-pptx>=1.0.2",
-  "typing-extensions>=4.13.2",
-]
 classifiers = [
-  "Typing :: Typed",
-  "Topic :: Software Development :: Libraries :: Python Modules",
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
@@ -22,15 +15,25 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
   "Topic :: Office/Business :: Office Suites",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
+]
+dependencies = [
+  "Pillow>=10.0.0",
+  "python-pptx>=1.0.2",
+  "typing-extensions>=4.13.2",
 ]
 
 [project.optional-dependencies]
 pandas = ["pandas>=2.0.0"]
 polars = ["polars>=0.20.0"]
-rich = ["rich>=14.0.0", "rich-argparse>=1.7.0"]
+tool = [
+  "rich>=14.0.0",
+  "rich-argparse>=1.7.0",
+  "pydantic-ai>=0.1.6",
+]
 
 [dependency-groups]
-rich = ["rich", "rich-argparse"]
 dataframes = [
   "pandas",
   "polars",
@@ -42,12 +45,20 @@ dev = [
   "ruff>=0.11.6",
   "taskipy>=1.14.1",
   "tombi>=0.3.27",
-  {include-group = "rich"},
+  { include-group = "rich" },
 ]
+rich = ["rich", "rich-argparse"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.mypy]
+exclude = ["**/site-packages", ".venv/**"]
+
+[tool.pyright]
+include = ["src/tppt", "examples", "tests"]
+exclude = ["**/site-packages", ".venv/**"]
 
 [tool.pytest.ini_options]
 python_files = ["test_*.py"]
@@ -59,13 +70,6 @@ format = "ruff format"
 format-check = "ruff format --check"
 lint = "ruff check"
 lint-check = "ruff check --fix"
-typecheck-pyright = "pyright"
-typecheck = "task typecheck-pyright"
 test = "pytest"
-
-[tool.pyright]
-include = ["src/tppt", "examples", "tests"]
-exclude = [ "**/site-packages", ".venv/**"]
-
-[tool.mypy]
-exclude = ["**/site-packages", ".venv/**"]
+typecheck = "task typecheck-pyright"
+typecheck-pyright = "pyright"
