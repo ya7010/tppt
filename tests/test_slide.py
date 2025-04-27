@@ -11,11 +11,7 @@ def test_slide_placeholders() -> None:
     """Test getting placeholders from a slide."""
     # Create a presentation with a slide
     presentation = (
-        tppt.Presentation.builder()
-        .slide(
-            tppt.SlideBuilder(0)  # Use layout 0 which usually has placeholders
-        )
-        .build()
+        tppt.Presentation.builder().slide(lambda slide: slide.Blank()).build()
     )
 
     # Get the slide from the presentation's pptx object

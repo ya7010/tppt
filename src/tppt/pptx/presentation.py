@@ -107,21 +107,17 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
 
     def slide(
         self,
-        slide: SlideBuilder
-        | Callable[[type[GenericTpptSlideMaster]], SlideBuilder | SlideLayout],
+        slide: Callable[[type[GenericTpptSlideMaster]], SlideBuilder | SlideLayout],
         /,
     ) -> Self:
         """Add a slide to the presentation."""
-        if isinstance(slide, SlideBuilder):
-            slide._build(self)
-        else:
-            slide_layout = slide(self._slide_master)
-            slide_builder = (
-                slide_layout.builder()
-                if isinstance(slide_layout, SlideLayout)
-                else slide_layout
-            )
-            slide_builder._build(self)
+        slide_layout = slide(self._slide_master)
+        slide_builder = (
+            slide_layout.builder()
+            if isinstance(slide_layout, SlideLayout)
+            else slide_layout
+        )
+        slide_builder._build(self)
 
         return self
 
