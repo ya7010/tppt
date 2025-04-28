@@ -10,7 +10,7 @@ pip install tppt
 
 ## 📚 Documentation
 
-For detailed documentation, please visit [TPPT Documentation](https://yassun7010.github.io/tppt/).
+For detailed documentation, please visit [Documentation](https://yassun7010.github.io/tppt/).
 
 ## 🎯 Usage Examples
 
