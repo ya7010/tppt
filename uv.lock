@@ -1109,6 +1109,7 @@ dev = [
     { name = "mkdocstrings" },
     { name = "mkdocstrings-python" },
     { name = "mypy" },
+    { name = "pymdown-extensions" },
     { name = "pyright" },
     { name = "pytest" },
     { name = "rich" },
@@ -1122,6 +1123,7 @@ docs = [
     { name = "mkdocs-material" },
     { name = "mkdocstrings" },
     { name = "mkdocstrings-python" },
+    { name = "pymdown-extensions" },
 ]
 rich = [
     { name = "rich" },
@@ -1153,6 +1155,7 @@ dev = [
     { name = "mkdocstrings", specifier = ">=0.25.0" },
     { name = "mkdocstrings-python", specifier = ">=1.10.0" },
     { name = "mypy", specifier = ">=1.15.0" },
+    { name = "pymdown-extensions", specifier = ">=10.15" },
     { name = "pyright", specifier = ">=1.1.399" },
     { name = "pytest", specifier = ">=8.3.5" },
     { name = "rich" },
@@ -1166,6 +1169,7 @@ docs = [
     { name = "mkdocs-material", specifier = ">=9.6.12" },
     { name = "mkdocstrings", specifier = ">=0.25.0" },
     { name = "mkdocstrings-python", specifier = ">=1.10.0" },
+    { name = "pymdown-extensions", specifier = ">=10.15" },
 ]
 rich = [
     { name = "rich" },

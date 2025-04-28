@@ -6,7 +6,7 @@ We welcome contributions to TPPT! This document provides guidelines and instruct
 
 1. Fork and clone the repository:
 ```bash
-git clone https://github.com/yourusername/tppt.git
+git clone https://github.com/yassun7010/tppt.git
 cd tppt
 ```
 

@@ -12,20 +12,7 @@ TPPT (Typed Python PowerPoint Tool) is a Python library for creating and manipul
 ## Quick Start
 
 ```python
-from tppt import Presentation
-
-# Create a new presentation
-presentation = Presentation()
-
-# Add a slide
-slide = presentation.add_slide()
-
-# Add content to the slide
-slide.add_title("Hello, World!")
-slide.add_text("This is a sample slide.")
-
-# Save the presentation
-presentation.save("example.pptx")
+--8<-- "docs/examples/simple.py"
 ```
 
 ## Getting Started

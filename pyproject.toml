@@ -54,6 +54,7 @@ docs = [
   "mkdocs>=1.6.1",
   "mkdocstrings-python>=1.10.0",
   "mkdocstrings>=0.25.0",
+  "pymdown-extensions>=10.15",
 ]
 rich = ["rich", "rich-argparse"]
 
