@@ -40,23 +40,15 @@ plugins:
             docstring_style: google
             filters: ["!^_"]
           paths: [src]
-          inventories:
-            - src/tppt
-            - src/tppt/pptx
-            - src/tppt/pptx/dml
-            - src/tppt/pptx/shape
-            - src/tppt/pptx/text
-            - src/tppt/template
-            - src/tppt/types
-            - src/tppt/exception
 
 markdown_extensions:
+  - pymdownx.details:
   - pymdownx.highlight:
       anchor_linenums: true
-  - pymdownx.inlinehilite
+  - pymdownx.inlinehilite:
   - pymdownx.snippets:
       base_path: docs
-  - pymdownx.superfences
+  - pymdownx.superfences:
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.tasklist:

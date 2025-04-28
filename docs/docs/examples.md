@@ -137,4 +137,4 @@ table = slide.add_table(data)
 presentation.save("project_status.pptx")
 ```
 
-These examples demonstrate some common use cases for TPPT. For more detailed information about specific features, please refer to the [API Reference](api.md). 
+These examples demonstrate some common use cases for TPPT. For more detailed information about specific features, please refer to the [API Reference](api/tppt.md). 

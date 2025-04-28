@@ -12,7 +12,7 @@ TPPT (Typed Python PowerPoint Tool) is a Python library for creating and manipul
 ## Quick Start
 
 ```python
---8<-- "docs/examples/simple.py"
+--8<-- "examples/simple.py"
 ```
 
 ## Getting Started
