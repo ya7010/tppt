@@ -1,82 +1,85 @@
-# TPPTのコンセプト
+# TPPT Concept
 
-## なぜTPPTなのか？
+## Why TPPT?
 
-生成AIが普及している現在でも、レポートを pptx で提出してほしい、といった要望は多いものです。
-（私たちが取り残されているだけなのだろうか？）
+Even in the current era of widespread generative AI, there are still many requests for submitting reports in pptx format.
+(Are we the only ones being left behind?)
 
-tppt は python-pptx のラッパーであり、スライドマスターの型安全な利用などを提供します。
+TPPT is a wrapper for python-pptx that provides type-safe usage of slide masters and more.
 
-また、簡単に利用でき、直感的に記述されるためのアイデアを投入したものであり、
-皆さんの pptx の生成がより安全に、簡単になることを願っています。
+It also incorporates ideas to make it easy to use and intuitive to write,
+hoping to make your pptx generation safer and simpler.
 
-## import の削減
-もう一度 Quick Start を見てみましょう。
+## Reducing Imports
+Let's look at the Quick Start again:
 ```python
 --8<-- "codes/quick_start.py"
 ```
 
-このコードは、TPPTのみをインポートしています。
+This code only imports TPPT.
 
-極端に少ない import で、PowerPoint のプレゼンテーションを作成できます。
+You can create PowerPoint presentations with an extremely minimal number of imports.
 
-これは、 AI でコード生成をする際、常に tppt を import するだけで済むように配慮することで、
-コード生成の成功率を高めることができないか？という実験的なアプローチです。
+This is an experimental approach to increase the success rate of code generation by AI,
+by ensuring that only importing tppt is sufficient.
 
-これの実現には二つのテクニックが利用されています。
+Two techniques are used to achieve this:
 
-### Literal 型の積極的採用
+### Active Adoption of Literal Types
 
-例えば、スライドに追加する Shape の形は従来のように次のように書くことができます。
+For example, the shape of a Shape to be added to a slide can be written in the traditional way:
 
 ```python
 --8<-- "codes/quick_start_many_import.py"
 ```
 
-つまり、 `tppt.types.Inches(1)` と同じことを `(1, "in")` と書くことができます。
+In other words, `tppt.types.Inches(1)` can be written as `(1, "in")`.
 
-このように、肩による単位の指定を Literal で表現することで、従来必要であったインポートを減らしています。
+By expressing unit specifications with types using Literals in this way,
+we have reduced the imports that were previously necessary.
 
-これは、書き込みの話であり、プロパティを読み取るには必ず Inches 型に変換されている状態であるため、加減算や比較ができるようになっています。
+This is about writing; when reading properties, they are always converted to the Inches type,
+allowing for addition, subtraction, and comparison.
 
+### Type Extraction
 
-### 型の引き出し
+There are places where lambda expressions like `lambda slide: slide...` are used.
+This is lazy evaluation, where the type is extracted at the time of element initialization,
+and the element is completed by adding operations to it.
 
-いくつかの場所で `lambda slide: slide...` のように lambda 式を利用している箇所があります。
-これは遅延評価であり、要素を初期化した時点の方を取り出し、それに操作を加えることで要素を完成させます。
+The characteristic of this approach is that instead of importing types and passing them to function arguments,
+types are extracted from within the function and used.
 
-このアプローチの特徴は、型を import してから関数の引数に渡すのではなく、
-関数の中から型を取り出して利用するというものです。
+This further reduces imports for code generation.
 
-これにより、コード生成としては import をさらに減らしています。
-
-この方法には別のメリットがあります。
-引き出した型に対する操作を関数で切り出すことで、部品を共通化することが容易になります。
+This method has another advantage.
+By extracting operations on the extracted types into functions,
+it becomes easier to share components.
 
 ```python
 --8<-- "codes/apply_sample.py"
 ```
 
-あなたは `format_text` のような独自の修飾関数を作成し、それを簡単に再利用できます。
+You can create your own modifier functions like `format_text` and easily reuse them.
 
-### 型安全性
-このツールはスライドマスターを元に、新規のスライド作成を行うユーザをメインターゲットとしています。
+### Type Safety
+This tool is mainly targeted at users who create new slides based on slide masters.
 
-さて、あなたが私と同じであれば、 python-pptx のスライドマスターに型を与えることに苦労したはずです。
+If you're like me, you've probably struggled with giving types to python-pptx's slide masters.
 
-tppt は、 pydantic のような宣言的な型ヒントを利用してスライドマスターに型を与えることができます。
+TPPT allows you to give types to slide masters using declarative type hints like pydantic.
 
 ```python
 --8<-- "codes/custom_slide_master.py"
 ```
 
-型定義を自分で書くのは面倒だ？そんな方のために、ささやかなツールも用意しています。
+Is writing type definitions yourself tedious? We've prepared a modest tool for you.
 
 ```bash
 python -m tppt.tool.ppt2template $YOUR_TEMPLATE.pptx -o $OUTPUT_FILE.py
 ```
 
-スライドレイアウトのコンストラクタでプレースホルダーの設定をした後、
-テキストやピクチャ、表などのデータを記述することができます。
+After setting placeholders in the slide layout constructor,
+you can describe data such as text, pictures, and tables.
 
-これらの操作は全て型安全です！
+All these operations are type-safe!
