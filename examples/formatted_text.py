@@ -9,7 +9,7 @@ EXAMPLE_DIR = Path(__file__).parent
 
 
 def main():
-    def colorize(text: tppt.pptx.shape.text.Text) -> tppt.pptx.shape.text.Text:
+    def formatted_text(text: tppt.pptx.shape.text.Text) -> tppt.pptx.shape.text.Text:
         run = text.text_frame().add_paragraph().add_run()
         run.text = "Hello, world!"
         font = run.font
@@ -27,7 +27,7 @@ def main():
             .builder()
             .text(
                 # Pattern custom function
-                colorize,
+                formatted_text,
                 left=(50, "pt"),
                 top=(50, "pt"),
                 width=(400, "pt"),
