@@ -181,13 +181,43 @@ class SlideBuilder:
 
         return self
 
-    def table(self, data: DataFrame, /, **kwargs: Unpack[TableProps]) -> Self:
-        data = dataframe2list(data)
-        rows, cols = len(data), len(data[0])
-        table_data: TableData = {"type": "table", "data": data, **kwargs}
+    @overload
+    def table(self, data: DataFrame, /, **kwargs: Unpack[TableProps]) -> Self: ...
 
-        self._shape_registry.append(
-            lambda slide: Table(
+    @overload
+    def table(
+        self,
+        data: Callable[[Table], Table],
+        /,
+        rows: int,
+        cols: int,
+        **kwargs: Unpack[TableProps],
+    ) -> Self: ...
+
+    def table(
+        self,
+        data: DataFrame | Callable[[Table], Table],
+        /,
+        rows: int | None = None,
+        cols: int | None = None,
+        **kwargs: Unpack[TableProps],
+    ) -> Self:
+        if isinstance(data, Callable):
+            assert rows is not None
+            assert cols is not None
+            table_data: TableData = {"type": "table", "data": [], **kwargs}
+        else:
+            data = dataframe2list(data)
+            rows, cols = len(data), len(data[0])
+
+            table_data: TableData = {
+                "type": "table",
+                "data": data,
+                **kwargs,
+            }
+
+        def _register(slide: Slide) -> Table:
+            table_obj = Table(
                 slide.to_pptx().shapes.add_table(
                     rows,
                     cols,
@@ -198,7 +228,14 @@ class SlideBuilder:
                 ),
                 table_data,
             )
-        )
+
+            if isinstance(data, Callable):
+                return data(table_obj)
+            else:
+                return table_obj
+
+        self._shape_registry.append(_register)
+
         return self
 
     def _build(self, slide: PptxSlide) -> Slide:
