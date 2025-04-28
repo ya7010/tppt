@@ -28,10 +28,14 @@ class Presentation(PptxConvertible[PptxPresentation]):
 
     def __init__(
         self,
-        presentation: PptxPresentation,
+        pptx: PptxPresentation | FilePath,
     ) -> None:
         """Initialize presentation."""
-        self._pptx = presentation
+        if isinstance(pptx, (os.PathLike, str)):
+            from pptx import Presentation
+
+            pptx = Presentation(os.fspath(pptx))
+        self._pptx = pptx
 
     @property
     def slides(self) -> "list[Slide]":
