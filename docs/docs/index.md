@@ -4,6 +4,12 @@
 
 A modern Python library for creating beautiful PowerPoint presentations with code! 🚀
 
+## Quick Start
+
+```python
+--8<-- "codes/quick-start.py"
+```
+
 ## Features
 
 - 🛡️ **Type-Safe Development**
@@ -25,11 +31,6 @@ A modern Python library for creating beautiful PowerPoint presentations with cod
 - 📊 **Data Integration**
     - Seamless pandas/polars DataFrame support
 
-## Quick Start
-
-```python
---8<-- "codes/quick-start.py"
-```
 
 ## Getting Started
 
