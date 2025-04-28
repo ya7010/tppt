@@ -52,9 +52,9 @@ dev = [
 docs = [
   "mkdocs-material>=9.6.12",
   "mkdocs>=1.6.1",
-  "pymdown-extensions>=10.15",
   "mkdocstrings-python>=1.16.10",
   "mkdocstrings>=0.29.1",
+  "pymdown-extensions>=10.15",
 ]
 rich = ["rich", "rich-argparse"]
 
@@ -75,9 +75,9 @@ testpaths = ["tests"]
 
 [tool.taskipy.tasks]
 ci = "task format && task lint && task typecheck && task test"
-docs = "cd docs && mkdocs serve"
-docs-build = "cd docs && mkdocs build"
-docs-deploy = "cd docs && mkdocs gh-deploy"
+docs = "mkdocs serve"
+docs-build = "mkdocs build"
+docs-deploy = "mkdocs gh-deploy"
 format = "ruff format"
 format-check = "ruff format --check"
 lint = "ruff check"
