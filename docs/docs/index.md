@@ -34,7 +34,7 @@ A modern Python library for creating beautiful PowerPoint presentations with cod
 
 ## Getting Started
 
-To get started with TPPT, check out the [Installation](installation.md) guide and [Usage](usage/index.md) documentation.
+To get started with TPPT, check out the [Installation](home/installation.md) guide and [Usage](usage/index.md) documentation.
 
 ## License
 
