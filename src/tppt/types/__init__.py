@@ -3,8 +3,6 @@
 import pathlib
 from typing import TypeAlias
 
-from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE as _MSO_AUTO_SHAPE_TYPE
-
 from tppt.pptx.shape import RangeProps as _RangeProps
 from tppt.pptx.shape.table import TableCellStyle as TableCellStyle
 
@@ -33,5 +31,4 @@ from ._length import (
 )
 
 FilePath = str | pathlib.Path
-AutoShapeType: TypeAlias = _MSO_AUTO_SHAPE_TYPE
 Range: TypeAlias = _RangeProps
