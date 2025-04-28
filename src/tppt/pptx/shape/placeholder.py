@@ -7,8 +7,10 @@ from pptx.shapes.placeholder import SlidePlaceholder as PptxSlidePlaceholder
 from tppt.exception import InvalidSetterTypeError
 from tppt.pptx.presentation import PptxConvertible
 
+from . import BaseShape
 
-class SlidePlaceholder(PptxConvertible[PptxSlidePlaceholder]):
+
+class SlidePlaceholder(BaseShape[PptxSlidePlaceholder]):
     def __init__(self, pptx_obj: PptxSlidePlaceholder) -> None:
         self._pptx = pptx_obj
 

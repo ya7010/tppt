@@ -8,9 +8,9 @@ from pptx.slide import Slide as PptxSlide
 from tppt.types import FilePath
 
 from .converter import PptxConvertible, to_pptx_length
-from .placeholder import SlidePlaceholder
-from .shape import RangeProps, Shape
+from .shape import BaseShape, RangeProps
 from .shape.picture import Picture, PictureData, PictureProps
+from .shape.placeholder import SlidePlaceholder
 from .shape.text import Text, TextData, TextProps
 from .slide_layout import SlideLayout
 from .snotes_slide import NotesSlide
@@ -43,9 +43,9 @@ class Slide(PptxConvertible[PptxSlide]):
         return self._pptx.slide_id
 
     @property
-    def shapes(self) -> list[Shape]:
+    def shapes(self) -> list[BaseShape]:
         """Get all shapes in the slide."""
-        return [Shape(shape) for shape in self._pptx.shapes]
+        return [BaseShape(shape) for shape in self._pptx.shapes]
 
     @property
     def placeholders(self) -> list[SlidePlaceholder]:

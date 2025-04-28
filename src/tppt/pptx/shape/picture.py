@@ -4,7 +4,7 @@ from pptx.shapes.picture import Picture as PptxPicture
 
 from tppt.types import FilePath
 
-from . import RangeProps, Shape
+from . import BaseShape, RangeProps
 
 
 class PictureProps(RangeProps):
@@ -19,7 +19,7 @@ class PictureData(PictureProps):
     image_file: FilePath | IO[bytes]
 
 
-class Picture(Shape[PptxPicture]):
+class Picture(BaseShape[PptxPicture]):
     """Picture data class."""
 
     def __init__(

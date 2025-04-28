@@ -35,7 +35,7 @@ class TextData(TextProps):
     text: str
 
 
-class Text(Shape[PptxShape]):
+class Text(Shape):
     """Text data class."""
 
     def __init__(self, pptx_obj: PptxShape, data: TextData | None = None, /) -> None:

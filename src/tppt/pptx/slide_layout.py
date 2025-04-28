@@ -3,9 +3,9 @@ from typing import Self
 from pptx.slide import SlideLayout as PptxSlideLayout
 
 from .converter import PptxConvertible
-from .placeholder import LayoutPlaceholder
-from .shape import Shape
+from .shape import BaseShape
 from .shape.background import Background
+from .shape.placeholder import LayoutPlaceholder
 
 
 class SlideLayout(PptxConvertible[PptxSlideLayout]):
@@ -39,9 +39,9 @@ class SlideLayout(PptxConvertible[PptxSlideLayout]):
         ]
 
     @property
-    def shapes(self) -> list[Shape]:
+    def shapes(self) -> list[BaseShape]:
         """Get the shapes."""
-        return [Shape.from_pptx(shape) for shape in self._pptx.shapes]
+        return [BaseShape.from_pptx(shape) for shape in self._pptx.shapes]
 
     def to_pptx(self) -> PptxSlideLayout:
         """Convert to pptx slide layout."""

@@ -3,7 +3,6 @@
 from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 
 import tppt
-import tppt.pptx.table.table
 from tppt.types._color import Color
 
 
@@ -27,7 +26,7 @@ def test_text_with_options(output) -> None:
                 size=(24, "pt"),
                 bold=True,
                 italic=True,
-                color=Color("#FF0000"),
+                color=Color("#0000FF"),
                 margin_bottom=(10, "pt"),
                 margin_left=(10, "pt"),
                 vertical_anchor=MSO_ANCHOR.MIDDLE,

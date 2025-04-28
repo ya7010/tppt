@@ -1,7 +1,8 @@
 import datetime
 from typing import Literal
 
-from ..types import FilePath
+from tppt.types import FilePath
+
 from .slide_layout import Placeholder, SlideLayout
 from .slide_master import Layout, SlideMaster, slide_master
 

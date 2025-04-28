@@ -4,7 +4,7 @@ import pytest
 
 import tppt
 import tppt.pptx.slide
-from tppt.pptx.placeholder import LayoutPlaceholder, SlidePlaceholder
+from tppt.pptx.shape.placeholder import LayoutPlaceholder, SlidePlaceholder
 from tppt.pptx.slide_layout import SlideLayout as PptxSlideLayout
 
 
