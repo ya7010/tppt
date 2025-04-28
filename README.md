@@ -126,7 +126,3 @@ This library consists of the following modules:
 ## 📜 License
 
 MIT
-
----
-
-Made with ❤️ by the tppt team
