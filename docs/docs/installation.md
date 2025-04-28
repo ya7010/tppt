@@ -6,29 +6,29 @@ TPPT can be installed using your favorite Python package manager.
 
 - Python 3.11 or higher
 - One of the following package managers:
-    * [uv](https://docs.astral.sh/uv/)
-    * [poetry](https://python-poetry.org/)
-    * [hatch](https://hatch.pypa.io/)
     * [pip](https://pip.pypa.io/)
-
-=== "uv"
-    ```bash
-    uv add tppt
-    ```
+    * [uv](https://docs.astral.sh/uv/)
+    * [hatch](https://hatch.pypa.io/)
+    * [poetry](https://python-poetry.org/)
 
 === "pip"
     ```bash
     pip install tppt
     ```
 
-=== "poetry"
+=== "uv"
     ```bash
-    poetry add tppt
+    uv add tppt
     ```
 
 === "hatch"
     ```bash
     hatch add tppt
+    ```
+
+=== "poetry"
+    ```bash
+    poetry add tppt
     ```
 
 ## Optional Dependencies
@@ -39,15 +39,6 @@ TPPT provides optional dependencies for additional features:
 
 For working with data frames:
 
-=== "uv"
-    ```bash
-    # For pandas support
-    uv add "tppt[pandas]"
-
-    # For polars support
-    uv add "tppt[polars]"
-    ```
-
 === "pip"
     ```bash
     # For pandas support
@@ -57,13 +48,13 @@ For working with data frames:
     pip install "tppt[polars]"
     ```
 
-=== "poetry"
+=== "uv"
     ```bash
     # For pandas support
-    poetry add "tppt[pandas]"
+    uv add "tppt[pandas]"
 
     # For polars support
-    poetry add "tppt[polars]"
+    uv add "tppt[polars]"
     ```
 
 === "hatch"
@@ -75,23 +66,27 @@ For working with data frames:
     hatch add "tppt[polars]"
     ```
 
+=== "poetry"
+    ```bash
+    # For pandas support
+    poetry add "tppt[pandas]"
+
+    # For polars support
+    poetry add "tppt[polars]"
+    ```
+
 ### Pydantic Support
 
 For Pydantic integration:
-
-=== "uv"
-    ```bash
-    uv add "tppt[pydantic]"
-    ```
 
 === "pip"
     ```bash
     pip install "tppt[pydantic]"
     ```
 
-=== "poetry"
+=== "uv"
     ```bash
-    poetry add "tppt[pydantic]"
+    uv add "tppt[pydantic]"
     ```
 
 === "hatch"
@@ -99,28 +94,33 @@ For Pydantic integration:
     hatch add "tppt[pydantic]"
     ```
 
+=== "poetry"
+    ```bash
+    poetry add "tppt[pydantic]"
+    ```
+
 ### Development Tools
 
 For development purposes:
-
-=== "uv"
-    ```bash
-    uv add "tppt[dev]"
-    ```
 
 === "pip"
     ```bash
     pip install "tppt[dev]"
     ```
 
-=== "poetry"
+=== "uv"
     ```bash
-    poetry add "tppt[dev]"
+    uv add "tppt[dev]"
     ```
 
 === "hatch"
     ```bash
     hatch add "tppt[dev]"
+    ```
+
+=== "poetry"
+    ```bash
+    poetry add "tppt[dev]"
     ```
 
 ## Verifying Installation
