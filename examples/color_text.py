@@ -22,9 +22,9 @@ def main():
                             lambda run: run.builder()
                             .text("Hello, world!")
                             .font(
-                                lambda font: font.builder().color(
-                                    lambda color: color.builder().rgb("#0000FF")
-                                )
+                                lambda font: font.builder()
+                                .color(lambda color: color.builder().rgb("#0000FF"))
+                                .italic(True)
                             )
                         )
                     ),

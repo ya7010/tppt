@@ -104,17 +104,17 @@ class SlideBuilder:
         text: str | Callable[[Text], Text | TextBuilder],
         **kwargs: Unpack[TextProps],
     ) -> Self:
-        data = TextData(
-            type="text",
-            text=text if isinstance(text, str) else "",
-            top=kwargs["top"],
-            left=kwargs["left"],
-            width=kwargs["width"],
-            height=kwargs["height"],
-        )
+        def _register(slide: Slide) -> Text:
+            data = TextData(
+                type="text",
+                text=text if isinstance(text, str) else "",
+                top=kwargs["top"],
+                left=kwargs["left"],
+                width=kwargs["width"],
+                height=kwargs["height"],
+            )
 
-        self._shape_registry.append(
-            lambda slide: Text(
+            text_obj = Text(
                 slide.to_pptx().shapes.add_textbox(
                     to_pptx_length(data["left"]),
                     to_pptx_length(data["top"]),
@@ -123,7 +123,15 @@ class SlideBuilder:
                 ),
                 data,
             )
-        )
+            if isinstance(text, Callable):
+                text_builder = text(text_obj)
+                if isinstance(text_builder, TextBuilder):
+                    text_builder = text_builder._build()
+                return text_builder
+            else:
+                return text_obj
+
+        self._shape_registry.append(_register)
 
         return self
 

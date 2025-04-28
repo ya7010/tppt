@@ -39,7 +39,7 @@ class Text(Shape[PptxShape]):
     """Text data class."""
 
     def __init__(self, pptx_obj: PptxShape, data: TextData | None = None, /) -> None:
-        if data:
+        if data and data["text"] != "":
             text_frame = pptx_obj.text_frame
             p = text_frame.paragraphs[0]
             run = p.add_run()
