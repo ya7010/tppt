@@ -3,9 +3,17 @@
 import importlib.metadata
 from typing import Callable, Concatenate, ParamSpec, TypeVar
 
-from tppt.pptx.presentation import Presentation
-from tppt.template.slide_layout import Placeholder, SlideLayout
-from tppt.template.slide_master import Layout, SlideMaster, slide_master
+from tppt.pptx.presentation import Presentation as Presentation
+from tppt.pptx.shape.picture import Picture as Picture
+from tppt.pptx.shape.text import Text as Text
+from tppt.pptx.slide import Slide as Slide
+from tppt.pptx.table import Table as Table
+from tppt.pptx.table import TableCellStyle as TableCellStyle
+from tppt.template.slide_layout import Placeholder as Placeholder
+from tppt.template.slide_layout import SlideLayout as SlideLayout
+from tppt.template.slide_master import Layout as Layout
+from tppt.template.slide_master import SlideMaster as SlideMaster
+from tppt.template.slide_master import slide_master as slide_master
 
 from . import types as types
 
@@ -35,15 +43,3 @@ def apply(
         return func(x, *args, **kwargs)
 
     return wrapper
-
-
-__all__ = [
-    "Presentation",
-    "SlideLayout",
-    "Placeholder",
-    "SlideLayout",
-    "SlideMaster",
-    "Layout",
-    "slide_master",
-    "apply",
-]

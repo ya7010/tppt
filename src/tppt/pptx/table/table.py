@@ -25,7 +25,7 @@ from tppt._features import (
     PolarsLazyFrame,
     PydanticModel,
 )
-from tppt.types._length import LiteralPoint, Points
+from tppt.types._length import LiteralPoints, Points
 
 from ..converter import PptxConvertible, to_pptx_length
 from ..shape import RangeProps
@@ -52,7 +52,7 @@ class TableCellStyle(TypedDict):
     vertical_align: NotRequired[Literal["top", "middle", "bottom"]]
     bold: NotRequired[bool]
     italic: NotRequired[bool]
-    font_size: NotRequired[Points | LiteralPoint]
+    font_size: NotRequired[Points | LiteralPoints]
     font_name: NotRequired[str]
 
 

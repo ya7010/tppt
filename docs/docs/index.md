@@ -7,7 +7,7 @@ A modern Python library for creating beautiful PowerPoint presentations with cod
 ## Quick Start
 
 ```python
---8<-- "codes/quick-start.py"
+--8<-- "codes/quick_start.py"
 ```
 
 ## Features

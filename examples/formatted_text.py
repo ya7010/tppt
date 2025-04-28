@@ -10,7 +10,7 @@ EXAMPLE_DIR = Path(__file__).parent
 
 def main():
     def formatted_text(text: tppt.pptx.shape.text.Text, /) -> tppt.pptx.shape.text.Text:
-        run = text.text_frame().add_paragraph().add_run()
+        run = text.text_frame.add_paragraph().add_run()
         run.text = "Hello, world!"
         font = run.font
         font.color.rgb = "#00FFFF"
@@ -27,7 +27,7 @@ def main():
         italic: bool = False,
         color: tppt.types.Color | tppt.types.LiteralColor | None = None,
     ) -> tppt.pptx.shape.text.Text:
-        run = text_obj.text_frame().add_paragraph().add_run()
+        run = text_obj.text_frame.add_paragraph().add_run()
         run.text = text
         font = run.font
 

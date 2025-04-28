@@ -70,6 +70,7 @@ class Text(Shape[PptxShape]):
 
         self._pptx = pptx_obj
 
+    @property
     def text_frame(self) -> TextFrame:
         return TextFrame(self._pptx.text_frame)
 

@@ -14,7 +14,7 @@ from ._length import (
     EnglishMetricUnits as EnglishMetricUnits,
 )
 from ._length import (
-    Inchs as Inchs,
+    Inches as Inches,
 )
 from ._length import (
     Length as Length,

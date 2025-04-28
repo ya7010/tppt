@@ -23,7 +23,7 @@ from tppt.types._color import Color, LiteralColor, to_color
 from tppt.types._length import (
     CentiMeters,
     EnglishMetricUnits,
-    Inchs,
+    Inches,
     Length,
     LiteralLength,
     MilliMeters,
@@ -61,7 +61,7 @@ def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None:
         length = to_length(length)
 
     match length:
-        case Inchs():
+        case Inches():
             return PptxInches(length.value)
         case CentiMeters():
             return PptxCm(length.value)
