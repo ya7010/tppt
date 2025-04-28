@@ -74,9 +74,9 @@ testpaths = ["tests"]
 
 [tool.taskipy.tasks]
 ci = "task format && task lint && task typecheck && task test"
-doc = "cd docs && mkdocs serve"
-doc-build = "cd docs && mkdocs build"
-doc-deploy = "cd docs && mkdocs gh-deploy"
+docs = "cd docs && mkdocs serve"
+docs-build = "cd docs && mkdocs build"
+docs-deploy = "cd docs && mkdocs gh-deploy"
 format = "ruff format"
 format-check = "ruff format --check"
 lint = "ruff check"
