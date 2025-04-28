@@ -152,7 +152,7 @@ class SlideLayoutProxy:
             for placeholder, value in zip(
                 slide.placeholders, get_placeholders(self._slide_layout).values()
             ):
-                placeholder.value = value
+                placeholder.text = value
 
         return SlideBuilder(
             self._convertible_slide_layout,

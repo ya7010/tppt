@@ -13,22 +13,22 @@ class SlidePlaceholder(PptxConvertible[PptxSlidePlaceholder]):
         self._pptx = pptx_obj
 
     @property
-    def value(self) -> str:
+    def text(self) -> str:
         return self._pptx.text
 
-    @value.setter
-    def value(self, value: str | int | datetime.date | None):
-        match value:
+    @text.setter
+    def text(self, text: str | int | datetime.date | None):
+        match text:
             case None:
                 return
             case str():
-                self._pptx.text = value
+                self._pptx.text = text
             case int():
-                self._pptx.text = str(value)
+                self._pptx.text = str(text)
             case datetime.date():
-                self._pptx.text = value.isoformat()
+                self._pptx.text = text.isoformat()
             case _:
-                raise InvalidSetterTypeError(str, type(value))
+                raise InvalidSetterTypeError(str, type(text))
 
     def to_pptx(self) -> PptxSlidePlaceholder:
         return self._pptx
