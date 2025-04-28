@@ -1,5 +1,6 @@
 """Typed Python PowerPoint Tool"""
 
+import importlib.metadata
 from typing import Callable, Concatenate, ParamSpec, TypeVar
 
 from tppt.pptx.presentation import Presentation
@@ -7,6 +8,8 @@ from tppt.template.slide_layout import Placeholder, SlideLayout
 from tppt.template.slide_master import Layout, SlideMaster, slide_master
 
 from . import types as types
+
+__version__ = importlib.metadata.version("tppt")
 
 T = TypeVar("T")
 P = ParamSpec("P")

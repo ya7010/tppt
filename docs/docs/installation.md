@@ -6,29 +6,29 @@ TPPT can be installed using your favorite Python package manager.
 
 - Python 3.11 or higher
 - One of the following package managers:
-  - pip
-  - uv
-  - hatch
-  - poetry
-
-=== "pip"
-    ```bash
-    pip install tppt
-    ```
+    * [uv](https://docs.astral.sh/uv/)
+    * [poetry](https://python-poetry.org/)
+    * [hatch](https://hatch.pypa.io/)
+    * [pip](https://pip.pypa.io/)
 
 === "uv"
     ```bash
     uv add tppt
     ```
 
-=== "hatch"
+=== "pip"
     ```bash
-    hatch add tppt
+    pip install tppt
     ```
 
 === "poetry"
     ```bash
     poetry add tppt
+    ```
+
+=== "hatch"
+    ```bash
+    hatch add tppt
     ```
 
 ## Optional Dependencies
@@ -39,15 +39,6 @@ TPPT provides optional dependencies for additional features:
 
 For working with data frames:
 
-=== "pip"
-    ```bash
-    # For pandas support
-    pip install "tppt[pandas]"
-
-    # For polars support
-    pip install "tppt[polars]"
-    ```
-
 === "uv"
     ```bash
     # For pandas support
@@ -57,13 +48,13 @@ For working with data frames:
     uv add "tppt[polars]"
     ```
 
-=== "hatch"
+=== "pip"
     ```bash
     # For pandas support
-    hatch add "tppt[pandas]"
+    pip install "tppt[pandas]"
 
     # For polars support
-    hatch add "tppt[polars]"
+    pip install "tppt[polars]"
     ```
 
 === "poetry"
@@ -75,23 +66,27 @@ For working with data frames:
     poetry add "tppt[polars]"
     ```
 
+=== "hatch"
+    ```bash
+    # For pandas support
+    hatch add "tppt[pandas]"
+
+    # For polars support
+    hatch add "tppt[polars]"
+    ```
+
 ### Pydantic Support
 
 For Pydantic integration:
-
-=== "pip"
-    ```bash
-    pip install "tppt[pydantic]"
-    ```
 
 === "uv"
     ```bash
     uv add "tppt[pydantic]"
     ```
 
-=== "hatch"
+=== "pip"
     ```bash
-    hatch add "tppt[pydantic]"
+    pip install "tppt[pydantic]"
     ```
 
 === "poetry"
@@ -99,23 +94,23 @@ For Pydantic integration:
     poetry add "tppt[pydantic]"
     ```
 
+=== "hatch"
+    ```bash
+    hatch add "tppt[pydantic]"
+    ```
+
 ### Development Tools
 
 For development purposes:
-
-=== "pip"
-    ```bash
-    pip install "tppt[dev]"
-    ```
 
 === "uv"
     ```bash
     uv add "tppt[dev]"
     ```
 
-=== "hatch"
+=== "pip"
     ```bash
-    hatch add "tppt[dev]"
+    pip install "tppt[dev]"
     ```
 
 === "poetry"
@@ -123,11 +118,15 @@ For development purposes:
     poetry add "tppt[dev]"
     ```
 
+=== "hatch"
+    ```bash
+    hatch add "tppt[dev]"
+    ```
+
 ## Verifying Installation
 
 You can verify the installation by running:
 
 ```python
-import tppt
-print(tppt.__version__)
+--8<-- "examples/check_version.py"
 ``` 
