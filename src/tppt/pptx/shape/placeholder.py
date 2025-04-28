@@ -7,10 +7,10 @@ from tppt.pptx.converter import to_pptx_length, to_tppt_length
 from tppt.pptx.presentation import PptxConvertible
 from tppt.types._length import Length
 
-from . import BaseShape
+from . import Shape
 
 
-class SlidePlaceholder(BaseShape[PptxSlidePlaceholder]):
+class SlidePlaceholder(Shape[PptxSlidePlaceholder]):
     def __init__(self, pptx_obj: PptxSlidePlaceholder) -> None:
         self._pptx = pptx_obj
 

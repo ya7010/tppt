@@ -1,3 +1,4 @@
+import datetime
 from typing import (
     TYPE_CHECKING,
     Annotated,
@@ -13,6 +14,8 @@ from typing import (
     get_type_hints,
     overload,
 )
+
+from tppt.exception import InvalidSetterTypeError
 
 if TYPE_CHECKING:
     from ..pptx.slide import SlideBuilder
@@ -152,6 +155,16 @@ class SlideLayoutProxy:
             for placeholder, value in zip(
                 slide.placeholders, get_placeholders(self._slide_layout).values()
             ):
+                match value:
+                    case None:
+                        continue
+                    case str():
+                        pass
+                    case datetime.date():
+                        value = value.strftime("%Y%m/%d")
+                    case _:
+                        raise InvalidSetterTypeError(str, type(value))
+
                 placeholder.text = value
 
         return SlideBuilder(
