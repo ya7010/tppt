@@ -92,16 +92,17 @@ class SlideBuilder:
         self._placeholder_registry = placeholder_registry
 
     @overload
-    def text(self, text: str, **kwargs: Unpack[TextProps]) -> Self: ...
+    def text(self, text: str, /, **kwargs: Unpack[TextProps]) -> Self: ...
 
     @overload
     def text(
-        self, text: Callable[[Text], Text], **kwargs: Unpack[RangeProps]
+        self, text: Callable[[Text], Text], /, **kwargs: Unpack[RangeProps]
     ) -> Self: ...
 
     def text(
         self,
         text: str | Callable[[Text], Text],
+        /,
         **kwargs: Unpack[TextProps],
     ) -> Self:
         def _register(slide: Slide) -> Text:
@@ -133,7 +134,7 @@ class SlideBuilder:
         return self
 
     def picture(
-        self, image_file: FilePath | IO[bytes], **kwargs: Unpack[PictureProps]
+        self, image_file: FilePath | IO[bytes], /, **kwargs: Unpack[PictureProps]
     ) -> Self:
         if isinstance(image_file, os.PathLike):
             image_file = os.fspath(image_file)
@@ -155,7 +156,7 @@ class SlideBuilder:
 
         return self
 
-    def table(self, data: DataFrame, **kwargs: Unpack[TableProps]) -> Self:
+    def table(self, data: DataFrame, /, **kwargs: Unpack[TableProps]) -> Self:
         data = dataframe2list(data)
         rows, cols = len(data), len(data[0])
         table_data: TableData = {"type": "table", "data": data, **kwargs}
