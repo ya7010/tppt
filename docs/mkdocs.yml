@@ -34,10 +34,6 @@ repo_url: https://github.com/yassun7010/tppt
 plugins:
   - mkdocstrings:
       default_handler: python
-      handlers:
-        python:
-          options:
-            show_source: true
 
 markdown_extensions:
   - pymdownx.details:
