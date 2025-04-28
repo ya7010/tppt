@@ -14,4 +14,8 @@ By using the builder, you can create slides while utilizing slide masters and sl
 Also, `tppt.Presentation` has a property called `tree`,
 which is a dictionary representing the tree structure of the presentation.
 
+```python
+--8<-- "codes/pptx_tree.py"
+```
+
 It is used for automatic generation of slide master type definitions and can also be used to analyze how pptx files are structured.
