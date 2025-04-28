@@ -133,16 +133,36 @@ class SlideBuilder:
 
         return self
 
+    @overload
     def picture(
-        self, image_file: FilePath | IO[bytes], /, **kwargs: Unpack[PictureProps]
+        self, image: FilePath | IO[bytes], /, **kwargs: Unpack[PictureProps]
+    ) -> Self: ...
+
+    @overload
+    def picture(
+        self,
+        image: Callable[[Picture], Picture],
+        /,
+        image_file: FilePath | IO[bytes],
+        **kwargs: Unpack[PictureProps],
+    ) -> Self: ...
+
+    def picture(
+        self,
+        image: FilePath | IO[bytes] | Callable[[Picture], Picture],
+        image_file: FilePath | IO[bytes] | None = None,
+        **kwargs: Unpack[PictureProps],
     ) -> Self:
+        if not isinstance(image, Callable):
+            image_file = image
+
+        assert image_file
         if isinstance(image_file, os.PathLike):
             image_file = os.fspath(image_file)
 
-        data = PictureData(type="picture", image_file=image_file, **kwargs)
-
-        self._shape_registry.append(
-            lambda slide: Picture(
+        def _register(slide: Slide) -> Picture:
+            data = PictureData(type="picture", image_file=image_file, **kwargs)
+            picture_obj = Picture(
                 slide.to_pptx().shapes.add_picture(
                     image_file,
                     to_pptx_length(data["left"]),
@@ -152,7 +172,12 @@ class SlideBuilder:
                 ),
                 data,
             )
-        )
+            if isinstance(image, Callable):
+                return image(picture_obj)
+            else:
+                return picture_obj
+
+        self._shape_registry.append(_register)
 
         return self
 
