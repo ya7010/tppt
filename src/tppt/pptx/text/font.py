@@ -1,5 +1,6 @@
 from typing import Callable, Self
 
+from pptx.enum.text import MSO_TEXT_UNDERLINE_TYPE
 from pptx.text.text import Font as PptxFont
 
 from tppt.pptx.converter import PptxConvertible, to_pptx_length, to_tppt_length
@@ -44,6 +45,14 @@ class Font(PptxConvertible[PptxFont]):
         self._pptx.italic = italic
 
     @property
+    def underline(self) -> bool | MSO_TEXT_UNDERLINE_TYPE | None:
+        return self._pptx.underline
+
+    @underline.setter
+    def underline(self, underline: bool | MSO_TEXT_UNDERLINE_TYPE) -> None:
+        self._pptx.underline = underline
+
+    @property
     def color(self) -> ColorFormat:
         return ColorFormat(self._pptx.color)
 
@@ -83,6 +92,11 @@ class FontBuilder:
 
     def italic(self, italic: bool) -> Self:
         self._pptx.italic = italic
+
+        return self
+
+    def underline(self, underline: bool | MSO_TEXT_UNDERLINE_TYPE) -> Self:
+        self._pptx.underline = underline
 
         return self
 

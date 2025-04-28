@@ -4,6 +4,7 @@ from pptx.text.text import _Run as PptxRun
 
 from tppt.pptx.converter import PptxConvertible
 from tppt.pptx.text.font import Font, FontBuilder
+from tppt.pptx.text.hyperlink import Hyperlink, HyperlinkBuilder
 
 
 class Run(PptxConvertible[PptxRun]):
@@ -21,6 +22,10 @@ class Run(PptxConvertible[PptxRun]):
     @property
     def font(self) -> Font:
         return Font(self._pptx.font)
+
+    @property
+    def hyperlink(self) -> Hyperlink:
+        return Hyperlink(self._pptx.hyperlink)
 
     def builder(self) -> "RunBuilder":
         return RunBuilder(self._pptx)
@@ -46,6 +51,15 @@ class RunBuilder:
         font = callable(Font(self._pptx.font))
         if isinstance(font, FontBuilder):
             font._build()
+
+        return self
+
+    def hyperlink(
+        self, callable: Callable[[Hyperlink], Hyperlink | HyperlinkBuilder]
+    ) -> Self:
+        hyperlink = callable(Hyperlink(self._pptx.hyperlink))
+        if isinstance(hyperlink, HyperlinkBuilder):
+            hyperlink._build()
 
         return self
 
