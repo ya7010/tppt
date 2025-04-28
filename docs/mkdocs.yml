@@ -41,14 +41,14 @@ plugins:
             filters: ["!^_"]
           paths: [src]
           inventories:
-            - tppt
-            - tppt.pptx
-            - tppt.pptx.dml
-            - tppt.pptx.shape
-            - tppt.pptx.text
-            - tppt.template
-            - tppt.types
-            - tppt.exception
+            - src/tppt
+            - src/tppt/pptx
+            - src/tppt/pptx/dml
+            - src/tppt/pptx/shape
+            - src/tppt/pptx/text
+            - src/tppt/template
+            - src/tppt/types
+            - src/tppt/exception
 
 markdown_extensions:
   - pymdownx.highlight:

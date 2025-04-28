@@ -1,6 +1,6 @@
 # Examples
 
-Here are some examples of how to use TPPT in various scenarios. For detailed API reference, see [Core API Reference](api/core.md), [PPTX API Reference](api/pptx.md), [DML API Reference](api/dml.md), [Shape API Reference](api/shape.md), [Text API Reference](api/text.md), [Template API Reference](api/template.md), [Types API Reference](api/types.md), and [Exception API Reference](api/exception.md).
+Here are some examples of how to use TPPT in various scenarios. For detailed API reference, see [Core API Reference](api/tppt.md), [PPTX API Reference](api/tppt_pptx.md), [DML API Reference](api/tppt_pptx_dml.md), [Shape API Reference](api/tppt_pptx_shape.md), [Text API Reference](api/tppt_pptx_text.md), [Template API Reference](api/tppt_template.md), [Types API Reference](api/tppt_types.md), and [Exception API Reference](api/tppt_exception.md).
 
 ## Basic Presentation
 
