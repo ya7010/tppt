@@ -97,5 +97,13 @@ def to_pptx_rgb_color(color: Color | LiteralColor | None) -> PptxRGBColor | None
     return PptxRGBColor(color.r, color.g, color.b)
 
 
-def to_tppt_color(color: PptxRGBColor) -> Color:
-    return Color(*color)
+@overload
+def to_tppt_color(color: PptxRGBColor) -> Color: ...
+
+
+@overload
+def to_tppt_color(color: PptxRGBColor | None) -> Color | None: ...
+
+
+def to_tppt_color(color: PptxRGBColor | None) -> Color | None:
+    return Color(*color) if color else None

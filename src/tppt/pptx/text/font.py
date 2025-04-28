@@ -44,7 +44,7 @@ class Font(PptxConvertible[PptxFont]):
         self._pptx.italic = italic
 
     @property
-    def color(self) -> ColorFormat | None:
+    def color(self) -> ColorFormat:
         return ColorFormat(self._pptx.color)
 
     @color.setter

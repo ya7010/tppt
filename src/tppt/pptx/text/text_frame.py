@@ -10,6 +10,9 @@ class TextFrame(PptxConvertible[PptxTextFrame]):
     def __init__(self, pptx_obj: PptxTextFrame) -> None:
         self._pptx = pptx_obj
 
+    def add_paragraph(self) -> Paragraph:
+        return Paragraph(self._pptx.add_paragraph())
+
     def builder(self) -> "TextFrameBuilder":
         return TextFrameBuilder(self._pptx)
 

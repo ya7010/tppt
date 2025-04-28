@@ -14,6 +14,9 @@ class Paragraph(PptxConvertible[PptxParagraph]):
     def runs(self) -> list[Run]:
         return [Run(run) for run in self._pptx.runs]
 
+    def add_run(self) -> Run:
+        return Run(self._pptx.add_run())
+
     def builder(self) -> "ParagraphBuilder":
         return ParagraphBuilder(self._pptx)
 
