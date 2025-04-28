@@ -1077,6 +1077,7 @@ name = "tppt"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "mkdocstrings-python" },
     { name = "pillow" },
     { name = "python-pptx" },
     { name = "typing-extensions" },
@@ -1132,6 +1133,7 @@ rich = [
 
 [package.metadata]
 requires-dist = [
+    { name = "mkdocstrings-python", specifier = ">=1.16.10" },
     { name = "pandas", marker = "extra == 'pandas'", specifier = ">=2.0.0" },
     { name = "pillow", specifier = ">=10.0.0" },
     { name = "polars", marker = "extra == 'polars'", specifier = ">=0.20.0" },
