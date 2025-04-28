@@ -1,11 +1,11 @@
-import datetime
 from typing import Self
 
 from pptx.shapes.placeholder import LayoutPlaceholder as PptxLayoutPlaceholder
 from pptx.shapes.placeholder import SlidePlaceholder as PptxSlidePlaceholder
 
-from tppt.exception import InvalidSetterTypeError
+from tppt.pptx.converter import to_pptx_length, to_tppt_length
 from tppt.pptx.presentation import PptxConvertible
+from tppt.types._length import Length
 
 from . import BaseShape
 
@@ -15,22 +15,36 @@ class SlidePlaceholder(BaseShape[PptxSlidePlaceholder]):
         self._pptx = pptx_obj
 
     @property
-    def text(self) -> str:
-        return self._pptx.text
+    def left(self) -> Length | None:
+        return to_tppt_length(self._pptx.left)
 
-    @text.setter
-    def text(self, text: str | int | datetime.date | None):
-        match text:
-            case None:
-                return
-            case str():
-                self._pptx.text = text
-            case int():
-                self._pptx.text = str(text)
-            case datetime.date():
-                self._pptx.text = text.isoformat()
-            case _:
-                raise InvalidSetterTypeError(str, type(text))
+    @left.setter
+    def left(self, value: Length | None) -> None:
+        self._pptx.left = to_pptx_length(value)
+
+    @property
+    def top(self) -> Length | None:
+        return to_tppt_length(self._pptx.top)
+
+    @top.setter
+    def top(self, value: Length | None) -> None:
+        self._pptx.top = to_pptx_length(value)
+
+    @property
+    def height(self) -> Length | None:
+        return to_tppt_length(self._pptx.height)
+
+    @height.setter
+    def height(self, value: Length | None) -> None:
+        self._pptx.height = to_pptx_length(value)
+
+    @property
+    def width(self) -> Length | None:
+        return to_tppt_length(self._pptx.width)
+
+    @width.setter
+    def width(self, value: Length | None) -> None:
+        self._pptx.width = to_pptx_length(value)
 
     def to_pptx(self) -> PptxSlidePlaceholder:
         return self._pptx

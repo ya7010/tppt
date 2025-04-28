@@ -42,6 +42,14 @@ class Shape(BaseShape[GenericPptxShape]):
         self._pptx: GenericPptxShape = pptx_shape
 
     @property
+    def text(self) -> str:
+        return self._pptx.text
+
+    @text.setter
+    def text(self, text: str) -> None:
+        self._pptx.text = text
+
+    @property
     def text_frame(self) -> "TextFrame":
         from ..text.text_frame import TextFrame
 
