@@ -4,7 +4,6 @@ import pathlib
 from dataclasses import dataclass
 
 import pytest
-from pydantic import BaseModel
 
 import tppt
 from tppt._features import (
@@ -195,7 +194,7 @@ def test_create_table_with_dataclass(output: pathlib.Path) -> None:
 def test_create_table_with_pydantic_model(output: pathlib.Path) -> None:
     """Test creating a table with Pydantic model."""
 
-    class Product(BaseModel):
+    class Product(PydanticModel):
         """Product model for testing."""
 
         name: str

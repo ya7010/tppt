@@ -203,7 +203,7 @@ def dataframe2list(data: DataFrame) -> list[list[str]]:
                 return [columns] + rows
             # Convert list of Pydantic model instances to list of lists
             elif USE_PYDANTIC and isinstance(first_instance, PydanticModel):
-                columns = list(first_instance.__class__.model_fields.keys())
+                columns = list(first_instance.__class__.model_fields.keys())  # type: ignore
                 rows = []
                 for instance in data:
                     instance = cast(Any, instance)
