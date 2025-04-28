@@ -18,6 +18,7 @@ from pptx.shapes.graphfrm import GraphicFrame
 from tppt._features import (
     USE_PANDAS,
     USE_POLARS,
+    USE_PYDANTIC,
     Dataclass,
     PandasDataFrame,
     PolarsDataFrame,
@@ -201,7 +202,7 @@ def dataframe2list(data: DataFrame) -> list[list[str]]:
                     rows.append(row)
                 return [columns] + rows
             # Convert list of Pydantic model instances to list of lists
-            elif isinstance(first_instance, PydanticModel):
+            elif USE_PYDANTIC and isinstance(first_instance, PydanticModel):
                 columns = list(first_instance.__class__.model_fields.keys())
                 rows = []
                 for instance in data:

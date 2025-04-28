@@ -1,6 +1,6 @@
 # Usage Guide
 
-This guide will walk you through the basic usage of TPPT. For detailed API reference, see [Core API Reference](api/tppt.md), [PPTX API Reference](api/tppt_pptx.md), [DML API Reference](api/tppt_pptx_dml.md), [Shape API Reference](api/tppt_pptx_shape.md), [Text API Reference](api/tppt_pptx_text.md), [Template API Reference](api/tppt_template.md), [Types API Reference](api/tppt_types.md), and [Exception API Reference](api/tppt_exception.md).
+This guide will walk you through the basic usage of TPPT. For detailed API reference, see [API Reference](api/tppt.md).
 
 ## Creating a Presentation
 
