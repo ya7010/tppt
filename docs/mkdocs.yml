@@ -27,7 +27,7 @@ plugins:
           rendering:
             show_source: true
             show_root_heading: true
-            show_root_full_path: false
+            show_root_full_path: true
             show_category_heading: true
             show_if_no_docstring: true
             show_signature_annotations: true
@@ -38,7 +38,17 @@ plugins:
             members_order: source
           selection:
             docstring_style: google
+            filters: ["!^_"]
           paths: [src]
+          inventories:
+            - tppt
+            - tppt.pptx
+            - tppt.pptx.dml
+            - tppt.pptx.shape
+            - tppt.pptx.text
+            - tppt.template
+            - tppt.types
+            - tppt.exception
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -63,6 +73,14 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Usage: usage.md
-  - API Reference: api.md
+  - API Reference:
+      - tppt: api/tppt.md
+      - tppt.pptx: api/tppt_pptx.md
+      - tppt.pptx.dml: api/tppt_pptx_dml.md
+      - tppt.pptx.shape: api/tppt_pptx_shape.md
+      - tppt.pptx.text: api/tppt_pptx_text.md
+      - tppt.template: api/tppt_template.md
+      - tppt.types: api/tppt_types.md
+      - tppt.exception: api/tppt_exception.md
   - Examples: examples.md
   - Contributing: contributing.md
