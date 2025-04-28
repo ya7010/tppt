@@ -78,14 +78,16 @@ nav:
   - Home:
       - About: index.md
       - Installation: home/installation.md
+      - Concept: home/concept.md
   - Usage:
-      - Builder: usage/index.md
+      - Presentation: usage/index.md
+      - Slide: usage/slide.md
       - Text: usage/text.md
-      - Table: usage/table.md
       - Picture: usage/picture.md
+      - Table: usage/table.md
       - Chart: usage/chart.md
-      - SlideLayout: usage/slide-layout.md
       - SlideMaster: usage/slide-master.md
+      - SlideLayout: usage/slide-layout.md
   - API Reference: api/tppt.md
   - Examples: examples.md
   - Contributing: contributing.md
