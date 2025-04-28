@@ -14,7 +14,6 @@ pip install tppt
 
 ```python
 import tppt
-from tppt.types import Color
 
 # Create a presentation using the builder pattern
 presentation = (
@@ -39,7 +38,7 @@ presentation = (
             size=(60, "pt"),
             bold=True,
             italic=True,
-            color=Color("#0000FF"),
+            color="#0000FF",
         )
         .text(
             "Example of using tppt library",
