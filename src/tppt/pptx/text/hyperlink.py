@@ -17,20 +17,9 @@ class Hyperlink(PptxConvertible[PptxHyperlink]):
     def address(self, address: str | None) -> None:
         self._pptx.address = address
 
-    def builder(self) -> "HyperlinkBuilder":
-        return HyperlinkBuilder(self._pptx)
-
     def to_pptx(self) -> PptxHyperlink:
         return self._pptx
 
     @classmethod
     def from_pptx(cls, pptx_obj: PptxHyperlink) -> Self:
         return cls(pptx_obj)
-
-
-class HyperlinkBuilder:
-    def __init__(self, pptx_obj: PptxHyperlink) -> None:
-        self._pptx = pptx_obj
-
-    def _build(self) -> Hyperlink:
-        return Hyperlink(self._pptx)

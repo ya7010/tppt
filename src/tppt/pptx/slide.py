@@ -12,7 +12,7 @@ from .placeholder import SlidePlaceholder
 from .shape import RangeProps, Shape
 from .shape.picture import Picture, PictureData, PictureProps
 from .shape.table import DataFrame, Table, TableData, TableProps, dataframe2list
-from .shape.text import Text, TextBuilder, TextData, TextProps
+from .shape.text import Text, TextData, TextProps
 from .slide_layout import SlideLayout
 from .snotes_slide import NotesSlide
 
@@ -96,12 +96,12 @@ class SlideBuilder:
 
     @overload
     def text(
-        self, text: Callable[[Text], Text | TextBuilder], **kwargs: Unpack[RangeProps]
+        self, text: Callable[[Text], Text], **kwargs: Unpack[RangeProps]
     ) -> Self: ...
 
     def text(
         self,
-        text: str | Callable[[Text], Text | TextBuilder],
+        text: str | Callable[[Text], Text],
         **kwargs: Unpack[TextProps],
     ) -> Self:
         def _register(slide: Slide) -> Text:
@@ -124,10 +124,7 @@ class SlideBuilder:
                 data,
             )
             if isinstance(text, Callable):
-                text_builder = text(text_obj)
-                if isinstance(text_builder, TextBuilder):
-                    text_builder = text_builder._build()
-                return text_builder
+                return text(text_obj)
             else:
                 return text_obj
 

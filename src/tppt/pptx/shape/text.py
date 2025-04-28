@@ -1,10 +1,10 @@
-from typing import Callable, Literal, NotRequired, Self
+from typing import Literal, NotRequired, Self
 
 from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 from pptx.shapes.autoshape import Shape as PptxShape
 
 from tppt.pptx.converter import to_pptx_length, to_pptx_rgb_color
-from tppt.pptx.text.text_frame import TextFrame, TextFrameBuilder
+from tppt.pptx.text.text_frame import TextFrame
 from tppt.types._color import Color, LiteralColor
 from tppt.types._length import Length, LiteralLength
 
@@ -73,9 +73,6 @@ class Text(Shape[PptxShape]):
     def text_frame(self) -> TextFrame:
         return TextFrame(self._pptx.text_frame)
 
-    def builder(self) -> "TextBuilder":
-        return TextBuilder(self._pptx)
-
     def to_pptx(self) -> PptxShape:
         """Convert to pptx shape."""
         return self._pptx
@@ -84,20 +81,3 @@ class Text(Shape[PptxShape]):
     def from_pptx(cls, pptx_obj: PptxShape) -> Self:
         """Create from pptx shape."""
         return cls(pptx_obj)
-
-
-class TextBuilder:
-    def __init__(self, pptx_obj: PptxShape) -> None:
-        self._pptx = pptx_obj
-
-    def text_frame(
-        self, callable: Callable[[TextFrame], TextFrame | TextFrameBuilder]
-    ) -> Self:
-        text_frame = callable(TextFrame(self._pptx.text_frame))
-        if isinstance(text_frame, TextFrameBuilder):
-            text_frame._build()
-
-        return self
-
-    def _build(self) -> Text:
-        return Text(self._pptx)

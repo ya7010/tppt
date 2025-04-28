@@ -33,26 +33,6 @@ def main():
                 width=(400, "pt"),
                 height=(50, "pt"),
             )
-            .text(
-                # Builder pattern.
-                lambda text: text.builder().text_frame(
-                    lambda text_frame: text_frame.builder().paragraph(
-                        lambda paragraph: paragraph.builder().run(
-                            lambda run: run.builder()
-                            .text("Hello, world!")
-                            .font(
-                                lambda font: font.builder()
-                                .color(lambda color: color.builder().rgb("#00FF00"))
-                                .italic(True)
-                            )
-                        )
-                    ),
-                ),
-                left=(50, "pt"),
-                top=(200, "pt"),
-                width=(400, "pt"),
-                height=(50, "pt"),
-            )
         )
         .build()
     )
