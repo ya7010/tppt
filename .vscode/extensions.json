@@ -6,6 +6,7 @@
     "ms-python.python",
     "ms-pyright.pyright",
     "biomejs.biome",
-    "naumovs.color-highlight"
+    "naumovs.color-highlight",
+    "redhat.vscode-yaml"
   ]
 }
