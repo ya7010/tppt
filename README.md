@@ -1,16 +1,16 @@
-# tppt
+# 🎨 tppt
 
-tppt is a type-safe PowerPoint presentation builder. This library allows you to easily generate PowerPoint presentations from Python code.
+✨ **tppt** is a type-safe PowerPoint presentation builder that lets you create stunning presentations with Python code! 🐍
 
-## Installation
+## 🚀 Installation
 
 ```bash
 pip install tppt
 ```
 
-## Usage Examples
+## 🎯 Usage Examples
 
-### Basic Presentation Creation
+### 📝 Basic Presentation Creation
 
 ```python
 import tppt
@@ -98,21 +98,21 @@ presentation = (
 presentation.save("output.pptx")
 ```
 
-## Features
+## ✨ Features
 
-- Type-safe interface with comprehensive type hints
-- Intuitive API using the builder pattern
-- Flexible slide layouts (Title, Title and Content, Blank)
-- Rich text formatting capabilities:
-  - Font size, bold, italic
-  - Custom colors
-  - Advanced text formatting through custom functions
-- Image support with precise positioning
-- Table creation with customizable dimensions
-- Fine-grained control over element positioning and sizing
-- Support for custom slide masters
+- 🛡️ Type-safe interface with comprehensive type hints
+- 🏗️ Intuitive API using the builder pattern
+- 🎨 Flexible slide layouts (Title, Title and Content, Blank)
+- 📝 Rich text formatting capabilities:
+  - 🅰️ Font size, bold, italic
+  - 🎨 Custom colors
+  - 🎯 Advanced text formatting through custom functions
+- 🖼️ Image support with precise positioning
+- 📊 Table creation with customizable dimensions
+- 📏 Fine-grained control over element positioning and sizing
+- 🎭 Support for custom slide masters
 
-## Architecture
+## 🏗️ Architecture
 
 This library consists of the following modules:
 
@@ -123,6 +123,10 @@ This library consists of the following modules:
 - `_slide_master`: Slide master class
 - `_tppt`: Interface with python-pptx
 
-## License
+## 📜 License
 
 MIT
+
+---
+
+Made with ❤️ by the tppt team
