@@ -3,6 +3,7 @@
 from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 
 import tppt
+import tppt.pptx.table.table
 from tppt.types._color import Color
 
 

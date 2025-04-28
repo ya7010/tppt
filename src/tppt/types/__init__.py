@@ -4,7 +4,6 @@ import pathlib
 from typing import TypeAlias
 
 from tppt.pptx.shape import RangeProps as _RangeProps
-from tppt.pptx.shape.table import TableCellStyle as TableCellStyle
 
 from ._color import Color as Color
 from ._color import LiteralColor as LiteralColor

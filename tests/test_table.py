@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import pytest
 
 import tppt
+import tppt.pptx.table
 from tppt._features import (
     USE_PANDAS,
     USE_POLARS,
@@ -226,3 +227,52 @@ def test_create_table_with_pydantic_model(output: pathlib.Path) -> None:
         .build()
     )
     presentation.save(output / "table_pydantic_data.pptx")
+
+
+def test_table_callback(output) -> None:
+    """Test creating table callback override."""
+
+    def customize_table(
+        table: tppt.pptx.table.Table,
+    ) -> tppt.pptx.table.Table:
+        # 3 x 3 のデータとヘッダを作成
+        table.cell(0, 0).text = "Price"
+        table.cell(0, 1).text = "Quantity"
+        table.cell(0, 2).text = "Total"
+
+        table.cell(1, 0).text = "100"
+        table.cell(1, 1).text = "5"
+        table.cell(1, 2).text = "500"
+
+        table.cell(2, 0).text = "200"
+        table.cell(2, 1).text = "10"
+        table.cell(2, 2).text = "2000"
+
+        table.cell(3, 0).text = "300"
+        table.cell(3, 1).text = "15"
+        table.cell(3, 2).text = "4500"
+
+        return table
+
+    # プレゼンテーションの作成
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(
+            lambda slide: slide.BlankLayout()
+            .builder()
+            .table(
+                tppt.apply(customize_table),
+                rows=4,
+                cols=3,
+                left=(100, "pt"),
+                top=(100, "pt"),
+                width=(400, "pt"),
+                height=(200, "pt"),
+            )
+        )
+        .build()
+    )
+
+    # プレゼンテーションを保存
+    pptx_path = output / "table_callback.pptx"
+    presentation.save(pptx_path)

@@ -7,7 +7,7 @@ import sys
 import pytest
 
 import tppt
-from tppt.types import TableCellStyle
+from tppt.pptx.table.table import TableCellStyle
 
 
 def test_create_presentation(output: pathlib.Path) -> None:

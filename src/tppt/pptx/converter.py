@@ -1,6 +1,14 @@
 """Type definitions for pptx wrapper."""
 
-from typing import Protocol, Self, TypeVar, assert_never, overload, runtime_checkable
+from typing import (
+    Protocol,
+    Self,
+    TypeAlias,
+    TypeVar,
+    assert_never,
+    overload,
+    runtime_checkable,
+)
 
 from pptx.dml.color import RGBColor as PptxRGBColor
 from pptx.util import Cm as PptxCm
@@ -10,6 +18,7 @@ from pptx.util import Length as PptxLength
 from pptx.util import Mm as PptxMm
 from pptx.util import Pt as PptxPt
 
+from tppt.types._angle import Angle, Degrees, LiteralAngle
 from tppt.types._color import Color, LiteralColor, to_color
 from tppt.types._length import (
     CentiMeters,
@@ -107,3 +116,38 @@ def to_tppt_color(color: PptxRGBColor | None) -> Color | None: ...
 
 def to_tppt_color(color: PptxRGBColor | None) -> Color | None:
     return Color(*color) if color else None
+
+
+PptxAngle: TypeAlias = float
+
+
+@overload
+def to_pptx_angle(angle: Angle | LiteralAngle) -> PptxAngle: ...
+
+
+@overload
+def to_pptx_angle(angle: Angle | LiteralAngle | None) -> PptxAngle | None: ...
+
+
+def to_pptx_angle(angle: Angle | LiteralAngle | None) -> PptxAngle | None:
+    match angle:
+        case Degrees():
+            return angle._value
+        case tuple():
+            return angle[0]
+        case None:
+            return None
+        case _:
+            assert_never(angle)
+
+
+@overload
+def to_tppt_angle(angle: PptxAngle) -> Angle: ...
+
+
+@overload
+def to_tppt_angle(angle: PptxAngle | None) -> Angle | None: ...
+
+
+def to_tppt_angle(angle: PptxAngle | None) -> Angle | None:
+    return Degrees(angle) if angle else None

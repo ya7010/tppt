@@ -11,10 +11,10 @@ from .converter import PptxConvertible, to_pptx_length
 from .placeholder import SlidePlaceholder
 from .shape import RangeProps, Shape
 from .shape.picture import Picture, PictureData, PictureProps
-from .shape.table import DataFrame, Table, TableData, TableProps, dataframe2list
 from .shape.text import Text, TextData, TextProps
 from .slide_layout import SlideLayout
 from .snotes_slide import NotesSlide
+from .table.table import DataFrame, Table, TableData, TableProps, dataframe2list
 
 if TYPE_CHECKING:
     pass
@@ -88,7 +88,7 @@ class SlideBuilder:
         placeholder_registry: Callable[[Slide], None],
     ) -> None:
         self._slide_layout = slide_layout
-        self._shape_registry: list[Callable[[Slide], Shape[Any]]] = []
+        self._shape_registry: list[Callable[[Slide], Any]] = []
         self._placeholder_registry = placeholder_registry
 
     @overload
@@ -218,14 +218,16 @@ class SlideBuilder:
 
         def _register(slide: Slide) -> Table:
             table_obj = Table(
-                slide.to_pptx().shapes.add_table(
+                slide.to_pptx()
+                .shapes.add_table(
                     rows,
                     cols,
                     to_pptx_length(table_data["left"]),
                     to_pptx_length(table_data["top"]),
                     to_pptx_length(table_data["width"]),
                     to_pptx_length(table_data["height"]),
-                ),
+                )
+                .table,
                 table_data,
             )
 

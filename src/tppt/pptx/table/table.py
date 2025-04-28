@@ -13,7 +13,7 @@ from typing import (
 )
 
 from pptx.enum.text import MSO_VERTICAL_ANCHOR, PP_ALIGN
-from pptx.shapes.graphfrm import GraphicFrame
+from pptx.table import Table as PptxTable
 
 from tppt._features import (
     USE_PANDAS,
@@ -27,8 +27,9 @@ from tppt._features import (
 )
 from tppt.types._length import LiteralPoint, Points
 
-from ..converter import to_pptx_length
-from . import RangeProps, Shape
+from ..converter import PptxConvertible, to_pptx_length
+from ..shape import RangeProps
+from .cell import Cell
 
 logger = logging.getLogger(__name__)
 
@@ -70,12 +71,12 @@ class TableData(TableProps):
     data: list[list[str]]
 
 
-class Table(Shape[GraphicFrame]):
+class Table(PptxConvertible[PptxTable]):
     """Table data class."""
 
     def __init__(
         self,
-        pptx_obj: GraphicFrame,
+        pptx_obj: PptxTable,
         props: TableData | None = None,
         /,
     ) -> None:
@@ -84,7 +85,7 @@ class Table(Shape[GraphicFrame]):
         if not props:
             return
 
-        table = pptx_obj.table
+        table = pptx_obj
 
         # Apply first row as header if specified
         if (first_row := props.get("first_row_header")) is not None:
@@ -155,13 +156,17 @@ class Table(Shape[GraphicFrame]):
                                 if "font_name" in cell_style:
                                     run.font.name = cell_style["font_name"]
 
-    def to_pptx(self) -> GraphicFrame:
-        """Convert to pptx table frame."""
+    def cell(self, row_idx: int, col_idx: int) -> Cell:
+        """Get cell at row_idx and col_idx."""
+        return Cell(self._pptx.cell(row_idx, col_idx))
+
+    def to_pptx(self) -> PptxTable:
+        """Convert to pptx table."""
         return self._pptx
 
     @classmethod
-    def from_pptx(cls, pptx_obj: GraphicFrame) -> Self:
-        """Create from pptx table frame."""
+    def from_pptx(cls, pptx_obj: PptxTable) -> Self:
+        """Create from pptx table."""
         return cls(pptx_obj)
 
 
