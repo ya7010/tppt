@@ -112,17 +112,6 @@ presentation.save("output.pptx")
 - 📏 Fine-grained control over element positioning and sizing
 - 🎭 Support for custom slide masters
 
-## 🏗️ Architecture
-
-This library consists of the following modules:
-
-- `types`: Type-safe basic types for length, color, etc.
-- `_data`: Data classes
-- `_builders`: Implementation of the builder pattern
-- `_presentation`: Presentation class
-- `_slide_master`: Slide master class
-- `_tppt`: Interface with python-pptx
-
 ## 📜 License
 
 MIT
