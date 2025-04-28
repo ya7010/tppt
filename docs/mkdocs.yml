@@ -19,8 +19,6 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
   features:
-    - navigation.tabs
-    - navigation.sections
     - navigation.next
     - navigation.previous
     - search.suggest
@@ -80,7 +78,14 @@ nav:
   - Home:
       - About: index.md
       - Installation: installation.md
-  - Usage: usage.md
+  - Usage:
+      - Builder: usage/index.md
+      - Text: usage/text.md
+      - Table: usage/table.md
+      - Picture: usage/picture.md
+      - Chart: usage/chart.md
+      - SlideLayout: usage/slide-layout.md
+      - SlideMaster: usage/slide-master.md
   - API Reference: api/tppt.md
   - Examples: examples.md
   - Contributing: contributing.md

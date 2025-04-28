@@ -128,5 +128,5 @@ For development purposes:
 You can verify the installation by running:
 
 ```python
---8<-- "examples/check_version.py"
+--8<-- "codes/check-version.py"
 ``` 

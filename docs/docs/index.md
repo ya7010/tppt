@@ -28,12 +28,12 @@ A modern Python library for creating beautiful PowerPoint presentations with cod
 ## Quick Start
 
 ```python
---8<-- "examples/quick-start.py"
+--8<-- "codes/quick-start.py"
 ```
 
 ## Getting Started
 
-To get started with TPPT, check out the [Installation](installation.md) guide and [Usage](usage.md) documentation.
+To get started with TPPT, check out the [Installation](installation.md) guide and [Usage](usage/index.md) documentation.
 
 ## License
 
