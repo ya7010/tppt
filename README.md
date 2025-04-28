@@ -8,18 +8,27 @@ tppt is a type-safe PowerPoint presentation builder. This library allows you to 
 pip install tppt
 ```
 
-## Usage Example
+## Usage Examples
+
+### Basic Presentation Creation
 
 ```python
 import tppt
+from tppt.types import Color
 
 # Create a presentation using the builder pattern
 presentation = (
     tppt.Presentation.builder()
+    # Slide 1: Title and Text
     .slide(
         lambda slide: slide.TitleLayout(
             title="Amazing Presentation",
+            subtitle="Example of using tppt library",
         )
+    )
+    # Slide 2: Text with Formatting
+    .slide(
+        lambda slide: slide.BlankLayout()
         .builder()
         .text(
             "Amazing Presentation",
@@ -30,7 +39,7 @@ presentation = (
             size=(60, "pt"),
             bold=True,
             italic=True,
-            color="#0000FF",
+            color=Color("#0000FF"),
         )
         .text(
             "Example of using tppt library",
@@ -40,27 +49,26 @@ presentation = (
             height=(30, "pt"),
         )
     )
+    # Slide 3: Image
     .slide(
-        lambda slide: slide.TitleAndContentLayout(
-            title="Image Example",
-            content="This is an example of an image on a slide.",
-        )
+        lambda slide: slide.BlankLayout()
         .builder()
         .text(
-            "Image Example",
+            "Python Logo Example",
             left=(50, "pt"),
             top=(50, "pt"),
             width=(300, "pt"),
             height=(40, "pt"),
         )
         .picture(
-            "image.png",
+            "python-logo.png",
             left=(50, "pt"),
             top=(100, "pt"),
             width=(300, "pt"),
             height=(80, "pt"),
         )
     )
+    # Slide 4: Table
     .slide(
         lambda slide: slide.BlankLayout()
         .builder()
@@ -92,11 +100,17 @@ presentation.save("output.pptx")
 
 ## Features
 
-- Type-safe interface
-- Intuitive API with builder pattern
-- Easy placement of text, images, and tables
-- Fine-tuned control over position and size
-- Customization of text styles (size, bold, italic, color)
+- Type-safe interface with comprehensive type hints
+- Intuitive API using the builder pattern
+- Flexible slide layouts (Title, Title and Content, Blank)
+- Rich text formatting capabilities:
+  - Font size, bold, italic
+  - Custom colors
+  - Advanced text formatting through custom functions
+- Image support with precise positioning
+- Table creation with customizable dimensions
+- Fine-grained control over element positioning and sizing
+- Support for custom slide masters
 
 ## Architecture
 
