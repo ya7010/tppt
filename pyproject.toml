@@ -46,7 +46,12 @@ dev = [
   "ruff>=0.11.6",
   "taskipy>=1.14.1",
   "tombi>=0.3.27",
+  { include-group = "docs" },
   { include-group = "rich" },
+]
+docs = [
+  "mkdocs-material>=9.6.12",
+  "mkdocs>=1.6.1",
 ]
 rich = ["rich", "rich-argparse"]
 
