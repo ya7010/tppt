@@ -2,84 +2,79 @@
 
 ## Why TPPT?
 
-Even in the current era of widespread generative AI, there are still many requests for submitting reports in pptx format.
-(Are we the only ones being left behind?)
+In today's world where generative AI is becoming ubiquitous, many organizations still require reports to be submitted in PowerPoint (pptx) format.
+(Or is it just us who are being left behind?)
 
-TPPT is a wrapper for python-pptx that provides type-safe usage of slide masters and more.
+TPPT is a powerful wrapper for python-pptx that brings type safety to slide masters and more.
 
-It also incorporates ideas to make it easy to use and intuitive to write,
-hoping to make your pptx generation safer and simpler.
+We've designed it to be both intuitive and easy to use,
+making your PowerPoint generation process safer and more efficient.
 
-## Reducing Imports
-Let's look at the Quick Start again:
+## Minimal Imports
+Let's revisit the Quick Start example:
 ```python
 --8<-- "codes/quick_start.py"
 ```
 
-This code only imports TPPT.
+Notice how this code only requires a single import of TPPT.
 
-You can create PowerPoint presentations with an extremely minimal number of imports.
+With just this minimal import, you can create complete PowerPoint presentations.
 
-This is an experimental approach to increase the success rate of code generation by AI,
-by ensuring that only importing tppt is sufficient.
+This design choice is intentional - by requiring only the TPPT import,
+we aim to improve the success rate of AI-generated code.
 
-Two techniques are used to achieve this:
+We achieve this through two key techniques:
 
-### Active Adoption of Literal Types
+### Simplified Unit Specification with Literals
 
-For example, the shape of a Shape to be added to a slide can be written in the traditional way:
-
+Traditionally, specifying shape dimensions in PowerPoint would look like this:
 ```python
 --8<-- "codes/quick_start_many_import.py"
 ```
 
-In other words, `tppt.types.Inches(1)` can be written as `(1, "in")`.
+With TPPT, you can write the same thing more concisely: `(1, "in")` instead of `tppt.types.Inches(1)`.
 
-By expressing unit specifications with types using Literals in this way,
-we have reduced the imports that were previously necessary.
+This Literal-based approach significantly reduces the number of imports needed.
 
-This is about writing; when reading properties, they are always converted to the Inches type,
-allowing for addition, subtraction, and comparison.
+While writing values is simplified, reading properties still gives you proper Inches objects,
+allowing you to perform arithmetic operations and comparisons as needed.
 
-### Type Extraction
+### Smart Type Extraction
 
-There are places where lambda expressions like `lambda slide: slide...` are used.
-This is lazy evaluation, where the type is extracted at the time of element initialization,
-and the element is completed by adding operations to it.
+You'll notice places where we use lambda expressions like `lambda slide: slide...`.
+This is a form of lazy evaluation - we extract the type at initialization time
+and then build the element by applying operations to it.
 
-The characteristic of this approach is that instead of importing types and passing them to function arguments,
-types are extracted from within the function and used.
+The beauty of this approach is that instead of importing types and passing them as function arguments,
+we extract and use types directly from within the function.
 
-This further reduces imports for code generation.
-
-This method has another advantage.
-By extracting operations on the extracted types into functions,
-it becomes easier to share components.
+This not only reduces imports but also brings another advantage:
+by extracting type operations into functions, you can easily create reusable components.
 
 ```python
 --8<-- "codes/apply_sample.py"
 ```
 
-You can create your own modifier functions like `format_text` and easily reuse them.
+You can create and reuse your own formatting functions like `format_text` with ease.
 
-### Type Safety
-This tool is mainly targeted at users who create new slides based on slide masters.
+### Type Safety First
+TPPT is designed primarily for users who create new slides based on slide masters.
 
-If you're like me, you've probably struggled with giving types to python-pptx's slide masters.
+If you've worked with python-pptx before, you know the struggle of adding type safety to slide masters.
 
-TPPT allows you to give types to slide masters using declarative type hints like pydantic.
+TPPT solves this by allowing you to define types for slide masters using pydantic-like declarative type hints:
 
 ```python
 --8<-- "codes/custom_slide_master.py"
 ```
 
-Is writing type definitions yourself tedious? We've prepared a modest tool for you.
+Don't want to write type definitions manually? We've got you covered with a handy tool:
 
 ```bash
 python -m tppt.tool.ppt2template $YOUR_TEMPLATE.pptx -o $OUTPUT_FILE.py
 ```
 
-After setting placeholders in the slide layout constructor,
-you can describe data such as text, pictures, and tables.
+After setting up placeholders in your slide layout constructor,
+you can easily add text, pictures, tables, and other elements.
 
-All these operations are type-safe!
+And the best part? All these operations are fully type-safe!
