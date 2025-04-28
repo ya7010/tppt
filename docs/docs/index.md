@@ -7,23 +7,23 @@ A modern Python library for creating beautiful PowerPoint presentations with cod
 ## Features
 
 - 🛡️ **Type-Safe Development**
-  - Full type hints for better IDE support
-  - Catch errors before runtime
-  - Enhanced code maintainability
+    - Full type hints for better IDE support
+    - Catch errors before runtime
+    - Enhanced code maintainability
 
 - 📝 **Declarative PowerPoint Creation**
-  - Write presentations like code
-  - Clean and readable syntax
-  - Focus on content, not formatting
+    - Write presentations like code
+    - Clean and readable syntax
+    - Focus on content, not formatting
 
 - 🎨 **Smart Templates**
-  - Type-safe template system
-  - Reusable slide components
-  - Extensible helper functions
-  - Build your own presentation tools
+    - Type-safe template system
+    - Reusable slide components
+    - Extensible helper functions
+    - Build your own presentation tools
 
 - 📊 **Data Integration**
-  - Seamless pandas/polars DataFrame support
+    - Seamless pandas/polars DataFrame support
 
 ## Quick Start
 
