@@ -29,23 +29,23 @@ TPPT uses several development tools:
 You can run all checks using:
 
 ```bash
-task ci
+uv run task ci
 ```
 
 Or run individual checks:
 
 ```bash
 # Format code
-task format
+uv run task format
 
 # Run linter
-task lint
+uv run task lint
 
 # Run type checker
-task typecheck
+uv run task typecheck
 
 # Run tests
-task test
+uv run task test
 ```
 
 ## Pull Request Process
@@ -63,7 +63,7 @@ git commit -m "Add your feature description"
 
 3. Ensure all tests pass:
 ```bash
-task ci
+uv run task ci
 ```
 
 4. Push your changes and create a pull request:
