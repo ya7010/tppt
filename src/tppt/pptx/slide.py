@@ -1,10 +1,26 @@
 """Slide wrapper implementation."""
 
 import os
-from typing import IO, TYPE_CHECKING, Any, Callable, Self, Unpack, overload
+from typing import (
+    IO,
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Self,
+    Unpack,
+    cast,
+    overload,
+)
 
 from pptx.slide import Slide as PptxSlide
 
+from tppt.pptx.shape.movie import (
+    Movie,
+    MovieData,
+    MovieProps,
+    PptxMovie,
+    to_pptx_movie_mime_type,
+)
 from tppt.types import FilePath
 
 from .converter import PptxConvertible, to_pptx_length
@@ -176,6 +192,52 @@ class SlideBuilder:
                 return image(picture_obj)
             else:
                 return picture_obj
+
+        self._shape_registry.append(_register)
+
+        return self
+
+    def movie(
+        self,
+        movie: FilePath | IO[bytes] | Callable[[Movie], Movie],
+        /,
+        movie_file: FilePath | IO[bytes] | None = None,
+        **kwargs: Unpack[MovieProps],
+    ) -> Self:
+        if not isinstance(movie, Callable):
+            movie_file = movie
+
+        assert movie_file
+        if isinstance(movie_file, os.PathLike):
+            movie_file = os.fspath(movie_file)
+
+        poster_frame_image = kwargs.get("poster_frame_image")
+        if isinstance(poster_frame_image, os.PathLike):
+            poster_frame_image = os.fspath(poster_frame_image)
+
+        mime_type = to_pptx_movie_mime_type(kwargs["mime_type"])
+
+        def _register(slide: Slide) -> Movie:
+            data = MovieData(type="movie", movie_file=movie_file, **kwargs)
+            movie_obj = Movie(
+                cast(
+                    PptxMovie,
+                    slide.to_pptx().shapes.add_movie(
+                        movie_file,
+                        to_pptx_length(data["left"]),
+                        to_pptx_length(data["top"]),
+                        to_pptx_length(data.get("width")),
+                        to_pptx_length(data.get("height")),
+                        poster_frame_image=poster_frame_image,
+                        mime_type=mime_type,
+                    ),
+                ),
+                data,
+            )
+            if isinstance(movie, Callable):
+                return movie(movie_obj)
+            else:
+                return movie_obj
 
         self._shape_registry.append(_register)
 
