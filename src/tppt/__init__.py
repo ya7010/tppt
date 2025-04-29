@@ -1,4 +1,4 @@
-"""🐍 🛡️ Typed Python PowerPoint Tool 🛡️ 🐍"""
+"""## 🐍 🛡️ Typed Python PowerPoint Tool 🛡️ 🐍"""
 
 import importlib.metadata
 from typing import Callable, Concatenate, ParamSpec, TypeVar

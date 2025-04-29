@@ -1,4 +1,10 @@
-"""pptx wrapper implementation."""
+"""
+## 📊 python-pptx wrapper implementation 📊
+
+This module provides a wrapper for the [python-pptx](https://github.com/scanny/python-pptx) library.
+
+In addition, the `Presentation` and `SlideLayout` classes have a `builder()` method, which allows you to create a PowerPoint declaratively.
+"""
 
 from .presentation import Presentation as Presentation
 from .shape.picture import Picture as Picture
