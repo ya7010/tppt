@@ -2,8 +2,8 @@ import tppt
 
 
 def format_text(
-    text_obj: tppt.Text, text: str, *, bold: bool = False, italic: bool = False
-) -> tppt.Text:
+    text_obj: tppt.pptx.Text, text: str, *, bold: bool = False, italic: bool = False
+) -> tppt.pptx.Text:
     paragraph = text_obj.text_frame.add_paragraph()
     run = paragraph.add_run()
     run.text = text
