@@ -14,7 +14,7 @@ from typing import (
 
 from pptx.slide import Slide as PptxSlide
 
-from tppt.pptx.shape.movie import (
+from tppt.pptx.shape.picture import (
     Movie,
     MovieData,
     MovieProps,
