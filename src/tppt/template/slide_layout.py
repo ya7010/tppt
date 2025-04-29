@@ -3,11 +3,13 @@ from typing import (
     TYPE_CHECKING,
     Annotated,
     Any,
+    Callable,
     ClassVar,
     OrderedDict,
     Self,
     TypeAlias,
     TypeVar,
+    assert_never,
     dataclass_transform,
     get_args,
     get_origin,
@@ -15,9 +17,8 @@ from typing import (
     overload,
 )
 
-from tppt.exception import InvalidSetterTypeError
-
 if TYPE_CHECKING:
+    from ..pptx.shape.placeholder import SlidePlaceholder as SlidePlaceholder
     from ..pptx.slide import SlideBuilder
     from ..pptx.slide_layout import SlideLayout as PptxConvertibleSlideLayout
 
@@ -26,7 +27,9 @@ AnyType = TypeVar("AnyType")
 
 
 if TYPE_CHECKING:
-    Placeholder: TypeAlias = Annotated[AnyType, ...]
+    Placeholder: TypeAlias = Annotated[
+        AnyType | Callable[[SlidePlaceholder], SlidePlaceholder], ...
+    ]
 else:
 
     class Placeholder:
@@ -159,13 +162,13 @@ class SlideLayoutProxy:
                     case None:
                         continue
                     case str():
-                        pass
+                        placeholder.text = value
                     case datetime.date():
-                        value = value.strftime("%Y%m/%d")
+                        placeholder.text = value.strftime("%Y%m/%d")
+                    case Callable():
+                        value(placeholder)
                     case _:
-                        raise InvalidSetterTypeError(str, type(value))
-
-                placeholder.text = value
+                        assert_never(value)
 
         return SlideBuilder(
             self._convertible_slide_layout,
@@ -173,7 +176,9 @@ class SlideLayoutProxy:
         )
 
 
-def get_placeholders(slide_layout: SlideLayout) -> OrderedDict[str, Any]:
+def get_placeholders(
+    slide_layout: SlideLayout,
+) -> "OrderedDict[str, str | datetime.date | None | Callable[[SlidePlaceholder], SlidePlaceholder]]":
     return OrderedDict(
         (key, getattr(slide_layout, key))
         for key in slide_layout.__class__.__placeholders__
