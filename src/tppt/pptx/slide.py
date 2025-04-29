@@ -14,6 +14,7 @@ from typing import (
 
 from pptx.slide import Slide as PptxSlide
 
+from tppt.pptx.chart.chart import Chart, ChartData, ChartProps, to_pptx_chart_type
 from tppt.pptx.shape.picture import (
     Movie,
     MovieData,
@@ -311,6 +312,39 @@ class SlideBuilder:
                 return data(table_obj)
             else:
                 return table_obj
+
+        self._shape_registry.append(_register)
+
+        return self
+
+    def chart(
+        self,
+        data: Callable[[Chart], Chart] | None = None,
+        /,
+        **kwargs: Unpack[ChartProps],
+    ) -> Self:
+        chart_type = to_pptx_chart_type(kwargs["chart_type"])
+
+        def _register(slide: Slide) -> Chart:
+            data: ChartData = {
+                "type": "chart",
+                **kwargs,
+            }
+
+            chart_obj = Chart(
+                slide.to_pptx().shapes.add_chart(
+                    chart_type=chart_type,
+                    x=to_pptx_length(data["x"]),
+                    y=to_pptx_length(data["y"]),
+                    cx=to_pptx_length(data["cx"]),
+                    cy=to_pptx_length(data["cy"]),
+                    chart_data=data["chart_data"],
+                )
+            )
+            if isinstance(data, Callable):
+                return data(chart_obj)
+            else:
+                return chart_obj
 
         self._shape_registry.append(_register)
 

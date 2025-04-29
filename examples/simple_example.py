@@ -3,7 +3,6 @@
 from pathlib import Path
 
 import tppt
-from tppt.types import Color
 
 EXAMPLE_DIR = Path(__file__).parent
 
@@ -32,7 +31,7 @@ def main():
                 size=(60, "pt"),
                 bold=True,
                 italic=True,
-                color=Color("#0000FF"),
+                color="#0000FF",
             )
             .text(
                 "Example of using tppt library",  # Subtitle

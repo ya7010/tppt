@@ -19,7 +19,7 @@ from pptx.util import Mm as PptxMm
 from pptx.util import Pt as PptxPt
 
 from tppt.types._angle import Angle, Degrees, LiteralAngle
-from tppt.types._color import Color, LiteralColor, to_color
+from tppt.types._color import LiteralColor, RGBColor, to_color
 from tppt.types._length import (
     CentiMeters,
     EnglishMetricUnits,
@@ -90,14 +90,14 @@ def to_tppt_length(length: PptxLength | None) -> Length | None:
 
 
 @overload
-def to_pptx_rgb_color(color: Color | LiteralColor) -> PptxRGBColor: ...
+def to_pptx_rgb_color(color: RGBColor | LiteralColor) -> PptxRGBColor: ...
 
 
 @overload
-def to_pptx_rgb_color(color: Color | LiteralColor | None) -> PptxRGBColor | None: ...
+def to_pptx_rgb_color(color: RGBColor | LiteralColor | None) -> PptxRGBColor | None: ...
 
 
-def to_pptx_rgb_color(color: Color | LiteralColor | None) -> PptxRGBColor | None:
+def to_pptx_rgb_color(color: RGBColor | LiteralColor | None) -> PptxRGBColor | None:
     if color is None:
         return None
 
@@ -107,15 +107,15 @@ def to_pptx_rgb_color(color: Color | LiteralColor | None) -> PptxRGBColor | None
 
 
 @overload
-def to_tppt_color(color: PptxRGBColor) -> Color: ...
+def to_tppt_rgb_color(color: PptxRGBColor) -> RGBColor: ...
 
 
 @overload
-def to_tppt_color(color: PptxRGBColor | None) -> Color | None: ...
+def to_tppt_rgb_color(color: PptxRGBColor | None) -> RGBColor | None: ...
 
 
-def to_tppt_color(color: PptxRGBColor | None) -> Color | None:
-    return Color(*color) if color else None
+def to_tppt_rgb_color(color: PptxRGBColor | None) -> RGBColor | None:
+    return RGBColor(*color) if color else None
 
 
 PptxAngle: TypeAlias = float

@@ -3,8 +3,8 @@ from typing import Self
 from pptx.dml.color import ColorFormat as PptxColorFormat
 from pptx.enum.dml import MSO_THEME_COLOR
 
-from tppt.pptx.converter import PptxConvertible, to_pptx_rgb_color, to_tppt_color
-from tppt.types import Color, LiteralColor
+from tppt.pptx.converter import PptxConvertible, to_pptx_rgb_color, to_tppt_rgb_color
+from tppt.types import LiteralColor, RGBColor
 
 
 class ColorFormat(PptxConvertible[PptxColorFormat]):
@@ -25,11 +25,11 @@ class ColorFormat(PptxConvertible[PptxColorFormat]):
         self._pptx.brightness = value
 
     @property
-    def rgb(self) -> Color | None:
-        return to_tppt_color(self._pptx.rgb)
+    def rgb(self) -> RGBColor | None:
+        return to_tppt_rgb_color(self._pptx.rgb)
 
     @rgb.setter
-    def rgb(self, color: Color | LiteralColor):
+    def rgb(self, color: RGBColor | LiteralColor):
         self._pptx.rgb = to_pptx_rgb_color(color)
 
     @property
