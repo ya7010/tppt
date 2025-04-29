@@ -3,13 +3,12 @@
 from pathlib import Path
 
 import tppt
-import tppt.pptx.shape.text
 
 EXAMPLE_DIR = Path(__file__).parent
 
 
 def main():
-    def formatted_text(text: tppt.pptx.shape.text.Text, /) -> tppt.pptx.shape.text.Text:
+    def formatted_text(text: tppt.pptx.Text, /) -> tppt.pptx.Text:
         run = text.text_frame.add_paragraph().add_run()
         run.text = "Hello, world!"
         font = run.font
@@ -19,14 +18,14 @@ def main():
         return text
 
     def functional_text(
-        text_obj: tppt.pptx.shape.text.Text,
+        text_obj: tppt.pptx.Text,
         /,
         *,
         text: str,
         bold: bool = False,
         italic: bool = False,
         color: tppt.types.Color | tppt.types.LiteralColor | None = None,
-    ) -> tppt.pptx.shape.text.Text:
+    ) -> tppt.pptx.Text:
         run = text_obj.text_frame.add_paragraph().add_run()
         run.text = text
         font = run.font
