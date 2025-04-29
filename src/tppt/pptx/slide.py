@@ -197,6 +197,20 @@ class SlideBuilder:
 
         return self
 
+    @overload
+    def movie(
+        self, movie: FilePath | IO[bytes], /, **kwargs: Unpack[MovieProps]
+    ) -> Self: ...
+
+    @overload
+    def movie(
+        self,
+        movie: Callable[[Movie], Movie],
+        /,
+        movie_file: FilePath | IO[bytes],
+        **kwargs: Unpack[MovieProps],
+    ) -> Self: ...
+
     def movie(
         self,
         movie: FilePath | IO[bytes] | Callable[[Movie], Movie],
