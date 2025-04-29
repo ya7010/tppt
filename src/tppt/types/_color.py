@@ -14,14 +14,14 @@ class RGBColor(NamedTuple):
 
 
 @overload
-def to_color(color: RGBColor | LiteralColor) -> RGBColor: ...
+def to_rgb_color(color: RGBColor | LiteralColor) -> RGBColor: ...
 
 
 @overload
-def to_color(color: RGBColor | LiteralColor | None) -> RGBColor | None: ...
+def to_rgb_color(color: RGBColor | LiteralColor | None) -> RGBColor | None: ...
 
 
-def to_color(color: RGBColor | LiteralColor | None) -> RGBColor | None:
+def to_rgb_color(color: RGBColor | LiteralColor | None) -> RGBColor | None:
     match color:
         case None:
             return None

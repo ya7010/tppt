@@ -3,7 +3,7 @@
 import unittest
 
 from tppt.exception import ColorInvalidFormatError
-from tppt.types._color import RGBColor, to_color
+from tppt.types._color import RGBColor, to_rgb_color
 
 
 class TestColor(unittest.TestCase):
@@ -11,7 +11,7 @@ class TestColor(unittest.TestCase):
 
     def test_init_with_rgb_hex_short(self):
         """Test initialization with short hex color code (#RGB)."""
-        color = to_color("#123")
+        color = to_rgb_color("#123")
         r, g, b = color
         assert r == 0x11
         assert g == 0x22
@@ -19,7 +19,7 @@ class TestColor(unittest.TestCase):
 
     def test_init_with_rgb_hex_long(self):
         """Test initialization with long hex color code (#RRGGBB)."""
-        color = to_color("#123456")
+        color = to_rgb_color("#123456")
         r, g, b = color
         assert r == 0x12
         assert g == 0x34
@@ -36,12 +36,12 @@ class TestColor(unittest.TestCase):
     def test_invalid_format_no_hash(self):
         """Test initialization with invalid format (no # prefix)."""
         with self.assertRaises(ColorInvalidFormatError):
-            to_color("123456")
+            to_rgb_color("123456")
 
     def test_invalid_format_wrong_length(self):
         """Test initialization with invalid format (wrong length)."""
         with self.assertRaises(ColorInvalidFormatError):
-            to_color("#12345")  # 6 characters (including #) is invalid
+            to_rgb_color("#12345")  # 6 characters (including #) is invalid
 
 
 class TestToColor(unittest.TestCase):
@@ -49,7 +49,7 @@ class TestToColor(unittest.TestCase):
 
     def test_to_color_with_tuple(self):
         """Test to_color with a RGB tuple."""
-        result = to_color((10, 20, 30))
+        result = to_rgb_color((10, 20, 30))
         assert isinstance(result, RGBColor)
         r, g, b = result
         assert r == 10
@@ -58,7 +58,7 @@ class TestToColor(unittest.TestCase):
 
     def test_to_color_with_str(self):
         """Test to_color with a hex string."""
-        result = to_color("#123456")
+        result = to_rgb_color("#123456")
         assert isinstance(result, RGBColor)
         r, g, b = result
         assert r == 0x12
@@ -67,7 +67,7 @@ class TestToColor(unittest.TestCase):
 
     def test_to_color_with_short_hex(self):
         """Test to_color with a short hex string."""
-        result = to_color("#123")
+        result = to_rgb_color("#123")
         assert isinstance(result, RGBColor)
         r, g, b = result
         assert r == 0x11

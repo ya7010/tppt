@@ -19,7 +19,7 @@ from pptx.util import Mm as PptxMm
 from pptx.util import Pt as PptxPt
 
 from tppt.types._angle import Angle, Degrees, LiteralAngle
-from tppt.types._color import LiteralColor, RGBColor, to_color
+from tppt.types._color import LiteralColor, RGBColor, to_rgb_color
 from tppt.types._length import (
     CentiMeters,
     EnglishMetricUnits,
@@ -101,7 +101,7 @@ def to_pptx_rgb_color(color: RGBColor | LiteralColor | None) -> PptxRGBColor | N
     if color is None:
         return None
 
-    color = to_color(color)
+    color = to_rgb_color(color)
 
     return PptxRGBColor(color.r, color.g, color.b)
 
