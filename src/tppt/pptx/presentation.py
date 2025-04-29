@@ -145,7 +145,7 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
 
     def slide(
         self,
-        slide: Callable[[type[GenericTpptSlideMaster]], SlideBuilder | SlideLayout],
+        slide: Callable[[type[GenericTpptSlideMaster]], SlideLayout | SlideBuilder],
         /,
     ) -> Self:
         """Add a slide to the presentation."""
