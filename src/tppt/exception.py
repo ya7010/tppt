@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 if TYPE_CHECKING:
     from pptx.slide import SlideLayouts as PptxSlideLayouts
@@ -29,6 +29,17 @@ class ColorInvalidFormatError(TpptException, ValueError):
     @property
     def message(self) -> str:
         return f"Invalid color format: {self.color}"
+
+
+class ColorInvalidTupleSizeError(TpptException, ValueError):
+    """Color tuple size is invalid."""
+
+    def __init__(self, color: tuple[Any, ...]) -> None:
+        self.color = color
+
+    @property
+    def message(self) -> str:
+        return f"Invalid color tuple size: {self.color}, expected 3(RGB) or 4(RGBA) elements."
 
 
 class SlideLayoutIndexError(TpptException, IndexError):
@@ -87,3 +98,17 @@ class InvalidSetterTypeError(TpptException, TypeError):
     @property
     def message(self) -> str:
         return f"Invalid setter type. Expected type: {self.expected_type}, but got: {self.actual_type}."
+
+
+class InvalidColorValueError(TpptException, ValueError):
+    """Invalid color value."""
+
+    def __init__(
+        self, type: Literal["red", "green", "blue", "alpha"], value: int
+    ) -> None:
+        self.type = type
+        self.value = value
+
+    @property
+    def message(self) -> str:
+        return f"Invalid {self.type} value: {self.value}. It must be between 0 and 255."

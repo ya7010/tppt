@@ -24,7 +24,7 @@ def main():
         text: str,
         bold: bool = False,
         italic: bool = False,
-        color: tppt.types.RGBColor | tppt.types.LiteralColor | None = None,
+        color: tppt.types.Color | tppt.types.LiteralColor | None = None,
     ) -> tppt.pptx.Text:
         run = text_obj.text_frame.add_paragraph().add_run()
         run.text = text

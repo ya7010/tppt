@@ -5,7 +5,7 @@ from pptx.shapes.autoshape import Shape as PptxShape
 
 from tppt.pptx.converter import to_pptx_length, to_pptx_rgb_color
 from tppt.pptx.text.text_frame import TextFrame
-from tppt.types._color import LiteralColor, RGBColor
+from tppt.types._color import Color, LiteralColor
 from tppt.types._length import Length, LiteralLength
 
 from . import RangeProps, Shape
@@ -17,7 +17,7 @@ class TextProps(RangeProps):
     size: NotRequired[Length | LiteralLength]
     bold: NotRequired[bool]
     italic: NotRequired[bool]
-    color: NotRequired[RGBColor | LiteralColor]
+    color: NotRequired[Color | LiteralColor]
     margin_bottom: NotRequired[Length | LiteralLength]
     margin_left: NotRequired[Length | LiteralLength]
     vertical_anchor: NotRequired[MSO_ANCHOR]

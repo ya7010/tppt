@@ -5,8 +5,8 @@ from typing import TypeAlias
 
 from tppt.pptx.shape import RangeProps as _RangeProps
 
+from ._color import Color as Color
 from ._color import LiteralColor as LiteralColor
-from ._color import RGBColor as RGBColor
 from ._color import to_rgb_color as to_rgb_color
 from ._length import (
     CentiMeters as CentiMeters,
