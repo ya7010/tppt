@@ -1133,7 +1133,7 @@ rich = [
 [package.metadata]
 requires-dist = [
     { name = "pandas", marker = "extra == 'pandas'", specifier = ">=2.0.0" },
-    { name = "pillow", specifier = ">=10.0.0" },
+    { name = "pillow", specifier = ">=10.0.1" },
     { name = "polars", marker = "extra == 'polars'", specifier = ">=0.20.0" },
     { name = "pydantic", marker = "extra == 'pydantic'", specifier = ">=2.0.0" },
     { name = "python-pptx", specifier = ">=1.0.2" },
