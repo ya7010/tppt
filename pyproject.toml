@@ -24,6 +24,10 @@ dependencies = [
   "typing-extensions>=4.13.2",
 ]
 
+[project.urls]
+Documentation = "https://yassun7010.github.io/tppt/"
+Homepage = "https://github.com/yassun7010/tppt"
+
 [project.optional-dependencies]
 pandas = ["pandas>=2.0.0"]
 polars = ["polars>=0.20.0"]
