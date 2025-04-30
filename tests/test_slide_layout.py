@@ -1,6 +1,8 @@
 import datetime
 from typing import Annotated, Any, ClassVar
 
+from typing_extensions import Doc
+
 from tppt import Presentation
 from tppt.template.default import DefaultTitleSlideLayout
 from tppt.template.slide_layout import (
@@ -113,7 +115,7 @@ class TestSlideLayoutGetPlaceholders:
 
         class MixedLayout(SlideLayout):
             # Placeholder fields
-            title: Placeholder[str]
+            title: Annotated[Placeholder[str], Doc("Title")]
             subtitle: Placeholder[str | None] = None
 
             # Regular fields (not placeholders)
