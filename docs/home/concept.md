@@ -5,7 +5,7 @@
 In today's world where generative AI is becoming ubiquitous, many organizations still require reports to be submitted in PowerPoint (pptx) format.
 (Or is it just us who are being left behind?)
 
-TPPT is a powerful wrapper for python-pptx that brings type safety to slide masters and more.
+TPPT is a powerful wrapper for [python-pptx](https://github.com/scanny/python-pptx) that brings type safety to slide masters and more.
 
 We've designed it to be both intuitive and easy to use,
 making your PowerPoint generation process safer and more efficient.
