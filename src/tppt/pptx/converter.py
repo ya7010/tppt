@@ -19,7 +19,7 @@ from pptx.util import Mm as PptxMm
 from pptx.util import Pt as PptxPt
 
 from tppt.types._angle import Angle, Degrees, LiteralAngle
-from tppt.types._color import Color, LiteralColor, to_rgb_color
+from tppt.types._color import Color, LiteralColor, to_color
 from tppt.types._length import (
     CentiMeters,
     EnglishMetricUnits,
@@ -49,14 +49,18 @@ class PptxConvertible(Protocol[PT]):
 
 
 @overload
-def to_pptx_length(length: Length | LiteralLength) -> PptxLength: ...
+def to_pptx_length(length: Length | LiteralLength | PptxLength) -> PptxLength: ...
 
 
 @overload
-def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None: ...
+def to_pptx_length(
+    length: Length | LiteralLength | PptxLength | None,
+) -> PptxLength | None: ...
 
 
-def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None:
+def to_pptx_length(
+    length: Length | LiteralLength | PptxLength | None,
+) -> PptxLength | None:
     if isinstance(length, tuple):
         length = to_length(length)
 
@@ -71,6 +75,8 @@ def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None:
             return PptxMm(length.value)
         case EnglishMetricUnits():
             return PptxEmu(length.value)
+        case PptxLength():
+            return length
         case None:
             return None
         case _:
@@ -113,7 +119,7 @@ def to_pptx_rgb_color(
     if color is None:
         return None
 
-    color = to_rgb_color(color)
+    color = to_color(color)
 
     return PptxRGBColor(color.r, color.g, color.b), color.a
 

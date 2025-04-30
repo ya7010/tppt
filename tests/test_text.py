@@ -8,8 +8,6 @@ import tppt
 def test_text_with_options(output) -> None:
     """Test creating text with various formatting options."""
     # テキストとその書式設定オプション
-    text_content = "サンプルテキスト"
-
     # プレゼンテーションの作成
     presentation = (
         tppt.Presentation.builder()
@@ -17,7 +15,7 @@ def test_text_with_options(output) -> None:
             lambda slide: slide.BlankLayout()
             .builder()
             .text(
-                text_content,
+                "サンプルテキスト",
                 left=(100, "pt"),
                 top=(100, "pt"),
                 width=(400, "pt"),
@@ -25,7 +23,7 @@ def test_text_with_options(output) -> None:
                 size=(24, "pt"),
                 bold=True,
                 italic=True,
-                color="#0000FF",
+                color="#0000FF99",
                 margin_bottom=(10, "pt"),
                 margin_left=(10, "pt"),
                 vertical_anchor=MSO_ANCHOR.MIDDLE,

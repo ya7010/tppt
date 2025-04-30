@@ -5,7 +5,7 @@ from typing import IO, TYPE_CHECKING, Any, Callable, Generic, Self, cast, overlo
 
 from pptx.presentation import Presentation as PptxPresentation
 
-from tppt.pptx.tree import ppt2dict
+from tppt.pptx.tree import ppt2tree
 from tppt.template.default import DefaultSlideMaster
 from tppt.template.slide_layout import SlideLayout, SlideLayoutProxy
 from tppt.template.slide_master import (
@@ -72,7 +72,7 @@ class Presentation(PptxConvertible[PptxPresentation]):
     @property
     def tree(self) -> dict[str, Any]:
         """Get the node tree of the presentation."""
-        return ppt2dict(self._pptx)
+        return ppt2tree(self._pptx)
 
     @overload
     @classmethod

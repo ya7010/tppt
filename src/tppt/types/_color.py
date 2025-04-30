@@ -36,16 +36,16 @@ class Color:
 
 
 @overload
-def to_rgb_color(color: Color | LiteralColor | _PptxRGBColor) -> Color: ...
+def to_color(color: Color | LiteralColor | _PptxRGBColor) -> Color: ...
 
 
 @overload
-def to_rgb_color(
+def to_color(
     color: Color | LiteralColor | _PptxRGBColor | None,
 ) -> Color | None: ...
 
 
-def to_rgb_color(color: Color | LiteralColor | _PptxRGBColor | None) -> Color | None:
+def to_color(color: Color | LiteralColor | _PptxRGBColor | None) -> Color | None:
     match color:
         case None:
             return None

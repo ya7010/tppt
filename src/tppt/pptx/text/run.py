@@ -12,20 +12,20 @@ class Run(PptxConvertible[PptxRun]):
         self._pptx = pptx_obj
 
     @property
-    def text(self) -> str:
-        return self._pptx.text
-
-    @text.setter
-    def text(self, text: str) -> None:
-        self._pptx.text = text
-
-    @property
     def font(self) -> Font:
         return Font(self._pptx.font)
 
     @property
     def hyperlink(self) -> Hyperlink:
         return Hyperlink(self._pptx.hyperlink)
+
+    @property
+    def text(self) -> str:
+        return self._pptx.text
+
+    @text.setter
+    def text(self, text: str) -> None:
+        self._pptx.text = text
 
     def to_pptx(self) -> PptxRun:
         return self._pptx

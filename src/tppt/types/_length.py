@@ -2,6 +2,8 @@
 
 from typing import Literal, assert_never
 
+from pptx.util import Length as _PptxLength
+
 # Constants for unit conversion
 INCHES_PER_POINT = 1 / 72  # 1 point = 1/72 inches
 POINTS_PER_INCH = 72  # 1 inch = 72 points
@@ -237,7 +239,12 @@ class MilliMeters:
 
 
 class EnglishMetricUnits:
-    """Class representing English Metric Units (EMU)"""
+    """
+    Class representing English Metric Units (EMU)
+
+    This is not a physical unit system, but is written as a Microsoft-specific definition
+    in the ISO/IEC 29500 specification as "1 inch = 360,000 EMU".
+    """
 
     def __init__(self, value: int):
         self.value = value
@@ -288,7 +295,7 @@ class EnglishMetricUnits:
 Length = Inches | Points | CentiMeters | MilliMeters | EnglishMetricUnits
 
 
-def to_length(length: LiteralLength | Length) -> Length:
+def to_length(length: LiteralLength | Length | _PptxLength) -> Length:
     """Convert public length representation to internal length representation
 
     Args:
@@ -298,23 +305,26 @@ def to_length(length: LiteralLength | Length) -> Length:
         _Length: Internal length representation
     """
 
-    if isinstance(length, tuple):
-        value, unit = length
-        match unit:
-            case "in":
-                return Inches(value)
-            case "cm":
-                return CentiMeters(value)
-            case "pt":
-                return Points(int(value))
-            case "mm":
-                return MilliMeters(value)
-            case "emu":
-                return EnglishMetricUnits(int(value))
-            case _:
-                assert_never(unit)
-    else:
-        return length
+    match length:
+        case tuple():
+            value, unit = length
+            match unit:
+                case "in":
+                    return Inches(value)
+                case "cm":
+                    return CentiMeters(value)
+                case "pt":
+                    return Points(int(value))
+                case "mm":
+                    return MilliMeters(value)
+                case "emu":
+                    return EnglishMetricUnits(int(value))
+                case _:
+                    assert_never(unit)
+        case _PptxLength():
+            return EnglishMetricUnits(length)
+        case _:
+            return length
 
 
 def to_literal_length(
@@ -347,13 +357,7 @@ def to_literal_length(
             assert_never(unit)
 
 
-def to_optional_length(length: Length | LiteralLength | None) -> Length | None:
-    if length is None:
-        return None
-    return to_length(length)
-
-
-def to_centimeter(length: Length | LiteralLength) -> CentiMeters:
+def to_centimeter(length: Length | LiteralLength | _PptxLength) -> CentiMeters:
     """Convert any length to centimeters
 
     Args:
@@ -376,11 +380,13 @@ def to_centimeter(length: Length | LiteralLength) -> CentiMeters:
             return CentiMeters(length.value / MM_PER_CM)
         case EnglishMetricUnits():
             return CentiMeters(length.value / EMUS_PER_CM)
+        case _PptxLength():
+            return CentiMeters(length.cm)
         case _:
             assert_never(length)
 
 
-def to_inche(length: Length | LiteralLength) -> Inches:
+def to_inche(length: Length | LiteralLength | _PptxLength) -> Inches:
     """Convert any length to inches
 
     Args:
@@ -403,11 +409,13 @@ def to_inche(length: Length | LiteralLength) -> Inches:
             return Inches(length.value / MM_PER_INCH)
         case EnglishMetricUnits():
             return Inches(length.value / EMUS_PER_INCH)
+        case _PptxLength():
+            return Inches(length.inches)
         case _:
             assert_never(length)
 
 
-def to_point(length: Length | LiteralLength) -> Points:
+def to_point(length: Length | LiteralLength | _PptxLength) -> Points:
     """Convert any length to points
 
     Args:
@@ -430,11 +438,13 @@ def to_point(length: Length | LiteralLength) -> Points:
             return Points(int(length.value / MM_PER_INCH * POINTS_PER_INCH))
         case EnglishMetricUnits():
             return Points(int(length.value / EMUS_PER_PT))
+        case _PptxLength():
+            return Points(int(length.pt))
         case _:
             assert_never(length)
 
 
-def to_millimeter(length: Length | LiteralLength) -> MilliMeters:
+def to_millimeter(length: Length | LiteralLength | _PptxLength) -> MilliMeters:
     """Convert any length to millimeters
 
     Args:
@@ -457,11 +467,13 @@ def to_millimeter(length: Length | LiteralLength) -> MilliMeters:
             return length
         case EnglishMetricUnits():
             return MilliMeters(length.value / EMUS_PER_MM)
+        case _PptxLength():
+            return MilliMeters(length.mm)
         case _:
             assert_never(length)
 
 
-def to_emu(length: Length | LiteralLength) -> EnglishMetricUnits:
+def to_emu(length: Length | LiteralLength | _PptxLength) -> EnglishMetricUnits:
     """Convert any length to English Metric Units (EMU)
 
     Args:
@@ -484,5 +496,7 @@ def to_emu(length: Length | LiteralLength) -> EnglishMetricUnits:
             return EnglishMetricUnits(int(length.value * EMUS_PER_MM))
         case EnglishMetricUnits():
             return length
+        case _PptxLength():
+            return EnglishMetricUnits(length.emu)
         case _:
             assert_never(length)

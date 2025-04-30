@@ -2,6 +2,8 @@
 
 from typing import TYPE_CHECKING, Self, TypedDict
 
+from pptx.opc.package import XmlPart
+from pptx.shapes import Subshape as PptxSubshape
 from pptx.shapes.autoshape import Shape as PptxShape
 from pptx.shapes.base import BaseShape as PptxBaseShape
 from typing_extensions import TypeVar
@@ -54,6 +56,22 @@ class Shape(BaseShape[GenericPptxShape]):
         from ..text.text_frame import TextFrame
 
         return TextFrame(self._pptx.text_frame)
+
+
+class SubShape(PptxConvertible[PptxSubshape]):
+    def __init__(self, pptx_shape: PptxSubshape) -> None:
+        self._pptx: PptxSubshape = pptx_shape
+
+    @property
+    def part(self) -> XmlPart:
+        return self._pptx.part
+
+    def to_pptx(self) -> PptxSubshape:
+        return self._pptx
+
+    @classmethod
+    def from_pptx(cls, pptx_obj: PptxSubshape) -> Self:
+        return cls(pptx_obj)
 
 
 class RangeProps(TypedDict):
