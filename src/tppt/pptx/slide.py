@@ -236,6 +236,8 @@ class SlideBuilder:
             data = MovieData(type="movie", movie_file=movie_file, **kwargs)
             movie_obj = Movie(
                 cast(
+                    # NOTE: Type hint of python-pptx is incorrect. Expected Movie, but GraphicFrame is returned.
+                    # Ref: https://github.com/scanny/python-pptx/pull/1057/commits/56338fa314d2c5bceb8b1756a50ed64ea8984abe
                     PptxMovie,
                     slide.to_pptx().shapes.add_movie(
                         movie_file,
