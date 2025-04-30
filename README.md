@@ -2,6 +2,11 @@
 
 ✨ **tppt** is a type-safe PowerPoint presentation builder that lets you create stunning presentations with Python code! 🐍
 
+This library is a wrapper around the [python-pptx](https://github.com/scanny/python-pptx) library,
+providing a more intuitive and type-safe interface for creating PowerPoint presentations.
+It allows you to build presentations using a builder pattern,
+making it easy to create slides with various layouts, text formatting, images, and tables.
+
 ## 🚀 Installation
 
 ```bash
