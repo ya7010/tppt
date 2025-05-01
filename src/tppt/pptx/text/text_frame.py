@@ -5,7 +5,12 @@ from pptx.util import Length as PptxLength
 from tppt.pptx.converter import to_pptx_length
 from tppt.pptx.shape import SubShape
 from tppt.pptx.text.paragraph import Paragraph
-from tppt.types._length import EnglishMetricUnits, Length, LiteralLength, to_emu
+from tppt.types._length import (
+    EnglishMetricUnits,
+    Length,
+    LiteralLength,
+    to_english_metric_units,
+)
 
 
 class TextFrame(SubShape[PptxTextFrame]):
@@ -38,7 +43,7 @@ class TextFrame(SubShape[PptxTextFrame]):
 
     @property
     def margin_bottom(self) -> EnglishMetricUnits:
-        return to_emu(self._pptx.margin_bottom)
+        return to_english_metric_units(self._pptx.margin_bottom)
 
     @margin_bottom.setter
     def margin_bottom(self, value: Length | LiteralLength | PptxLength) -> None:
@@ -46,7 +51,7 @@ class TextFrame(SubShape[PptxTextFrame]):
 
     @property
     def margin_left(self) -> EnglishMetricUnits:
-        return to_emu(self._pptx.margin_left)
+        return to_english_metric_units(self._pptx.margin_left)
 
     @margin_left.setter
     def margin_left(self, value: Length | LiteralLength | PptxLength) -> None:
@@ -54,7 +59,7 @@ class TextFrame(SubShape[PptxTextFrame]):
 
     @property
     def margin_right(self) -> EnglishMetricUnits:
-        return to_emu(self._pptx.margin_right)
+        return to_english_metric_units(self._pptx.margin_right)
 
     @margin_right.setter
     def margin_right(self, value: Length | LiteralLength | PptxLength) -> None:
@@ -62,7 +67,7 @@ class TextFrame(SubShape[PptxTextFrame]):
 
     @property
     def margin_top(self) -> EnglishMetricUnits:
-        return to_emu(self._pptx.margin_top)
+        return to_english_metric_units(self._pptx.margin_top)
 
     @margin_top.setter
     def margin_top(self, value: Length | LiteralLength | PptxLength) -> None:

@@ -79,9 +79,6 @@ def to_pptx_theme_color(
 
 
 class ColorFormat(PptxConvertible[PptxColorFormat]):
-    def __init__(self, pptx_obj: PptxColorFormat, /) -> None:
-        super().__init__(pptx_obj)
-
     @property
     def brightness(self) -> float:
         """

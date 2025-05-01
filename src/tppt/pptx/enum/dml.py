@@ -1,6 +1,18 @@
-from typing import Literal, assert_never
+from typing import Literal, assert_never, overload
 
-from pptx.enum.dml import MSO_PATTERN_TYPE
+from pptx.enum.dml import MSO_LINE_DASH_STYLE, MSO_PATTERN_TYPE
+
+LiteralLineDashStyle = Literal[
+    "dash",
+    "dash_dot",
+    "dash_dot_dot",
+    "long_dash",
+    "long_dash_dot",
+    "round_dot",
+    "solid",
+    "square_dot",
+    "mixed",
+]
 
 LiteralPatternType = Literal[
     "cross",
@@ -58,6 +70,48 @@ LiteralPatternType = Literal[
     "zig_zag",
     "mixed",
 ]
+
+
+@overload
+def to_pptx_line_dash_style(
+    dash_style: LiteralLineDashStyle | MSO_LINE_DASH_STYLE,
+) -> MSO_LINE_DASH_STYLE: ...
+
+
+@overload
+def to_pptx_line_dash_style(
+    dash_style: LiteralLineDashStyle | MSO_LINE_DASH_STYLE | None,
+) -> MSO_LINE_DASH_STYLE | None: ...
+
+
+def to_pptx_line_dash_style(
+    dash_style: LiteralLineDashStyle | MSO_LINE_DASH_STYLE | None,
+) -> MSO_LINE_DASH_STYLE | None:
+    match dash_style:
+        case None:
+            return None
+        case MSO_LINE_DASH_STYLE():
+            return dash_style
+        case "dash":
+            return MSO_LINE_DASH_STYLE.DASH
+        case "dash_dot":
+            return MSO_LINE_DASH_STYLE.DASH_DOT
+        case "dash_dot_dot":
+            return MSO_LINE_DASH_STYLE.DASH_DOT_DOT
+        case "long_dash":
+            return MSO_LINE_DASH_STYLE.LONG_DASH
+        case "long_dash_dot":
+            return MSO_LINE_DASH_STYLE.LONG_DASH_DOT
+        case "round_dot":
+            return MSO_LINE_DASH_STYLE.ROUND_DOT
+        case "solid":
+            return MSO_LINE_DASH_STYLE.SOLID
+        case "square_dot":
+            return MSO_LINE_DASH_STYLE.SQUARE_DOT
+        case "mixed":
+            return MSO_LINE_DASH_STYLE.DASH_STYLE_MIXED
+        case _:
+            assert_never(dash_style)
 
 
 def to_pptx_pattern_type(

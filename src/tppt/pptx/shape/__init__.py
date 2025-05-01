@@ -2,6 +2,7 @@
 
 from typing import TYPE_CHECKING, Self, TypedDict
 
+from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 from pptx.opc.package import XmlPart
 from pptx.shapes import Subshape as PptxSubshape
 from pptx.shapes.autoshape import Shape as PptxShape
@@ -12,7 +13,10 @@ from tppt.pptx.converter import PptxConvertible
 from tppt.types._length import Length, LiteralLength
 
 if TYPE_CHECKING:
-    from ..text.text_frame import TextFrame
+    from tppt.pptx.dml.fill import FillFormat
+    from tppt.pptx.dml.line import LineFormat
+    from tppt.pptx.text.text_frame import TextFrame
+
 
 GenericPptxBaseShape = TypeVar(
     "GenericPptxBaseShape",
@@ -40,8 +44,25 @@ class BaseShape(PptxConvertible[GenericPptxBaseShape]):
 
 
 class Shape(BaseShape[GenericPptxShape]):
-    def __init__(self, pptx_shape: GenericPptxShape) -> None:
-        self._pptx: GenericPptxShape = pptx_shape
+    @property
+    def adjustments(self) -> list[float]:
+        return [self._pptx.adjustments[i] for i in range(len(self._pptx.adjustments))]
+
+    @property
+    def auto_shape_type(self) -> MSO_AUTO_SHAPE_TYPE | None:
+        return self._pptx.auto_shape_type
+
+    @property
+    def fill(self) -> "FillFormat":
+        from tppt.pptx.dml.fill import FillFormat
+
+        return FillFormat(self._pptx.fill)
+
+    @property
+    def line(self) -> "LineFormat":
+        from tppt.pptx.dml.line import LineFormat
+
+        return LineFormat(self._pptx.line)
 
     @property
     def text(self) -> str:
@@ -53,7 +74,7 @@ class Shape(BaseShape[GenericPptxShape]):
 
     @property
     def text_frame(self) -> "TextFrame":
-        from ..text.text_frame import TextFrame
+        from tppt.pptx.text.text_frame import TextFrame
 
         return TextFrame(self._pptx.text_frame)
 

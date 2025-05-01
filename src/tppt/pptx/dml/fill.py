@@ -19,9 +19,6 @@ from tppt.types._angle import Angle
 class FillFormat(PptxConvertible[PptxFillFormat]):
     """Fill format."""
 
-    def __init__(self, pptx_obj: PptxFillFormat, /) -> None:
-        super().__init__(pptx_obj)
-
     @property
     def fore_color(self) -> ColorFormat:
         """Fore color."""
@@ -89,9 +86,6 @@ class GradFill(Fill[PptxGradFill]):
 
 class NoFill(Fill[PptxNoFill]):
     """No fill."""
-
-    def __init__(self, pptx_obj: PptxNoFill) -> None:
-        super().__init__(pptx_obj)
 
 
 class PattFill(Fill[PptxPattFill]):
