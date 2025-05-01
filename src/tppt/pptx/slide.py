@@ -32,40 +32,49 @@ from .shape.picture import Picture, PictureData, PictureProps
 from .shape.placeholder import SlidePlaceholder
 from .shape.text import Text, TextData, TextProps
 from .slide_layout import SlideLayout
-from .snotes_slide import NotesSlide
 from .table.table import DataFrame, Table, TableData, TableProps, dataframe2list
 
 if TYPE_CHECKING:
-    pass
+    from tppt.pptx.shape.background import Background
+
+    from .notes_slide import NotesSlide
 
 _GenericPptxBaseSlide = TypeVar("_GenericPptxBaseSlide", bound=_PptxBaseSlide)
 
 
-class _BaseSlide(PptxConvertible[_GenericPptxBaseSlide]): ...
+class _BaseSlide(PptxConvertible[_GenericPptxBaseSlide]):
+    @property
+    def background(self) -> "Background":
+        """Background of the slide."""
+        from tppt.pptx.shape.background import Background
+
+        return Background(self._pptx.background)
+
+    @property
+    def name(self) -> str:
+        return self._pptx.name
+
+    @name.setter
+    def name(self, value: str) -> None:
+        self._pptx.name = value
 
 
 class Slide(_BaseSlide[PptxSlide]):
     """Slide wrapper with type safety."""
 
     @property
-    def name(self) -> str | None:
-        """String representing the internal name of this slide.
-
-        Returns an empty string if no name is assigned.
-        """
-        if name := self._pptx.name:
-            return name
-        return None
+    def follow_master_background(self) -> bool:
+        return self._pptx.follow_master_background
 
     @property
-    def slide_id(self) -> int:
-        """Get the slide id."""
-        return self._pptx.slide_id
+    def notes_slide(self) -> "NotesSlide | None":
+        """Get the notes slide."""
+        if not self._pptx.has_notes_slide:
+            return None
 
-    @property
-    def shapes(self) -> list[BaseShape]:
-        """Get all shapes in the slide."""
-        return [BaseShape(shape) for shape in self._pptx.shapes]
+        from .notes_slide import NotesSlide
+
+        return NotesSlide(self._pptx.notes_slide)
 
     @property
     def placeholders(self) -> list[SlidePlaceholder]:
@@ -78,16 +87,19 @@ class Slide(_BaseSlide[PptxSlide]):
         ]
 
     @property
+    def shapes(self) -> list[BaseShape]:
+        """Get all shapes in the slide."""
+        return [BaseShape(shape) for shape in self._pptx.shapes]
+
+    @property
+    def slide_id(self) -> int:
+        """Get the slide id."""
+        return self._pptx.slide_id
+
+    @property
     def slide_layout(self) -> SlideLayout:
         """Get the slide layout."""
         return SlideLayout.from_pptx(self._pptx.slide_layout)
-
-    @property
-    def notes_slide(self) -> NotesSlide | None:
-        """Get the notes slide."""
-        if not self._pptx.has_notes_slide:
-            return None
-        return NotesSlide.from_pptx(self._pptx.notes_slide)
 
 
 class SlideBuilder:

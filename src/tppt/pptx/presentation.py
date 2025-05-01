@@ -19,7 +19,7 @@ from tppt.types import FilePath
 from tppt.types._length import Length, LiteralLength
 
 from .converter import PptxConvertible, to_pptx_length, to_tppt_length
-from .slide import SlideBuilder
+from .slide import SlideBuilder, _BaseSlide
 
 if TYPE_CHECKING:
     from tppt.pptx.shape import BaseShape
@@ -187,7 +187,7 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
         self.build().save(file)
 
 
-class _BaseMaster(PptxConvertible[_PptxBaseMaster]):
+class _BaseMaster(_BaseSlide[_PptxBaseMaster]):
     @property
     def placeholders(self) -> "list[MasterPlaceholder]":
         """Get the placeholders."""
