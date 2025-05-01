@@ -1,4 +1,4 @@
-from typing import Self, cast
+from typing import Literal, Self, assert_never, cast
 
 from lxml.etree import _Element
 from pptx.dml.color import ColorFormat as PptxColorFormat
@@ -10,6 +10,72 @@ from pptx.oxml.xmlchemy import OxmlElement
 
 from tppt.pptx.converter import PptxConvertible, to_pptx_rgb_color, to_tppt_rgb_color
 from tppt.types import Color, LiteralColor
+
+LiteralThemeColor = Literal[
+    "accent1",
+    "accent2",
+    "accent3",
+    "accent4",
+    "accent5",
+    "accent6",
+    "background1",
+    "background2",
+    "dark1",
+    "dark2",
+    "followed_hyperlink",
+    "hyperlink",
+    "light1",
+    "light2",
+    "text1",
+    "text2",
+    "mixed",
+]
+
+
+def to_pptx_theme_color(
+    value: LiteralThemeColor | MSO_THEME_COLOR | None,
+) -> MSO_THEME_COLOR:
+    match value:
+        case MSO_THEME_COLOR():
+            return value
+        case None:
+            return MSO_THEME_COLOR.NOT_THEME_COLOR
+        case "accent1":
+            return MSO_THEME_COLOR.ACCENT_1
+        case "accent2":
+            return MSO_THEME_COLOR.ACCENT_2
+        case "accent3":
+            return MSO_THEME_COLOR.ACCENT_3
+        case "accent4":
+            return MSO_THEME_COLOR.ACCENT_4
+        case "accent5":
+            return MSO_THEME_COLOR.ACCENT_5
+        case "accent6":
+            return MSO_THEME_COLOR.ACCENT_6
+        case "background1":
+            return MSO_THEME_COLOR.BACKGROUND_1
+        case "background2":
+            return MSO_THEME_COLOR.BACKGROUND_2
+        case "dark1":
+            return MSO_THEME_COLOR.DARK_1
+        case "dark2":
+            return MSO_THEME_COLOR.DARK_2
+        case "followed_hyperlink":
+            return MSO_THEME_COLOR.FOLLOWED_HYPERLINK
+        case "hyperlink":
+            return MSO_THEME_COLOR.HYPERLINK
+        case "light1":
+            return MSO_THEME_COLOR.LIGHT_1
+        case "light2":
+            return MSO_THEME_COLOR.LIGHT_2
+        case "text1":
+            return MSO_THEME_COLOR.TEXT_1
+        case "text2":
+            return MSO_THEME_COLOR.TEXT_2
+        case "mixed":
+            return MSO_THEME_COLOR.MIXED
+        case _:
+            assert_never(value)
 
 
 class ColorFormat(PptxConvertible[PptxColorFormat]):
@@ -53,7 +119,7 @@ class ColorFormat(PptxConvertible[PptxColorFormat]):
                 srgbClr.remove(alpha)
 
     @property
-    def theme_color(self) -> MSO_THEME_COLOR:
+    def theme_color(self) -> MSO_THEME_COLOR | None:
         """Theme color value of this color.
 
         Value is a member of :ref:`MsoThemeColorIndex`, e.g.
@@ -65,8 +131,8 @@ class ColorFormat(PptxConvertible[PptxColorFormat]):
         return self._pptx.theme_color
 
     @theme_color.setter
-    def theme_color(self, value: MSO_THEME_COLOR) -> None:
-        self._pptx.theme_color = value
+    def theme_color(self, value: LiteralThemeColor | MSO_THEME_COLOR | None) -> None:
+        self._pptx.theme_color = to_pptx_theme_color(value)
 
     def to_pptx(self) -> PptxColorFormat:
         return self._pptx
