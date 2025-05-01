@@ -1,4 +1,4 @@
-from typing import Literal, Self, TypedDict, assert_never
+from typing import Literal, TypedDict, assert_never
 
 from pptx.chart.chart import Chart as PptxChart
 from pptx.chart.data import ChartData as PptxChartData
@@ -258,18 +258,5 @@ class ChartData(ChartProps):
 class Chart(PptxConvertible[PptxChart]):
     """Chart data class."""
 
-    def __init__(
-        self,
-        pptx_obj: PptxChart,
-        /,
-    ) -> None:
-        self._pptx = pptx_obj
-
-    def to_pptx(self) -> PptxChart:
-        """Convert to pptx shape."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxChart) -> Self:
-        """Create from pptx shape."""
-        return cls(pptx_obj)
+    def __init__(self, pptx_obj: PptxChart, /) -> None:
+        super().__init__(pptx_obj)

@@ -1,4 +1,4 @@
-from typing import Literal, Self, assert_never, cast
+from typing import Literal, assert_never, cast
 
 from lxml.etree import _Element
 from pptx.dml.color import ColorFormat as PptxColorFormat
@@ -79,8 +79,8 @@ def to_pptx_theme_color(
 
 
 class ColorFormat(PptxConvertible[PptxColorFormat]):
-    def __init__(self, pptx_obj: PptxColorFormat) -> None:
-        self._pptx = pptx_obj
+    def __init__(self, pptx_obj: PptxColorFormat, /) -> None:
+        super().__init__(pptx_obj)
 
     @property
     def brightness(self) -> float:
@@ -136,10 +136,3 @@ class ColorFormat(PptxConvertible[PptxColorFormat]):
     @theme_color.setter
     def theme_color(self, value: LiteralThemeColor | MSO_THEME_COLOR | None) -> None:
         self._pptx.theme_color = to_pptx_theme_color(value)
-
-    def to_pptx(self) -> PptxColorFormat:
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxColorFormat) -> Self:
-        return cls(pptx_obj)

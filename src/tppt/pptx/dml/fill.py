@@ -1,6 +1,7 @@
-from typing import Self, cast
+from typing import TypeVar, cast
 
 from pptx.dml.fill import FillFormat as PptxFillFormat
+from pptx.dml.fill import _Fill as PptxFill
 from pptx.dml.fill import _GradFill as PptxGradFill
 from pptx.dml.fill import _GradientStop as PptxGradientStop
 from pptx.dml.fill import _GradientStops as PptxGradientStops
@@ -11,14 +12,15 @@ from pptx.enum.dml import MSO_PATTERN_TYPE
 
 from tppt.pptx.converter import PptxConvertible, to_pptx_angle, to_tppt_angle
 from tppt.pptx.dml.color import ColorFormat
+from tppt.pptx.enum.dml import LiteralPatternType, to_pptx_pattern_type
 from tppt.types._angle import Angle
 
 
 class FillFormat(PptxConvertible[PptxFillFormat]):
     """Fill format."""
 
-    def __init__(self, pptx_obj: PptxFillFormat) -> None:
-        self._pptx = pptx_obj
+    def __init__(self, pptx_obj: PptxFillFormat, /) -> None:
+        super().__init__(pptx_obj)
 
     @property
     def fore_color(self) -> ColorFormat:
@@ -59,69 +61,16 @@ class FillFormat(PptxConvertible[PptxFillFormat]):
         self._pptx.gradient()
         return GradFill(cast(PptxGradFill, self._pptx._fill))
 
-    def to_pptx(self) -> PptxFillFormat:
-        """Convert to pptx fill format."""
-        return self._pptx
 
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxFillFormat) -> Self:
-        """Create from pptx fill format."""
-        return cls(pptx_obj)
+_GenericPptxFill = TypeVar("_GenericPptxFill", bound=PptxFill)
 
 
-class NoFill(PptxConvertible[PptxNoFill]):
-    """No fill."""
-
-    def __init__(self, pptx_obj: PptxNoFill) -> None:
-        self._pptx = pptx_obj
-
-    def to_pptx(self) -> PptxNoFill:
-        """Convert to pptx no fill."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxNoFill) -> Self:
-        """Create from pptx no fill."""
-        return cls(pptx_obj)
+class Fill(PptxConvertible[_GenericPptxFill]):
+    pass
 
 
-class PattFill(PptxConvertible[PptxPattFill]):
-    """Pattern fill."""
-
-    def __init__(self, pptx_obj: PptxPattFill) -> None:
-        self._pptx = pptx_obj
-
-    def to_pptx(self) -> PptxPattFill:
-        """Convert to pptx pattern fill."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxPattFill) -> Self:
-        """Create from pptx pattern fill."""
-        return cls(pptx_obj)
-
-
-class SolidFill(PptxConvertible[PptxSolidFill]):
-    """Solid fill."""
-
-    def __init__(self, pptx_obj: PptxSolidFill) -> None:
-        self._pptx = pptx_obj
-
-    def to_pptx(self) -> PptxSolidFill:
-        """Convert to pptx solid fill."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxSolidFill) -> Self:
-        """Create from pptx solid fill."""
-        return cls(pptx_obj)
-
-
-class GradFill(PptxConvertible[PptxGradFill]):
+class GradFill(Fill[PptxGradFill]):
     """Gradient fill."""
-
-    def __init__(self, pptx_obj: PptxGradFill) -> None:
-        self._pptx = pptx_obj
 
     @property
     def gradient_angle(self) -> Angle | None:
@@ -137,21 +86,48 @@ class GradFill(PptxConvertible[PptxGradFill]):
         """Gradient stops."""
         return GradientStops(self._pptx.gradient_stops)
 
-    def to_pptx(self) -> PptxGradFill:
-        """Convert to pptx gradient fill."""
-        return self._pptx
 
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxGradFill) -> Self:
-        """Create from pptx gradient fill."""
-        return cls(pptx_obj)
+class NoFill(Fill[PptxNoFill]):
+    """No fill."""
+
+    def __init__(self, pptx_obj: PptxNoFill) -> None:
+        super().__init__(pptx_obj)
+
+
+class PattFill(Fill[PptxPattFill]):
+    """Pattern fill."""
+
+    @property
+    def back_color(self) -> ColorFormat:
+        """Back color."""
+        return ColorFormat(self._pptx.back_color)
+
+    @property
+    def fore_color(self) -> ColorFormat:
+        """Fore color."""
+        return ColorFormat(self._pptx.fore_color)
+
+    @property
+    def pattern(self) -> MSO_PATTERN_TYPE:
+        """Pattern."""
+        return self._pptx.pattern
+
+    @pattern.setter
+    def pattern(self, value: LiteralPatternType | MSO_PATTERN_TYPE) -> None:
+        self._pptx.pattern = to_pptx_pattern_type(value)
+
+
+class SolidFill(Fill[PptxSolidFill]):
+    """Solid fill."""
+
+    @property
+    def fore_color(self) -> ColorFormat:
+        """Fore color."""
+        return ColorFormat(self._pptx.fore_color)
 
 
 class GradientStops(PptxConvertible[PptxGradientStops]):
     """Gradient stops."""
-
-    def __init__(self, pptx_obj: PptxGradientStops) -> None:
-        self._pptx = pptx_obj
 
     def __getitem__(self, idx: int) -> "GradientStop":
         return GradientStop(self._pptx[idx])
@@ -159,21 +135,9 @@ class GradientStops(PptxConvertible[PptxGradientStops]):
     def __len__(self) -> int:
         return len(self._pptx)
 
-    def to_pptx(self) -> PptxGradientStops:
-        """Convert to pptx gradient stops."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxGradientStops) -> Self:
-        """Create from pptx gradient stops."""
-        return cls(pptx_obj)
-
 
 class GradientStop(PptxConvertible[PptxGradientStop]):
     """Gradient stop."""
-
-    def __init__(self, pptx_obj: PptxGradientStop) -> None:
-        self._pptx = pptx_obj
 
     @property
     def color(self) -> ColorFormat:
@@ -194,12 +158,3 @@ class GradientStop(PptxConvertible[PptxGradientStop]):
     @position.setter
     def position(self, value: float) -> None:
         self._pptx.position = value
-
-    def to_pptx(self) -> PptxGradientStop:
-        """Convert to pptx gradient stop."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxGradientStop) -> Self:
-        """Create from pptx gradient stop."""
-        return cls(pptx_obj)

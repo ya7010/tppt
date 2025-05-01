@@ -1,13 +1,12 @@
 """Type definitions for pptx wrapper."""
 
 from typing import (
-    Protocol,
+    Generic,
     Self,
     TypeAlias,
     TypeVar,
     assert_never,
     overload,
-    runtime_checkable,
 )
 
 from pptx.dml.color import RGBColor as PptxRGBColor
@@ -34,18 +33,20 @@ from tppt.types._length import (
 PT = TypeVar("PT")
 
 
-@runtime_checkable
-class PptxConvertible(Protocol[PT]):
+class PptxConvertible(Generic[PT]):
     """Protocol for objects that can be converted to and from pptx objects."""
+
+    def __init__(self, pptx_obj: PT, /) -> None:
+        self._pptx: PT = pptx_obj
 
     def to_pptx(self) -> PT:
         """Convert to pptx object."""
-        ...
+        return self._pptx
 
     @classmethod
     def from_pptx(cls, pptx_obj: PT) -> Self:
         """Create from pptx object."""
-        ...
+        return cls(pptx_obj)
 
 
 @overload
