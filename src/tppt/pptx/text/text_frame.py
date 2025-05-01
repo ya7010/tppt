@@ -1,17 +1,16 @@
-from typing import Self
-
 from pptx.enum.text import MSO_AUTO_SIZE, MSO_VERTICAL_ANCHOR
 from pptx.text.text import TextFrame as PptxTextFrame
 from pptx.util import Length as PptxLength
 
-from tppt.pptx.converter import PptxConvertible, to_pptx_length
+from tppt.pptx.converter import to_pptx_length
+from tppt.pptx.shape import SubShape
 from tppt.pptx.text.paragraph import Paragraph
 from tppt.types._length import EnglishMetricUnits, Length, LiteralLength, to_emu
 
 
-class TextFrame(PptxConvertible[PptxTextFrame]):
+class TextFrame(SubShape[PptxTextFrame]):
     def __init__(self, pptx_obj: PptxTextFrame) -> None:
-        self._pptx = pptx_obj
+        super().__init__(pptx_obj)
 
     def add_paragraph(self) -> Paragraph:
         return Paragraph(self._pptx.add_paragraph())
@@ -96,10 +95,3 @@ class TextFrame(PptxConvertible[PptxTextFrame]):
     @word_wrap.setter
     def word_wrap(self, value: bool | None) -> None:
         self._pptx.word_wrap = value
-
-    def to_pptx(self) -> PptxTextFrame:
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxTextFrame) -> Self:
-        return cls(pptx_obj)

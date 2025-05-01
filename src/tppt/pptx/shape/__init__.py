@@ -58,19 +58,22 @@ class Shape(BaseShape[GenericPptxShape]):
         return TextFrame(self._pptx.text_frame)
 
 
-class SubShape(PptxConvertible[PptxSubshape]):
-    def __init__(self, pptx_shape: PptxSubshape) -> None:
-        self._pptx: PptxSubshape = pptx_shape
+_GenericPptxSubshape = TypeVar("_GenericPptxSubshape", bound=PptxSubshape)
+
+
+class SubShape(PptxConvertible[_GenericPptxSubshape]):
+    def __init__(self, pptx_shape: _GenericPptxSubshape) -> None:
+        self._pptx: _GenericPptxSubshape = pptx_shape
 
     @property
     def part(self) -> XmlPart:
         return self._pptx.part
 
-    def to_pptx(self) -> PptxSubshape:
+    def to_pptx(self) -> _GenericPptxSubshape:
         return self._pptx
 
     @classmethod
-    def from_pptx(cls, pptx_obj: PptxSubshape) -> Self:
+    def from_pptx(cls, pptx_obj: _GenericPptxSubshape) -> Self:
         return cls(pptx_obj)
 
 
