@@ -1,5 +1,3 @@
-from typing import Self
-
 from pptx.enum.text import MSO_VERTICAL_ANCHOR
 from pptx.table import _Cell as PptxCell
 
@@ -11,9 +9,6 @@ from tppt.types._length import Length
 
 class Cell(PptxConvertible[PptxCell]):
     """Cell data class."""
-
-    def __init__(self, pptx_obj: PptxCell) -> None:
-        self._pptx = pptx_obj
 
     @property
     def fill(self) -> FillFormat:
@@ -106,12 +101,3 @@ class Cell(PptxConvertible[PptxCell]):
     @vertical_anchor.setter
     def vertical_anchor(self, value: MSO_VERTICAL_ANCHOR | None) -> None:
         self._pptx.vertical_anchor = value
-
-    def to_pptx(self) -> PptxCell:
-        """Convert to pptx cell."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxCell) -> Self:
-        """Create from pptx cell."""
-        return cls(pptx_obj)

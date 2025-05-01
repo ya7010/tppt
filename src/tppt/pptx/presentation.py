@@ -22,10 +22,10 @@ from .converter import PptxConvertible, to_pptx_length, to_tppt_length
 from .slide import SlideBuilder
 
 if TYPE_CHECKING:
+    from tppt.pptx.shape import BaseShape
     from tppt.pptx.shape.placeholder import MasterPlaceholder
     from tppt.pptx.slide import Slide
-
-    from .slide_master import SlideMaster
+    from tppt.pptx.slide_master import SlideMaster
 
 
 class Presentation(PptxConvertible[_PptxPresentation]):
@@ -40,7 +40,7 @@ class Presentation(PptxConvertible[_PptxPresentation]):
             from pptx import Presentation
 
             pptx = Presentation(os.fspath(pptx))
-        self._pptx = pptx
+        super().__init__(pptx)
 
     @property
     def core_properties(self) -> _PptxCorePropertiesPart:
@@ -121,15 +121,6 @@ class Presentation(PptxConvertible[_PptxPresentation]):
             file = os.fspath(file)
         self._pptx.save(file)
 
-    def to_pptx(self) -> _PptxPresentation:
-        """Convert to pptx presentation."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: _PptxPresentation) -> Self:
-        """Create from pptx presentation."""
-        return cls(pptx_obj)
-
 
 class PresentationBuilder(Generic[GenericTpptSlideMaster]):
     """Builder for presentations."""
@@ -205,6 +196,13 @@ class _BaseMaster(PptxConvertible[_PptxBaseMaster]):
         return [
             MasterPlaceholder(placeholder) for placeholder in self._pptx.placeholders
         ]
+
+    @property
+    def shapes(self) -> "list[BaseShape]":
+        """Get the shapes."""
+        from tppt.pptx.shape import BaseShape
+
+        return [BaseShape(shape) for shape in self._pptx.shapes]
 
 
 class NotesMaster(_BaseMaster):

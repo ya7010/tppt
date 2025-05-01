@@ -1,4 +1,4 @@
-from typing import Literal, NotRequired, Self
+from typing import Literal, NotRequired
 
 from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 from pptx.shapes.autoshape import Shape as PptxShape
@@ -72,12 +72,3 @@ class Text(Shape):
     @property
     def text_frame(self) -> TextFrame:
         return TextFrame(self._pptx.text_frame)
-
-    def to_pptx(self) -> PptxShape:
-        """Convert to pptx shape."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxShape) -> Self:
-        """Create from pptx shape."""
-        return cls(pptx_obj)

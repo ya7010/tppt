@@ -1,5 +1,3 @@
-from typing import Self
-
 from pptx.enum.text import MSO_TEXT_UNDERLINE_TYPE
 from pptx.text.text import Font as PptxFont
 
@@ -9,9 +7,6 @@ from tppt.types._length import Length
 
 
 class Font(PptxConvertible[PptxFont]):
-    def __init__(self, pptx_obj: PptxFont) -> None:
-        self._pptx = pptx_obj
-
     @property
     def name(self) -> str | None:
         return self._pptx.name
@@ -59,10 +54,3 @@ class Font(PptxConvertible[PptxFont]):
     @color.setter
     def color(self, color: ColorFormat) -> None:
         self._pptx.color = color.to_pptx()
-
-    def to_pptx(self) -> PptxFont:
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxFont) -> Self:
-        return cls(pptx_obj)

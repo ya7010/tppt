@@ -7,12 +7,14 @@ from typing import (
     Any,
     Callable,
     Self,
+    TypeVar,
     Unpack,
     cast,
     overload,
 )
 
 from pptx.slide import Slide as PptxSlide
+from pptx.slide import _BaseSlide as _PptxBaseSlide
 
 from tppt.pptx.chart.chart import Chart, ChartData, ChartProps, to_pptx_chart_type
 from tppt.pptx.shape.picture import (
@@ -36,13 +38,14 @@ from .table.table import DataFrame, Table, TableData, TableProps, dataframe2list
 if TYPE_CHECKING:
     pass
 
+_GenericPptxBaseSlide = TypeVar("_GenericPptxBaseSlide", bound=_PptxBaseSlide)
 
-class Slide(PptxConvertible[PptxSlide]):
+
+class _BaseSlide(PptxConvertible[_GenericPptxBaseSlide]): ...
+
+
+class Slide(_BaseSlide[PptxSlide]):
     """Slide wrapper with type safety."""
-
-    def __init__(self, pptx_slide: PptxSlide) -> None:
-        """Initialize slide."""
-        self._pptx: PptxSlide = pptx_slide
 
     @property
     def name(self) -> str | None:
@@ -85,15 +88,6 @@ class Slide(PptxConvertible[PptxSlide]):
         if not self._pptx.has_notes_slide:
             return None
         return NotesSlide.from_pptx(self._pptx.notes_slide)
-
-    def to_pptx(self) -> PptxSlide:
-        """Convert to pptx slide."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxSlide) -> Self:
-        """Create from pptx slide."""
-        return cls(pptx_obj)
 
 
 class SlideBuilder:

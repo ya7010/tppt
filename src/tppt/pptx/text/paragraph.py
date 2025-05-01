@@ -1,5 +1,3 @@
-from typing import Self
-
 from pptx.enum.text import PP_PARAGRAPH_ALIGNMENT
 from pptx.text.text import _Paragraph as PptxParagraph
 from pptx.util import Length as PptxLength
@@ -11,9 +9,6 @@ from tppt.types._length import Length, to_length
 
 
 class Paragraph(PptxConvertible[PptxParagraph]):
-    def __init__(self, pptx_obj: PptxParagraph) -> None:
-        self._pptx = pptx_obj
-
     def add_line_break(self) -> None:
         self._pptx.add_line_break()
 
@@ -102,10 +97,3 @@ class Paragraph(PptxConvertible[PptxParagraph]):
     @text.setter
     def text(self, value: str) -> None:
         self._pptx.text = value
-
-    def to_pptx(self) -> PptxParagraph:
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxParagraph) -> Self:
-        return cls(pptx_obj)
