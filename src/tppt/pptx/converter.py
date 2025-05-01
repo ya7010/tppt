@@ -97,18 +97,18 @@ def to_tppt_length(length: PptxLength | None) -> Length | None:
 
 @overload
 def to_pptx_rgb_color(
-    color: Color | LiteralColor,
+    color: Color | LiteralColor | PptxRGBColor,
 ) -> tuple[PptxRGBColor, int | None]: ...
 
 
 @overload
 def to_pptx_rgb_color(
-    color: Color | LiteralColor | None,
+    color: Color | LiteralColor | PptxRGBColor | None,
 ) -> tuple[PptxRGBColor, int | None] | None: ...
 
 
 def to_pptx_rgb_color(
-    color: Color | LiteralColor | None,
+    color: Color | LiteralColor | PptxRGBColor | None,
 ) -> (
     tuple[
         PptxRGBColor,
