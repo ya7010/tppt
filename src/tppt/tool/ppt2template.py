@@ -166,19 +166,13 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
             case PP_PLACEHOLDER_TYPE.TITLE:
                 base_name = "title"
             case PP_PLACEHOLDER_TYPE.BODY:
-                if "content" in layout_name_lower or "text" in layout_name_lower:
-                    base_name = "content"
-                else:
-                    base_name = "body"
+                base_name = "body"
             case PP_PLACEHOLDER_TYPE.CENTER_TITLE:
                 base_name = "title"
             case PP_PLACEHOLDER_TYPE.SUBTITLE:
                 base_name = "subtitle"
             case PP_PLACEHOLDER_TYPE.CHART:
-                if "chart" in sample_ph.name.lower():
-                    base_name = "chart"
-                else:
-                    base_name = "content"
+                base_name = "chart"
             case PP_PLACEHOLDER_TYPE.TABLE:
                 base_name = "table"
             case PP_PLACEHOLDER_TYPE.SLIDE_NUMBER:
