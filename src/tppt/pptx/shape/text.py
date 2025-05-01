@@ -3,10 +3,9 @@ from typing import Literal, NotRequired, Self
 from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 from pptx.shapes.autoshape import Shape as PptxShape
 
-from tppt.pptx.converter import to_pptx_length
 from tppt.pptx.text.text_frame import TextFrame
 from tppt.types._color import Color, LiteralColor, to_color
-from tppt.types._length import Length, LiteralLength
+from tppt.types._length import Length, LiteralLength, to_length
 
 from . import RangeProps, Shape
 
@@ -40,13 +39,13 @@ class Text(Shape):
 
     def __init__(self, pptx_obj: PptxShape, data: TextData | None = None, /) -> None:
         if data and data["text"] != "":
-            text_frame = pptx_obj.text_frame
+            text_frame = TextFrame(pptx_obj.text_frame)
             p = text_frame.paragraphs[0]
             run = p.add_run()
             run.text = data["text"]
             font = run.font
             if size := data.get("size"):
-                font.size = to_pptx_length(size)
+                font.size = to_length(size)
             if (bold := data.get("bold")) is not None:
                 font.bold = bold
             if (italic := data.get("italic")) is not None:
@@ -54,9 +53,9 @@ class Text(Shape):
             if (color := data.get("color")) is not None:
                 font.color.rgb = to_color(color)
             if (margin_bottom := data.get("margin_bottom")) is not None:
-                p.space_after = to_pptx_length(margin_bottom)
+                p.space_after = to_length(margin_bottom)
             if (margin_left := data.get("margin_left")) is not None:
-                p.space_before = to_pptx_length(margin_left)
+                p.space_before = to_length(margin_left)
             if (vertical_anchor := data.get("vertical_anchor")) is not None:
                 text_frame.vertical_anchor = vertical_anchor
             if (word_wrap := data.get("word_wrap")) is not None:

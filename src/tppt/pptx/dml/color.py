@@ -3,7 +3,9 @@ from typing import Self, cast
 from lxml.etree import _Element
 from pptx.dml.color import ColorFormat as PptxColorFormat
 from pptx.dml.color import RGBColor as PptxRGBColor
+from pptx.dml.color import _SRgbColor
 from pptx.enum.dml import MSO_THEME_COLOR
+from pptx.oxml.ns import _nsmap as namespace
 from pptx.oxml.xmlchemy import OxmlElement
 
 from tppt.pptx.converter import PptxConvertible, to_pptx_rgb_color, to_tppt_rgb_color
@@ -41,13 +43,14 @@ class ColorFormat(PptxConvertible[PptxColorFormat]):
     def rgb(self, color: Color | LiteralColor):
         pptx_color, alpha = to_pptx_rgb_color(color)
         self._pptx.rgb = pptx_color
-        if alpha:
-            solid_fill = cast(
-                _Element, self._pptx._xFill.solidFill.get_or_change_to_srgbClr()
-            )
+        srgbClr = cast(_Element, cast(_SRgbColor, self._pptx._color)._srgbClr)
+        if alpha is not None:
             element = OxmlElement("a:alpha")
-            element.attrib["val"] = str(alpha)
-            solid_fill.append(element)
+            element.attrib["val"] = str(int(100000 * (alpha / 255)))
+            srgbClr.append(element)
+        else:
+            if alpha := srgbClr.find("a:alpha", namespace):
+                srgbClr.remove(alpha)
 
     @property
     def theme_color(self) -> MSO_THEME_COLOR:

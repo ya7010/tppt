@@ -126,10 +126,7 @@ class SlideBuilder:
             data = TextData(
                 type="text",
                 text=text if isinstance(text, str) else "",
-                top=kwargs["top"],
-                left=kwargs["left"],
-                width=kwargs["width"],
-                height=kwargs["height"],
+                **kwargs,
             )
 
             text_obj = Text(
