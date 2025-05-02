@@ -6,7 +6,6 @@ from typing import (
     Any,
     Literal,
     NotRequired,
-    Self,
     TypeAlias,
     TypedDict,
     cast,
@@ -159,15 +158,6 @@ class Table(PptxConvertible[PptxTable]):
     def cell(self, row_idx: int, col_idx: int) -> Cell:
         """Get cell at row_idx and col_idx."""
         return Cell(self._pptx.cell(row_idx, col_idx))
-
-    def to_pptx(self) -> PptxTable:
-        """Convert to pptx table."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxTable) -> Self:
-        """Create from pptx table."""
-        return cls(pptx_obj)
 
 
 def dataframe2list(data: DataFrame) -> list[list[str]]:

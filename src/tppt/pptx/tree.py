@@ -1,7 +1,12 @@
-from typing import Any
+from typing import Any, cast
 
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.presentation import Presentation as PptxPresentation
+from pptx.shapes.autoshape import Shape
+from pptx.shapes.base import BaseShape
+from pptx.shapes.graphfrm import GraphicFrame
+from pptx.shapes.group import GroupShape
+from pptx.slide import Slide
 
 
 def color_format_to_dict(color_format: Any) -> dict[str, Any]:
@@ -61,7 +66,7 @@ def text_frame_to_dict(text_frame: Any) -> dict[str, Any]:
     return result
 
 
-def shape_to_dict(shape: Any) -> dict[str, Any]:
+def shape_to_dict(shape: BaseShape) -> dict[str, Any]:
     """Convert Shape object to dictionary"""
     shape_data = {
         "name": shape.name,
@@ -95,18 +100,20 @@ def shape_to_dict(shape: Any) -> dict[str, Any]:
 
     # If there is a text frame
     if shape.has_text_frame:
+        shape = cast(Shape, shape)
         shape_data["text_frame"] = text_frame_to_dict(shape.text_frame)
 
     # If there is a table
     if shape.has_table:
+        shape = cast(GraphicFrame, shape)
         table_data = {
-            "rows": shape.table.rows.count,
-            "columns": shape.table.columns.count,
+            "rows": len(shape.table.rows),
+            "columns": len(shape.table.columns),
             "cells": [],
         }
 
-        for row_idx in range(shape.table.rows.count):
-            for col_idx in range(shape.table.columns.count):
+        for row_idx in range(len(shape.table.rows)):
+            for col_idx in range(len(shape.table.columns)):
                 cell = shape.table.cell(row_idx, col_idx)
                 cell_data = {
                     "row": row_idx,
@@ -119,6 +126,7 @@ def shape_to_dict(shape: Any) -> dict[str, Any]:
 
     # In case of a group shape
     if shape.shape_type == MSO_SHAPE_TYPE.GROUP:
+        shape = cast(GroupShape, shape)
         shape_data["shapes"] = [shape_to_dict(subshape) for subshape in shape.shapes]
 
     return shape_data
@@ -175,7 +183,7 @@ def slide_master_to_dict(slide_master: Any) -> dict[str, Any]:
     return master_data
 
 
-def slide_to_dict(slide: Any) -> dict[str, Any]:
+def slide_to_dict(slide: Slide) -> dict[str, Any]:
     """Convert slide to dictionary"""
     slide_data = {
         "slide_id": slide.slide_id,
@@ -208,24 +216,22 @@ def slide_to_dict(slide: Any) -> dict[str, Any]:
     return slide_data
 
 
-def ppt2dict(ppt: PptxPresentation) -> dict[str, Any]:
+def ppt2tree(ppt: PptxPresentation) -> dict[str, Any]:
     """Convert presentation information to dictionary"""
 
     # Safely get the slide size
     slide_width = None
     slide_height = None
 
-    if slide_width := getattr(ppt, "slide_width", None):
-        if pt := getattr(slide_width, "pt", None):
-            slide_width = pt
-        else:
-            slide_width = slide_width
+    if slide_width := ppt.slide_width:
+        slide_width = slide_width.pt
+    else:
+        slide_width = None
 
-    if slide_height := getattr(ppt, "slide_height", None):
-        if pt := getattr(slide_height, "pt", None):
-            slide_height = pt
-        else:
-            slide_height = ppt.slide_height
+    if slide_height := ppt.slide_height:
+        slide_height = slide_height.pt
+    else:
+        slide_height = None
 
     prs_data = {
         "slides_count": len(ppt.slides),

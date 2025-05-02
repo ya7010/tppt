@@ -1,13 +1,12 @@
 """Type definitions for pptx wrapper."""
 
 from typing import (
-    Protocol,
+    Generic,
     Self,
     TypeAlias,
     TypeVar,
     assert_never,
     overload,
-    runtime_checkable,
 )
 
 from pptx.dml.color import RGBColor as PptxRGBColor
@@ -19,7 +18,7 @@ from pptx.util import Mm as PptxMm
 from pptx.util import Pt as PptxPt
 
 from tppt.types._angle import Angle, Degrees, LiteralAngle
-from tppt.types._color import LiteralColor, RGBColor, to_rgb_color
+from tppt.types._color import Color, LiteralColor, to_color
 from tppt.types._length import (
     CentiMeters,
     EnglishMetricUnits,
@@ -34,29 +33,35 @@ from tppt.types._length import (
 PT = TypeVar("PT")
 
 
-@runtime_checkable
-class PptxConvertible(Protocol[PT]):
+class PptxConvertible(Generic[PT]):
     """Protocol for objects that can be converted to and from pptx objects."""
+
+    def __init__(self, pptx_obj: PT, /) -> None:
+        self._pptx: PT = pptx_obj
 
     def to_pptx(self) -> PT:
         """Convert to pptx object."""
-        ...
+        return self._pptx
 
     @classmethod
     def from_pptx(cls, pptx_obj: PT) -> Self:
         """Create from pptx object."""
-        ...
+        return cls(pptx_obj)
 
 
 @overload
-def to_pptx_length(length: Length | LiteralLength) -> PptxLength: ...
+def to_pptx_length(length: Length | LiteralLength | PptxLength) -> PptxLength: ...
 
 
 @overload
-def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None: ...
+def to_pptx_length(
+    length: Length | LiteralLength | PptxLength | None,
+) -> PptxLength | None: ...
 
 
-def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None:
+def to_pptx_length(
+    length: Length | LiteralLength | PptxLength | None,
+) -> PptxLength | None:
     if isinstance(length, tuple):
         length = to_length(length)
 
@@ -71,6 +76,8 @@ def to_pptx_length(length: Length | LiteralLength | None) -> PptxLength | None:
             return PptxMm(length.value)
         case EnglishMetricUnits():
             return PptxEmu(length.value)
+        case PptxLength():
+            return length
         case None:
             return None
         case _:
@@ -90,32 +97,46 @@ def to_tppt_length(length: PptxLength | None) -> Length | None:
 
 
 @overload
-def to_pptx_rgb_color(color: RGBColor | LiteralColor) -> PptxRGBColor: ...
+def to_pptx_rgb_color(
+    color: Color | LiteralColor | PptxRGBColor,
+) -> tuple[PptxRGBColor, int | None]: ...
 
 
 @overload
-def to_pptx_rgb_color(color: RGBColor | LiteralColor | None) -> PptxRGBColor | None: ...
+def to_pptx_rgb_color(
+    color: Color | LiteralColor | PptxRGBColor | None,
+) -> tuple[PptxRGBColor, int | None] | None: ...
 
 
-def to_pptx_rgb_color(color: RGBColor | LiteralColor | None) -> PptxRGBColor | None:
+def to_pptx_rgb_color(
+    color: Color | LiteralColor | PptxRGBColor | None,
+) -> (
+    tuple[
+        PptxRGBColor,
+        int | None,
+    ]
+    | None
+):
     if color is None:
         return None
 
-    color = to_rgb_color(color)
+    color = to_color(color)
 
-    return PptxRGBColor(color.r, color.g, color.b)
-
-
-@overload
-def to_tppt_rgb_color(color: PptxRGBColor) -> RGBColor: ...
+    return PptxRGBColor(color.r, color.g, color.b), color.a
 
 
 @overload
-def to_tppt_rgb_color(color: PptxRGBColor | None) -> RGBColor | None: ...
+def to_tppt_rgb_color(color: PptxRGBColor, alpha: int | None) -> Color: ...
 
 
-def to_tppt_rgb_color(color: PptxRGBColor | None) -> RGBColor | None:
-    return RGBColor(*color) if color else None
+@overload
+def to_tppt_rgb_color(
+    color: PptxRGBColor | None, alpha: int | None
+) -> Color | None: ...
+
+
+def to_tppt_rgb_color(color: PptxRGBColor | None, alpha: int | None) -> Color | None:
+    return Color(color[0], color[1], color[2], alpha) if color else None
 
 
 PptxAngle: TypeAlias = float

@@ -7,12 +7,14 @@ from typing import (
     Any,
     Callable,
     Self,
+    TypeVar,
     Unpack,
     cast,
     overload,
 )
 
 from pptx.slide import Slide as PptxSlide
+from pptx.slide import _BaseSlide as _PptxBaseSlide
 
 from tppt.pptx.chart.chart import Chart, ChartData, ChartProps, to_pptx_chart_type
 from tppt.pptx.shape.picture import (
@@ -30,39 +32,49 @@ from .shape.picture import Picture, PictureData, PictureProps
 from .shape.placeholder import SlidePlaceholder
 from .shape.text import Text, TextData, TextProps
 from .slide_layout import SlideLayout
-from .snotes_slide import NotesSlide
 from .table.table import DataFrame, Table, TableData, TableProps, dataframe2list
 
 if TYPE_CHECKING:
-    pass
+    from tppt.pptx.shape.background import Background
+
+    from .notes_slide import NotesSlide
+
+_GenericPptxBaseSlide = TypeVar("_GenericPptxBaseSlide", bound=_PptxBaseSlide)
 
 
-class Slide(PptxConvertible[PptxSlide]):
+class _BaseSlide(PptxConvertible[_GenericPptxBaseSlide]):
+    @property
+    def background(self) -> "Background":
+        """Background of the slide."""
+        from tppt.pptx.shape.background import Background
+
+        return Background(self._pptx.background)
+
+    @property
+    def name(self) -> str:
+        return self._pptx.name
+
+    @name.setter
+    def name(self, value: str) -> None:
+        self._pptx.name = value
+
+
+class Slide(_BaseSlide[PptxSlide]):
     """Slide wrapper with type safety."""
 
-    def __init__(self, pptx_slide: PptxSlide) -> None:
-        """Initialize slide."""
-        self._pptx: PptxSlide = pptx_slide
+    @property
+    def follow_master_background(self) -> bool:
+        return self._pptx.follow_master_background
 
     @property
-    def name(self) -> str | None:
-        """String representing the internal name of this slide.
+    def notes_slide(self) -> "NotesSlide | None":
+        """Get the notes slide."""
+        if not self._pptx.has_notes_slide:
+            return None
 
-        Returns an empty string if no name is assigned.
-        """
-        if name := self._pptx.name:
-            return name
-        return None
+        from .notes_slide import NotesSlide
 
-    @property
-    def slide_id(self) -> int:
-        """Get the slide id."""
-        return self._pptx.slide_id
-
-    @property
-    def shapes(self) -> list[BaseShape]:
-        """Get all shapes in the slide."""
-        return [BaseShape(shape) for shape in self._pptx.shapes]
+        return NotesSlide(self._pptx.notes_slide)
 
     @property
     def placeholders(self) -> list[SlidePlaceholder]:
@@ -75,25 +87,19 @@ class Slide(PptxConvertible[PptxSlide]):
         ]
 
     @property
+    def shapes(self) -> list[BaseShape]:
+        """Get all shapes in the slide."""
+        return [BaseShape(shape) for shape in self._pptx.shapes]
+
+    @property
+    def slide_id(self) -> int:
+        """Get the slide id."""
+        return self._pptx.slide_id
+
+    @property
     def slide_layout(self) -> SlideLayout:
         """Get the slide layout."""
         return SlideLayout.from_pptx(self._pptx.slide_layout)
-
-    @property
-    def notes_slide(self) -> NotesSlide | None:
-        """Get the notes slide."""
-        if not self._pptx.has_notes_slide:
-            return None
-        return NotesSlide.from_pptx(self._pptx.notes_slide)
-
-    def to_pptx(self) -> PptxSlide:
-        """Convert to pptx slide."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxSlide) -> Self:
-        """Create from pptx slide."""
-        return cls(pptx_obj)
 
 
 class SlideBuilder:
@@ -126,10 +132,7 @@ class SlideBuilder:
             data = TextData(
                 type="text",
                 text=text if isinstance(text, str) else "",
-                top=kwargs["top"],
-                left=kwargs["left"],
-                width=kwargs["width"],
-                height=kwargs["height"],
+                **kwargs,
             )
 
             text_obj = Text(

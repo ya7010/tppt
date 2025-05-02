@@ -3,9 +3,12 @@
 import os
 from typing import IO, TYPE_CHECKING, Any, Callable, Generic, Self, cast, overload
 
-from pptx.presentation import Presentation as PptxPresentation
+from pptx.parts.coreprops import CorePropertiesPart as _PptxCorePropertiesPart
+from pptx.presentation import Presentation as _PptxPresentation
+from pptx.slide import NotesMaster as _PptxNotesMaster
+from pptx.slide import _BaseMaster as _PptxBaseMaster
 
-from tppt.pptx.tree import ppt2dict
+from tppt.pptx.tree import ppt2tree
 from tppt.template.default import DefaultSlideMaster
 from tppt.template.slide_layout import SlideLayout, SlideLayoutProxy
 from tppt.template.slide_master import (
@@ -16,26 +19,38 @@ from tppt.types import FilePath
 from tppt.types._length import Length, LiteralLength
 
 from .converter import PptxConvertible, to_pptx_length, to_tppt_length
-from .slide import SlideBuilder
-from .slide_master import SlideMaster
+from .slide import SlideBuilder, _BaseSlide
 
 if TYPE_CHECKING:
+    from tppt.pptx.shape import BaseShape
+    from tppt.pptx.shape.placeholder import MasterPlaceholder
     from tppt.pptx.slide import Slide
+    from tppt.pptx.slide_master import SlideMaster
 
 
-class Presentation(PptxConvertible[PptxPresentation]):
+class Presentation(PptxConvertible[_PptxPresentation]):
     """Presentation wrapper with type safety."""
 
     def __init__(
         self,
-        pptx: PptxPresentation | FilePath,
+        pptx: _PptxPresentation | FilePath,
     ) -> None:
         """Initialize presentation."""
         if isinstance(pptx, (os.PathLike, str)):
             from pptx import Presentation
 
             pptx = Presentation(os.fspath(pptx))
-        self._pptx = pptx
+        super().__init__(pptx)
+
+    @property
+    def core_properties(self) -> _PptxCorePropertiesPart:
+        """Get the core properties."""
+        return self._pptx.core_properties
+
+    @property
+    def notes_master(self) -> "NotesMaster":
+        """Get the notes master."""
+        return NotesMaster.from_pptx(self._pptx.notes_master)
 
     @property
     def slides(self) -> "list[Slide]":
@@ -45,12 +60,14 @@ class Presentation(PptxConvertible[PptxPresentation]):
         return [Slide.from_pptx(slide) for slide in self._pptx.slides]
 
     @property
-    def slide_master(self) -> SlideMaster:
+    def slide_master(self) -> "SlideMaster":
         """
         Get the slide master.
 
         This tool supports only one slide master.
         """
+        from .slide_master import SlideMaster
+
         return SlideMaster.from_pptx(self._pptx.slide_masters[0])
 
     @property
@@ -72,7 +89,7 @@ class Presentation(PptxConvertible[PptxPresentation]):
     @property
     def tree(self) -> dict[str, Any]:
         """Get the node tree of the presentation."""
-        return ppt2dict(self._pptx)
+        return ppt2tree(self._pptx)
 
     @overload
     @classmethod
@@ -103,15 +120,6 @@ class Presentation(PptxConvertible[PptxPresentation]):
         if isinstance(file, os.PathLike):
             file = os.fspath(file)
         self._pptx.save(file)
-
-    def to_pptx(self) -> PptxPresentation:
-        """Convert to pptx presentation."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxPresentation) -> Self:
-        """Create from pptx presentation."""
-        return cls(pptx_obj)
 
 
 class PresentationBuilder(Generic[GenericTpptSlideMaster]):
@@ -177,3 +185,29 @@ class PresentationBuilder(Generic[GenericTpptSlideMaster]):
     def save(self, file: FilePath | IO[bytes]) -> None:
         """Save the presentation to a file."""
         self.build().save(file)
+
+
+class _BaseMaster(_BaseSlide[_PptxBaseMaster]):
+    @property
+    def placeholders(self) -> "list[MasterPlaceholder]":
+        """Get the placeholders."""
+        from tppt.pptx.shape.placeholder import MasterPlaceholder
+
+        return [
+            MasterPlaceholder(placeholder) for placeholder in self._pptx.placeholders
+        ]
+
+    @property
+    def shapes(self) -> "list[BaseShape]":
+        """Get the shapes."""
+        from tppt.pptx.shape import BaseShape
+
+        return [BaseShape(shape) for shape in self._pptx.shapes]
+
+
+class NotesMaster(_BaseMaster):
+    """Notes master."""
+
+    def __init__(self, pptx_obj: _PptxNotesMaster) -> None:
+        """Initialize the notes master."""
+        super().__init__(pptx_obj)

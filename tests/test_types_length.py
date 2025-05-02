@@ -6,129 +6,129 @@ from tppt.types._length import (
     Inches,
     MilliMeters,
     Points,
-    to_centimeter,
-    to_emu,
-    to_inche,
+    to_centi_meters,
+    to_english_metric_units,
+    to_inches,
     to_length,
     to_literal_length,
-    to_millimeter,
-    to_point,
+    to_milli_meters,
+    to_points,
 )
 
 
 def test_to_centimeter():
     """Test conversion to centimeters"""
     # Test from inches
-    assert to_centimeter(Inches(1)).value == 2.54
-    assert to_centimeter((1.0, "in")).value == 2.54
+    assert to_centi_meters(Inches(1)).value == 2.54
+    assert to_centi_meters((1.0, "in")).value == 2.54
 
     # Test from points
-    assert to_centimeter(Points(72)).value == 2.54
-    assert to_centimeter((72, "pt")).value == 2.54
+    assert to_centi_meters(Points(72)).value == 2.54
+    assert to_centi_meters((72, "pt")).value == 2.54
 
     # Test from centimeters
-    assert to_centimeter(CentiMeters(2.54)).value == 2.54
-    assert to_centimeter((2.54, "cm")).value == 2.54
+    assert to_centi_meters(CentiMeters(2.54)).value == 2.54
+    assert to_centi_meters((2.54, "cm")).value == 2.54
 
     # Test from millimeters
-    assert to_centimeter(MilliMeters(25.4)).value == 2.54
-    assert to_centimeter((25.4, "mm")).value == 2.54
+    assert to_centi_meters(MilliMeters(25.4)).value == 2.54
+    assert to_centi_meters((25.4, "mm")).value == 2.54
 
     # Test from EMU
-    assert to_centimeter(EnglishMetricUnits(914400)).value == 2.54
-    assert to_centimeter((914400, "emu")).value == 2.54
+    assert to_centi_meters(EnglishMetricUnits(914400)).value == 2.54
+    assert to_centi_meters((914400, "emu")).value == 2.54
 
 
 def test_to_inche():
     """Test conversion to inches"""
     # Test from inches
-    assert to_inche(Inches(1)).value == 1.0
-    assert to_inche((1.0, "in")).value == 1.0
+    assert to_inches(Inches(1)).value == 1.0
+    assert to_inches((1.0, "in")).value == 1.0
 
     # Test from points
-    assert to_inche(Points(72)).value == 1.0
-    assert to_inche((72, "pt")).value == 1.0
+    assert to_inches(Points(72)).value == 1.0
+    assert to_inches((72, "pt")).value == 1.0
 
     # Test from centimeters
-    assert to_inche(CentiMeters(2.54)).value == 1.0
-    assert to_inche((2.54, "cm")).value == 1.0
+    assert to_inches(CentiMeters(2.54)).value == 1.0
+    assert to_inches((2.54, "cm")).value == 1.0
 
     # Test from millimeters
-    assert to_inche(MilliMeters(25.4)).value == 1.0
-    assert to_inche((25.4, "mm")).value == 1.0
+    assert to_inches(MilliMeters(25.4)).value == 1.0
+    assert to_inches((25.4, "mm")).value == 1.0
 
     # Test from EMU
-    assert to_inche(EnglishMetricUnits(914400)).value == 1.0
-    assert to_inche((914400, "emu")).value == 1.0
+    assert to_inches(EnglishMetricUnits(914400)).value == 1.0
+    assert to_inches((914400, "emu")).value == 1.0
 
 
 def test_to_point():
     """Test conversion to points"""
     # Test from inches
-    assert to_point(Inches(1)).value == 72
-    assert to_point((1.0, "in")).value == 72
+    assert to_points(Inches(1)).value == 72
+    assert to_points((1.0, "in")).value == 72
 
     # Test from points
-    assert to_point(Points(72)).value == 72
-    assert to_point((72, "pt")).value == 72
+    assert to_points(Points(72)).value == 72
+    assert to_points((72, "pt")).value == 72
 
     # Test from centimeters
-    assert to_point(CentiMeters(2.54)).value == 72
-    assert to_point((2.54, "cm")).value == 72
+    assert to_points(CentiMeters(2.54)).value == 72
+    assert to_points((2.54, "cm")).value == 72
 
     # Test from millimeters
-    assert to_point(MilliMeters(25.4)).value == 72
-    assert to_point((25.4, "mm")).value == 72
+    assert to_points(MilliMeters(25.4)).value == 72
+    assert to_points((25.4, "mm")).value == 72
 
     # Test from EMU
-    assert to_point(EnglishMetricUnits(914400)).value == 72
-    assert to_point((914400, "emu")).value == 72
+    assert to_points(EnglishMetricUnits(914400)).value == 72
+    assert to_points((914400, "emu")).value == 72
 
 
 def test_to_millimeter():
     """Test conversion to millimeters"""
     # Test from inches
-    assert to_millimeter(Inches(1)).value == 25.4
-    assert to_millimeter((1.0, "in")).value == 25.4
+    assert to_milli_meters(Inches(1)).value == 25.4
+    assert to_milli_meters((1.0, "in")).value == 25.4
 
     # Test from points
-    assert to_millimeter(Points(72)).value == 25.4
-    assert to_millimeter((72, "pt")).value == 25.4
+    assert to_milli_meters(Points(72)).value == 25.4
+    assert to_milli_meters((72, "pt")).value == 25.4
 
     # Test from centimeters
-    assert to_millimeter(CentiMeters(2.54)).value == 25.4
-    assert to_millimeter((2.54, "cm")).value == 25.4
+    assert to_milli_meters(CentiMeters(2.54)).value == 25.4
+    assert to_milli_meters((2.54, "cm")).value == 25.4
 
     # Test from millimeters
-    assert to_millimeter(MilliMeters(25.4)).value == 25.4
-    assert to_millimeter((25.4, "mm")).value == 25.4
+    assert to_milli_meters(MilliMeters(25.4)).value == 25.4
+    assert to_milli_meters((25.4, "mm")).value == 25.4
 
     # Test from EMU
-    assert to_millimeter(EnglishMetricUnits(914400)).value == 25.4
-    assert to_millimeter((914400, "emu")).value == 25.4
+    assert to_milli_meters(EnglishMetricUnits(914400)).value == 25.4
+    assert to_milli_meters((914400, "emu")).value == 25.4
 
 
 def test_to_emu():
     """Test conversion to EMU"""
     # Test from inches
-    assert to_emu(Inches(1)).value == 914400
-    assert to_emu((1.0, "in")).value == 914400
+    assert to_english_metric_units(Inches(1)).value == 914400
+    assert to_english_metric_units((1.0, "in")).value == 914400
 
     # Test from points
-    assert to_emu(Points(72)).value == 914400
-    assert to_emu((72, "pt")).value == 914400
+    assert to_english_metric_units(Points(72)).value == 914400
+    assert to_english_metric_units((72, "pt")).value == 914400
 
     # Test from centimeters
-    assert to_emu(CentiMeters(2.54)).value == 914400
-    assert to_emu((2.54, "cm")).value == 914400
+    assert to_english_metric_units(CentiMeters(2.54)).value == 914400
+    assert to_english_metric_units((2.54, "cm")).value == 914400
 
     # Test from millimeters
-    assert to_emu(MilliMeters(25.4)).value == 914400
-    assert to_emu((25.4, "mm")).value == 914400
+    assert to_english_metric_units(MilliMeters(25.4)).value == 914400
+    assert to_english_metric_units((25.4, "mm")).value == 914400
 
     # Test from EMU
-    assert to_emu(EnglishMetricUnits(914400)).value == 914400
-    assert to_emu((914400, "emu")).value == 914400
+    assert to_english_metric_units(EnglishMetricUnits(914400)).value == 914400
+    assert to_english_metric_units((914400, "emu")).value == 914400
 
 
 def test_internal_length_operations():
@@ -220,84 +220,84 @@ def test_internal_length_operations():
 def test_conversion_between_units():
     """Test conversion between different units"""
     # Test inch to point
-    assert to_point(Inches(1)).value == 72
-    assert to_point((1.0, "in")).value == 72
+    assert to_points(Inches(1)).value == 72
+    assert to_points((1.0, "in")).value == 72
 
     # Test inch to centimeter
-    assert to_centimeter(Inches(1)).value == 2.54
-    assert to_centimeter((1.0, "in")).value == 2.54
+    assert to_centi_meters(Inches(1)).value == 2.54
+    assert to_centi_meters((1.0, "in")).value == 2.54
 
     # Test inch to millimeter
-    assert to_millimeter(Inches(1)).value == 25.4
-    assert to_millimeter((1.0, "in")).value == 25.4
+    assert to_milli_meters(Inches(1)).value == 25.4
+    assert to_milli_meters((1.0, "in")).value == 25.4
 
     # Test inch to EMU
-    assert to_emu(Inches(1)).value == 914400
-    assert to_emu((1.0, "in")).value == 914400
+    assert to_english_metric_units(Inches(1)).value == 914400
+    assert to_english_metric_units((1.0, "in")).value == 914400
 
     # Test point to inch
-    assert to_inche(Points(72)).value == 1.0
-    assert to_inche((72, "pt")).value == 1.0
+    assert to_inches(Points(72)).value == 1.0
+    assert to_inches((72, "pt")).value == 1.0
 
     # Test point to centimeter
-    assert to_centimeter(Points(72)).value == 2.54
-    assert to_centimeter((72, "pt")).value == 2.54
+    assert to_centi_meters(Points(72)).value == 2.54
+    assert to_centi_meters((72, "pt")).value == 2.54
 
     # Test point to millimeter
-    assert to_millimeter(Points(72)).value == 25.4
-    assert to_millimeter((72, "pt")).value == 25.4
+    assert to_milli_meters(Points(72)).value == 25.4
+    assert to_milli_meters((72, "pt")).value == 25.4
 
     # Test point to EMU
-    assert to_emu(Points(72)).value == 914400
-    assert to_emu((72, "pt")).value == 914400
+    assert to_english_metric_units(Points(72)).value == 914400
+    assert to_english_metric_units((72, "pt")).value == 914400
 
     # Test centimeter to inch
-    assert to_inche(CentiMeters(2.54)).value == 1.0
-    assert to_inche((2.54, "cm")).value == 1.0
+    assert to_inches(CentiMeters(2.54)).value == 1.0
+    assert to_inches((2.54, "cm")).value == 1.0
 
     # Test centimeter to point
-    assert to_point(CentiMeters(2.54)).value == 72
-    assert to_point((2.54, "cm")).value == 72
+    assert to_points(CentiMeters(2.54)).value == 72
+    assert to_points((2.54, "cm")).value == 72
 
     # Test centimeter to millimeter
-    assert to_millimeter(CentiMeters(2.54)).value == 25.4
-    assert to_millimeter((2.54, "cm")).value == 25.4
+    assert to_milli_meters(CentiMeters(2.54)).value == 25.4
+    assert to_milli_meters((2.54, "cm")).value == 25.4
 
     # Test centimeter to EMU
-    assert to_emu(CentiMeters(2.54)).value == 914400
-    assert to_emu((2.54, "cm")).value == 914400
+    assert to_english_metric_units(CentiMeters(2.54)).value == 914400
+    assert to_english_metric_units((2.54, "cm")).value == 914400
 
     # Test millimeter to inch
-    assert to_inche(MilliMeters(25.4)).value == 1.0
-    assert to_inche((25.4, "mm")).value == 1.0
+    assert to_inches(MilliMeters(25.4)).value == 1.0
+    assert to_inches((25.4, "mm")).value == 1.0
 
     # Test millimeter to point
-    assert to_point(MilliMeters(25.4)).value == 72
-    assert to_point((25.4, "mm")).value == 72
+    assert to_points(MilliMeters(25.4)).value == 72
+    assert to_points((25.4, "mm")).value == 72
 
     # Test millimeter to centimeter
-    assert to_centimeter(MilliMeters(25.4)).value == 2.54
-    assert to_centimeter((25.4, "mm")).value == 2.54
+    assert to_centi_meters(MilliMeters(25.4)).value == 2.54
+    assert to_centi_meters((25.4, "mm")).value == 2.54
 
     # Test millimeter to EMU
-    assert to_emu(MilliMeters(25.4)).value == 914400
-    assert to_emu((25.4, "mm")).value == 914400
+    assert to_english_metric_units(MilliMeters(25.4)).value == 914400
+    assert to_english_metric_units((25.4, "mm")).value == 914400
 
     # Test EMU to inch
-    assert to_inche(EnglishMetricUnits(914400)).value == 1.0
-    assert to_inche((914400, "emu")).value == 1.0
+    assert to_inches(EnglishMetricUnits(914400)).value == 1.0
+    assert to_inches((914400, "emu")).value == 1.0
 
     # Test EMU to point
-    assert to_point(EnglishMetricUnits(914400)).value == 72
-    assert to_point((914400, "emu")).value == 72
+    assert to_points(EnglishMetricUnits(914400)).value == 72
+    assert to_points((914400, "emu")).value == 72
 
     # Test EMU to centimeter
-    assert to_centimeter(EnglishMetricUnits(914400)).value == 2.54
-    assert to_centimeter((914400, "emu")).value == 2.54
+    assert to_centi_meters(EnglishMetricUnits(914400)).value == 2.54
+    assert to_centi_meters((914400, "emu")).value == 2.54
 
     # Test EMU to millimeter
-    assert to_millimeter(EnglishMetricUnits(914400)).value == 25.4
-    assert to_millimeter((914400, "emu")).value == 25.4
+    assert to_milli_meters(EnglishMetricUnits(914400)).value == 25.4
+    assert to_milli_meters((914400, "emu")).value == 25.4
 
 
 def test_internal_to_public_conversion():

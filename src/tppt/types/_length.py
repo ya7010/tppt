@@ -2,6 +2,8 @@
 
 from typing import Literal, assert_never
 
+from pptx.util import Length as _PptxLength
+
 # Constants for unit conversion
 INCHES_PER_POINT = 1 / 72  # 1 point = 1/72 inches
 POINTS_PER_INCH = 72  # 1 inch = 72 points
@@ -37,23 +39,23 @@ class Inches:
     def __add__(self, other: "Length | LiteralLength") -> "Inches":
         if isinstance(other, tuple):
             other = to_length(other)
-        return Inches(self.value + to_inche(other).value)
+        return Inches(self.value + to_inches(other).value)
 
     def __sub__(self, other: "Length | LiteralLength") -> "Inches":
         if isinstance(other, tuple):
             other = to_length(other)
-        return Inches(self.value - to_inche(other).value)
+        return Inches(self.value - to_inches(other).value)
 
     def __iadd__(self, other: "Length | LiteralLength") -> "Inches":
         if isinstance(other, tuple):
             other = to_length(other)
-        self.value += to_inche(other).value
+        self.value += to_inches(other).value
         return self
 
     def __isub__(self, other: "Length | LiteralLength") -> "Inches":
         if isinstance(other, tuple):
             other = to_length(other)
-        self.value -= to_inche(other).value
+        self.value -= to_inches(other).value
         return self
 
     def __mul__(self, other: int | float) -> "Inches":
@@ -73,7 +75,7 @@ class Inches:
                 | EnglishMetricUnits()
                 | tuple()
             ):
-                return self == to_inche(other)
+                return self == to_inches(other)
             case _:
                 raise NotImplementedError(
                     f"Cannot compare {type(self)} with {type(other)}"
@@ -92,23 +94,23 @@ class Points:
     def __add__(self, other: "Length | LiteralLength") -> "Points":
         if isinstance(other, tuple):
             other = to_length(other)
-        return Points(self.value + to_point(other).value)
+        return Points(self.value + to_points(other).value)
 
     def __sub__(self, other: "Length | LiteralLength") -> "Points":
         if isinstance(other, tuple):
             other = to_length(other)
-        return Points(self.value - to_point(other).value)
+        return Points(self.value - to_points(other).value)
 
     def __iadd__(self, other: "Length | LiteralLength") -> "Points":
         if isinstance(other, tuple):
             other = to_length(other)
-        self.value += to_point(other).value
+        self.value += to_points(other).value
         return self
 
     def __isub__(self, other: "Length | LiteralLength") -> "Points":
         if isinstance(other, tuple):
             other = to_length(other)
-        self.value -= to_point(other).value
+        self.value -= to_points(other).value
         return self
 
     def __mul__(self, other: int | float) -> "Points":
@@ -128,7 +130,7 @@ class Points:
                 | EnglishMetricUnits()
                 | tuple()
             ):
-                return self == to_point(other)
+                return self == to_points(other)
             case _:
                 raise NotImplementedError(
                     f"Cannot compare {type(self)} with {type(other)}"
@@ -147,23 +149,23 @@ class CentiMeters:
     def __add__(self, other: "Length | LiteralLength") -> "CentiMeters":
         if isinstance(other, tuple):
             other = to_length(other)
-        return CentiMeters(self.value + to_centimeter(other).value)
+        return CentiMeters(self.value + to_centi_meters(other).value)
 
     def __sub__(self, other: "Length | LiteralLength") -> "CentiMeters":
         if isinstance(other, tuple):
             other = to_length(other)
-        return CentiMeters(self.value - to_centimeter(other).value)
+        return CentiMeters(self.value - to_centi_meters(other).value)
 
     def __iadd__(self, other: "Length | LiteralLength") -> "CentiMeters":
         if isinstance(other, tuple):
             other = to_length(other)
-        self.value += to_centimeter(other).value
+        self.value += to_centi_meters(other).value
         return self
 
     def __isub__(self, other: "Length | LiteralLength") -> "CentiMeters":
         if isinstance(other, tuple):
             other = to_length(other)
-        self.value -= to_centimeter(other).value
+        self.value -= to_centi_meters(other).value
         return self
 
     def __mul__(self, other: int | float) -> "CentiMeters":
@@ -177,7 +179,7 @@ class CentiMeters:
             case CentiMeters():
                 return self.value == other.value
             case Inches() | Points() | MilliMeters() | EnglishMetricUnits() | tuple():
-                return self == to_centimeter(other)
+                return self == to_centi_meters(other)
             case _:
                 raise NotImplementedError(
                     f"Cannot compare {type(self)} with {type(other)}"
@@ -196,23 +198,23 @@ class MilliMeters:
     def __add__(self, other: "Length | LiteralLength") -> "MilliMeters":
         if isinstance(other, tuple):
             other = to_length(other)
-        return MilliMeters(self.value + to_millimeter(other).value)
+        return MilliMeters(self.value + to_milli_meters(other).value)
 
     def __sub__(self, other: "Length | LiteralLength") -> "MilliMeters":
         if isinstance(other, tuple):
             other = to_length(other)
-        return MilliMeters(self.value - to_millimeter(other).value)
+        return MilliMeters(self.value - to_milli_meters(other).value)
 
     def __iadd__(self, other: "Length | LiteralLength") -> "MilliMeters":
         if isinstance(other, tuple):
             other = to_length(other)
-        self.value += to_millimeter(other).value
+        self.value += to_milli_meters(other).value
         return self
 
     def __isub__(self, other: "Length | LiteralLength") -> "MilliMeters":
         if isinstance(other, tuple):
             other = to_length(other)
-        self.value -= to_millimeter(other).value
+        self.value -= to_milli_meters(other).value
         return self
 
     def __mul__(self, other: int | float) -> "MilliMeters":
@@ -226,7 +228,7 @@ class MilliMeters:
             case MilliMeters():
                 return self.value == other.value
             case CentiMeters() | Inches() | Points() | EnglishMetricUnits() | tuple():
-                return self == to_millimeter(other)
+                return self == to_milli_meters(other)
             case _:
                 raise NotImplementedError(
                     f"Cannot compare {type(self)} with {type(other)}"
@@ -237,7 +239,12 @@ class MilliMeters:
 
 
 class EnglishMetricUnits:
-    """Class representing English Metric Units (EMU)"""
+    """
+    Class representing English Metric Units (EMU)
+
+    This is not a physical unit system, but is written as a Microsoft-specific definition
+    in the ISO/IEC 29500 specification as "1 inch = 360,000 EMU".
+    """
 
     def __init__(self, value: int):
         self.value = value
@@ -245,23 +252,23 @@ class EnglishMetricUnits:
     def __add__(self, other: "Length | LiteralLength") -> "EnglishMetricUnits":
         if isinstance(other, tuple):
             other = to_length(other)
-        return EnglishMetricUnits(self.value + to_emu(other).value)
+        return EnglishMetricUnits(self.value + to_english_metric_units(other).value)
 
     def __sub__(self, other: "Length | LiteralLength") -> "EnglishMetricUnits":
         if isinstance(other, tuple):
             other = to_length(other)
-        return EnglishMetricUnits(self.value - to_emu(other).value)
+        return EnglishMetricUnits(self.value - to_english_metric_units(other).value)
 
     def __iadd__(self, other: "Length | LiteralLength") -> "EnglishMetricUnits":
         if isinstance(other, tuple):
             other = to_length(other)
-        self.value += to_emu(other).value
+        self.value += to_english_metric_units(other).value
         return self
 
     def __isub__(self, other: "Length | LiteralLength") -> "EnglishMetricUnits":
         if isinstance(other, tuple):
             other = to_length(other)
-        self.value -= to_emu(other).value
+        self.value -= to_english_metric_units(other).value
         return self
 
     def __mul__(self, other: int | float) -> "EnglishMetricUnits":
@@ -275,7 +282,7 @@ class EnglishMetricUnits:
             case EnglishMetricUnits():
                 return self.value == other.value
             case CentiMeters() | Inches() | Points() | MilliMeters() | tuple():
-                return self == to_emu(other)
+                return self == to_english_metric_units(other)
             case _:
                 raise NotImplementedError(
                     f"Cannot compare {type(self)} with {type(other)}"
@@ -288,7 +295,7 @@ class EnglishMetricUnits:
 Length = Inches | Points | CentiMeters | MilliMeters | EnglishMetricUnits
 
 
-def to_length(length: LiteralLength | Length) -> Length:
+def to_length(length: LiteralLength | Length | _PptxLength) -> Length:
     """Convert public length representation to internal length representation
 
     Args:
@@ -298,23 +305,26 @@ def to_length(length: LiteralLength | Length) -> Length:
         _Length: Internal length representation
     """
 
-    if isinstance(length, tuple):
-        value, unit = length
-        match unit:
-            case "in":
-                return Inches(value)
-            case "cm":
-                return CentiMeters(value)
-            case "pt":
-                return Points(int(value))
-            case "mm":
-                return MilliMeters(value)
-            case "emu":
-                return EnglishMetricUnits(int(value))
-            case _:
-                assert_never(unit)
-    else:
-        return length
+    match length:
+        case tuple():
+            value, unit = length
+            match unit:
+                case "in":
+                    return Inches(value)
+                case "cm":
+                    return CentiMeters(value)
+                case "pt":
+                    return Points(int(value))
+                case "mm":
+                    return MilliMeters(value)
+                case "emu":
+                    return EnglishMetricUnits(int(value))
+                case _:
+                    assert_never(unit)
+        case _PptxLength():
+            return EnglishMetricUnits(length)
+        case _:
+            return length
 
 
 def to_literal_length(
@@ -334,26 +344,20 @@ def to_literal_length(
 
     match unit:
         case "in":
-            return (to_inche(length).value, "in")
+            return (to_inches(length).value, "in")
         case "cm":
-            return (to_centimeter(length).value, "cm")
+            return (to_centi_meters(length).value, "cm")
         case "pt":
-            return (to_point(length).value, "pt")
+            return (to_points(length).value, "pt")
         case "mm":
-            return (to_millimeter(length).value, "mm")
+            return (to_milli_meters(length).value, "mm")
         case "emu":
-            return (to_emu(length).value, "emu")
+            return (to_english_metric_units(length).value, "emu")
         case _:
             assert_never(unit)
 
 
-def to_optional_length(length: Length | LiteralLength | None) -> Length | None:
-    if length is None:
-        return None
-    return to_length(length)
-
-
-def to_centimeter(length: Length | LiteralLength) -> CentiMeters:
+def to_centi_meters(length: Length | LiteralLength | _PptxLength) -> CentiMeters:
     """Convert any length to centimeters
 
     Args:
@@ -363,7 +367,7 @@ def to_centimeter(length: Length | LiteralLength) -> CentiMeters:
         _Centimeter: Length in centimeters
     """
     if isinstance(length, tuple):
-        return to_centimeter(to_length(length))
+        return to_centi_meters(to_length(length))
 
     match length:
         case Inches():
@@ -376,11 +380,13 @@ def to_centimeter(length: Length | LiteralLength) -> CentiMeters:
             return CentiMeters(length.value / MM_PER_CM)
         case EnglishMetricUnits():
             return CentiMeters(length.value / EMUS_PER_CM)
+        case _PptxLength():
+            return CentiMeters(length.cm)
         case _:
             assert_never(length)
 
 
-def to_inche(length: Length | LiteralLength) -> Inches:
+def to_inches(length: Length | LiteralLength | _PptxLength) -> Inches:
     """Convert any length to inches
 
     Args:
@@ -390,7 +396,7 @@ def to_inche(length: Length | LiteralLength) -> Inches:
         _Inch: Length in inches
     """
     if isinstance(length, tuple):
-        return to_inche(to_length(length))
+        return to_inches(to_length(length))
 
     match length:
         case Inches():
@@ -403,11 +409,13 @@ def to_inche(length: Length | LiteralLength) -> Inches:
             return Inches(length.value / MM_PER_INCH)
         case EnglishMetricUnits():
             return Inches(length.value / EMUS_PER_INCH)
+        case _PptxLength():
+            return Inches(length.inches)
         case _:
             assert_never(length)
 
 
-def to_point(length: Length | LiteralLength) -> Points:
+def to_points(length: Length | LiteralLength | _PptxLength) -> Points:
     """Convert any length to points
 
     Args:
@@ -417,7 +425,7 @@ def to_point(length: Length | LiteralLength) -> Points:
         _Point: Length in points
     """
     if isinstance(length, tuple):
-        return to_point(to_length(length))
+        return to_points(to_length(length))
 
     match length:
         case Inches():
@@ -430,11 +438,13 @@ def to_point(length: Length | LiteralLength) -> Points:
             return Points(int(length.value / MM_PER_INCH * POINTS_PER_INCH))
         case EnglishMetricUnits():
             return Points(int(length.value / EMUS_PER_PT))
+        case _PptxLength():
+            return Points(int(length.pt))
         case _:
             assert_never(length)
 
 
-def to_millimeter(length: Length | LiteralLength) -> MilliMeters:
+def to_milli_meters(length: Length | LiteralLength | _PptxLength) -> MilliMeters:
     """Convert any length to millimeters
 
     Args:
@@ -444,7 +454,7 @@ def to_millimeter(length: Length | LiteralLength) -> MilliMeters:
         _Millimeter: Length in millimeters
     """
     if isinstance(length, tuple):
-        return to_millimeter(to_length(length))
+        return to_milli_meters(to_length(length))
 
     match length:
         case Inches():
@@ -457,11 +467,15 @@ def to_millimeter(length: Length | LiteralLength) -> MilliMeters:
             return length
         case EnglishMetricUnits():
             return MilliMeters(length.value / EMUS_PER_MM)
+        case _PptxLength():
+            return MilliMeters(length.mm)
         case _:
             assert_never(length)
 
 
-def to_emu(length: Length | LiteralLength) -> EnglishMetricUnits:
+def to_english_metric_units(
+    length: Length | LiteralLength | _PptxLength,
+) -> EnglishMetricUnits:
     """Convert any length to English Metric Units (EMU)
 
     Args:
@@ -471,7 +485,7 @@ def to_emu(length: Length | LiteralLength) -> EnglishMetricUnits:
         _Emu: Length in EMU
     """
     if isinstance(length, tuple):
-        return to_emu(to_length(length))
+        return to_english_metric_units(to_length(length))
 
     match length:
         case Inches():
@@ -484,5 +498,7 @@ def to_emu(length: Length | LiteralLength) -> EnglishMetricUnits:
             return EnglishMetricUnits(int(length.value * EMUS_PER_MM))
         case EnglishMetricUnits():
             return length
+        case _PptxLength():
+            return EnglishMetricUnits(length.emu)
         case _:
             assert_never(length)

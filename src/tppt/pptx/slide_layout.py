@@ -1,5 +1,3 @@
-from typing import Self
-
 from pptx.slide import SlideLayout as PptxSlideLayout
 
 from .converter import PptxConvertible
@@ -10,9 +8,6 @@ from .shape.placeholder import LayoutPlaceholder
 
 class SlideLayout(PptxConvertible[PptxSlideLayout]):
     """Slide layout data class."""
-
-    def __init__(self, pptx_slide_layout: PptxSlideLayout) -> None:
-        self._pptx = pptx_slide_layout
 
     @property
     def name(self) -> str | None:
@@ -42,11 +37,3 @@ class SlideLayout(PptxConvertible[PptxSlideLayout]):
     def shapes(self) -> list[BaseShape]:
         """Get the shapes."""
         return [BaseShape.from_pptx(shape) for shape in self._pptx.shapes]
-
-    def to_pptx(self) -> PptxSlideLayout:
-        """Convert to pptx slide layout."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxSlideLayout) -> Self:
-        return cls(pptx_obj)

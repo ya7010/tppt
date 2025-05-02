@@ -1,4 +1,4 @@
-from typing import IO, Literal, NotRequired, Self, assert_never
+from typing import IO, Literal, NotRequired, assert_never
 
 from pptx.opc.constants import CONTENT_TYPE
 from pptx.shapes.picture import Movie as PptxMovie
@@ -31,15 +31,6 @@ class Picture(BaseShape[PptxPicture]):
         /,
     ) -> None:
         self._pptx = pptx_obj
-
-    def to_pptx(self) -> PptxPicture:
-        """Convert to pptx shape."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxPicture) -> Self:
-        """Create from pptx shape."""
-        return cls(pptx_obj)
 
 
 MOVIE_MIME_TYPE = Literal[
@@ -108,12 +99,3 @@ class Movie(BaseShape[PptxMovie]):
         /,
     ) -> None:
         self._pptx = pptx_obj
-
-    def to_pptx(self) -> PptxMovie:
-        """Convert to pptx shape."""
-        return self._pptx
-
-    @classmethod
-    def from_pptx(cls, pptx_obj: PptxMovie) -> Self:
-        """Create from pptx shape."""
-        return cls(pptx_obj)

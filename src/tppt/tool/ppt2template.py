@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from pptx import Presentation as PptxPresentation
+from pptx.enum.shapes import PP_PLACEHOLDER_TYPE
 
 import tppt
 
@@ -162,40 +163,33 @@ def analyze_layout(layout: LayoutInfo) -> LayoutInfo:
 
         # Determine base name based on placeholder type
         match ph_type:
-            case 1:  # Title
+            case PP_PLACEHOLDER_TYPE.TITLE:
                 base_name = "title"
-            case 2:  # Body/Content
-                if "content" in layout_name_lower or "text" in layout_name_lower:
-                    base_name = "content"
-                else:
-                    base_name = "body"
-            case 3:  # CenteredTitle
+            case PP_PLACEHOLDER_TYPE.BODY:
+                base_name = "body"
+            case PP_PLACEHOLDER_TYPE.CENTER_TITLE:
                 base_name = "title"
-            case 4:  # Subtitle
+            case PP_PLACEHOLDER_TYPE.SUBTITLE:
                 base_name = "subtitle"
-            case 7:  # Chart
-                if "chart" in sample_ph.name.lower():
-                    base_name = "chart"
-                else:
-                    base_name = "content"
-            case 8:  # Table
+            case PP_PLACEHOLDER_TYPE.CHART:
+                base_name = "chart"
+            case PP_PLACEHOLDER_TYPE.TABLE:
                 base_name = "table"
-            case 13:  # SlideNumber
+            case PP_PLACEHOLDER_TYPE.SLIDE_NUMBER:
                 base_name = "slide_number"
-            case 15:  # Footer
+            case PP_PLACEHOLDER_TYPE.FOOTER:
                 base_name = "footer"
-            case 16:  # Date
+            case PP_PLACEHOLDER_TYPE.DATE:
                 base_name = "date"
-            case 18:  # Picture
+            case PP_PLACEHOLDER_TYPE.PICTURE:
                 base_name = "picture"
-            case 19:  # VerticalTitle
+            case PP_PLACEHOLDER_TYPE.VERTICAL_TITLE:
                 base_name = "vertical_title"
-            case 20:  # VerticalBody
+            case PP_PLACEHOLDER_TYPE.VERTICAL_BODY:
                 base_name = "vertical_text"
             case _:
                 # For other types, use the cleaned placeholder name
                 base_name = clean_field_name(sample_ph.name)
-
         # Process all types of placeholders
         if ph_type not in [
             1,
