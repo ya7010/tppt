@@ -33,9 +33,6 @@ def main():
         )
         .build()
     )
-    top_slide = presentation.slides[0]
-    top_slide.placeholders[0].text = "Custom Master Top Title"
-    top_slide.placeholders[1].text = "Custom Master Top Subtitle"
 
     presentation.save(Path(__file__).with_suffix(".pptx"))
 
