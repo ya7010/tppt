@@ -2,8 +2,9 @@
 
 from pathlib import Path
 
-import tppt
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
+
+import tppt
 
 
 def main():
