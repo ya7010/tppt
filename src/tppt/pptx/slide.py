@@ -60,6 +60,10 @@ class _BaseSlide(PptxConvertible[_GenericPptxBaseSlide]):
     def name(self, value: str) -> None:
         self._pptx.name = value
 
+    def set_name(self, value: str) -> Self:
+        self.name = value
+        return self
+
 
 class Slide(_BaseSlide[PptxSlide]):
     """Slide wrapper with type safety."""

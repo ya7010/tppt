@@ -1,3 +1,5 @@
+from typing import Self
+
 from pptx.action import ActionSetting as _PptxActionSetting
 from pptx.action import Hyperlink as _PptxHyperlink
 from pptx.enum.action import PP_ACTION_TYPE
@@ -15,6 +17,10 @@ class Hyperlink(SubShape[_PptxHyperlink]):
     @address.setter
     def address(self, value: str | None):
         self._pptx.address = value
+
+    def set_address(self, value: str | None) -> Self:
+        self.address = value
+        return self
 
 
 class ActionSetting(PptxConvertible[_PptxActionSetting]):
@@ -38,3 +44,7 @@ class ActionSetting(PptxConvertible[_PptxActionSetting]):
             self._pptx.target_slide = None
         else:
             self._pptx.target_slide = value._pptx
+
+    def set_target_slide(self, value: Slide | None) -> Self:
+        self.target_slide = value
+        return self

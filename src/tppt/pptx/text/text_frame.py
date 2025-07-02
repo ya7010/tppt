@@ -1,3 +1,5 @@
+from typing import Self
+
 from pptx.enum.text import MSO_AUTO_SIZE, MSO_VERTICAL_ANCHOR
 from pptx.text.text import TextFrame as PptxTextFrame
 from pptx.util import Length as PptxLength
@@ -28,6 +30,10 @@ class TextFrame(SubShape[PptxTextFrame]):
     def auto_size(self, value: MSO_AUTO_SIZE | None) -> None:
         self._pptx.auto_size = value
 
+    def set_auto_size(self, value: MSO_AUTO_SIZE | None) -> Self:
+        self.auto_size = value
+        return self
+
     def clear(self) -> None:
         self._pptx.clear()
 
@@ -49,6 +55,10 @@ class TextFrame(SubShape[PptxTextFrame]):
     def margin_bottom(self, value: Length | LiteralLength | PptxLength) -> None:
         self._pptx.margin_bottom = to_pptx_length(value)
 
+    def set_margin_bottom(self, value: Length | LiteralLength | PptxLength) -> Self:
+        self.margin_bottom = value
+        return self
+
     @property
     def margin_left(self) -> EnglishMetricUnits:
         return to_english_metric_units(self._pptx.margin_left)
@@ -56,6 +66,10 @@ class TextFrame(SubShape[PptxTextFrame]):
     @margin_left.setter
     def margin_left(self, value: Length | LiteralLength | PptxLength) -> None:
         self._pptx.margin_left = to_pptx_length(value)
+
+    def set_margin_left(self, value: Length | LiteralLength | PptxLength) -> Self:
+        self.margin_left = value
+        return self
 
     @property
     def margin_right(self) -> EnglishMetricUnits:
@@ -65,6 +79,10 @@ class TextFrame(SubShape[PptxTextFrame]):
     def margin_right(self, value: Length | LiteralLength | PptxLength) -> None:
         self._pptx.margin_right = to_pptx_length(value)
 
+    def set_margin_right(self, value: Length | LiteralLength | PptxLength) -> Self:
+        self.margin_right = value
+        return self
+
     @property
     def margin_top(self) -> EnglishMetricUnits:
         return to_english_metric_units(self._pptx.margin_top)
@@ -72,6 +90,10 @@ class TextFrame(SubShape[PptxTextFrame]):
     @margin_top.setter
     def margin_top(self, value: Length | LiteralLength | PptxLength) -> None:
         self._pptx.margin_top = to_pptx_length(value)
+
+    def set_margin_top(self, value: Length | LiteralLength | PptxLength) -> Self:
+        self.margin_top = value
+        return self
 
     @property
     def paragraphs(self) -> tuple[Paragraph, ...]:
@@ -85,6 +107,10 @@ class TextFrame(SubShape[PptxTextFrame]):
     def text(self, text: str) -> None:
         self._pptx.text = text
 
+    def set_text(self, text: str) -> Self:
+        self.text = text
+        return self
+
     @property
     def vertical_anchor(self) -> MSO_VERTICAL_ANCHOR | None:
         return self._pptx.vertical_anchor
@@ -93,6 +119,10 @@ class TextFrame(SubShape[PptxTextFrame]):
     def vertical_anchor(self, value: MSO_VERTICAL_ANCHOR | None) -> None:
         self._pptx.vertical_anchor = value
 
+    def set_vertical_anchor(self, value: MSO_VERTICAL_ANCHOR | None) -> Self:
+        self.vertical_anchor = value
+        return self
+
     @property
     def word_wrap(self) -> bool | None:
         return self._pptx.word_wrap
@@ -100,3 +130,7 @@ class TextFrame(SubShape[PptxTextFrame]):
     @word_wrap.setter
     def word_wrap(self, value: bool | None) -> None:
         self._pptx.word_wrap = value
+
+    def set_word_wrap(self, value: bool | None) -> Self:
+        self.word_wrap = value
+        return self

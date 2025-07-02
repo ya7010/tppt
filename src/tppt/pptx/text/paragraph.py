@@ -1,3 +1,5 @@
+from typing import Self
+
 from pptx.enum.text import PP_PARAGRAPH_ALIGNMENT
 from pptx.text.text import _Paragraph as PptxParagraph
 from pptx.util import Length as PptxLength
@@ -23,6 +25,10 @@ class Paragraph(PptxConvertible[PptxParagraph]):
     def alignment(self, value: PP_PARAGRAPH_ALIGNMENT | None) -> None:
         self._pptx.alignment = value
 
+    def set_alignment(self, value: PP_PARAGRAPH_ALIGNMENT | None) -> Self:
+        self.alignment = value
+        return self
+
     def clear(self) -> None:
         self._pptx.clear()
 
@@ -37,6 +43,10 @@ class Paragraph(PptxConvertible[PptxParagraph]):
     @level.setter
     def level(self, value: int) -> None:
         self._pptx.level = value
+
+    def set_level(self, value: int) -> Self:
+        self.level = value
+        return self
 
     @property
     def line_spacing(self) -> int | float | Length | None:
@@ -53,6 +63,10 @@ class Paragraph(PptxConvertible[PptxParagraph]):
                 self._pptx.line_spacing = value
             case _:
                 self._pptx.line_spacing = to_pptx_length(value)
+
+    def set_line_spacing(self, value: int | float | Length | PptxLength | None) -> Self:
+        self.line_spacing = value
+        return self
 
     @property
     def runs(self) -> tuple[Run, ...]:
@@ -74,6 +88,10 @@ class Paragraph(PptxConvertible[PptxParagraph]):
             case _:
                 self._pptx.space_after = to_pptx_length(value)
 
+    def set_space_after(self, value: Length | PptxLength | None) -> Self:
+        self.space_after = value
+        return self
+
     @property
     def space_before(self) -> Length | None:
         match self._pptx.space_before:
@@ -90,6 +108,10 @@ class Paragraph(PptxConvertible[PptxParagraph]):
             case _:
                 self._pptx.space_before = to_pptx_length(value)
 
+    def set_space_before(self, value: Length | PptxLength | None) -> Self:
+        self.space_before = value
+        return self
+
     @property
     def text(self) -> str:
         return self._pptx.text
@@ -97,3 +119,7 @@ class Paragraph(PptxConvertible[PptxParagraph]):
     @text.setter
     def text(self, value: str) -> None:
         self._pptx.text = value
+
+    def set_text(self, value: str) -> Self:
+        self.text = value
+        return self
