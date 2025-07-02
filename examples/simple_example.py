@@ -63,8 +63,6 @@ def main():
                 EXAMPLE_DIR / "images" / "python-logo.png",
                 left=(50, "pt"),
                 top=(100, "pt"),
-                width=(300, "pt"),
-                height=(80, "pt"),
             )
             .text(
                 "The Python logo",

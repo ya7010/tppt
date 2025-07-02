@@ -1,16 +1,21 @@
-from typing import IO, Literal, NotRequired, assert_never
+from typing import IO, Literal, NotRequired, TypedDict, assert_never
 
 from pptx.opc.constants import CONTENT_TYPE
 from pptx.shapes.picture import Movie as PptxMovie
 from pptx.shapes.picture import Picture as PptxPicture
 
-from tppt.types import FilePath
+from tppt.types import FilePath, Length, LiteralLength
 
 from . import BaseShape, RangeProps
 
 
-class PictureProps(RangeProps):
+class PictureProps(TypedDict):
     """Picture properties."""
+
+    left: Length | LiteralLength
+    top: Length | LiteralLength
+    width: NotRequired[Length | LiteralLength]
+    height: NotRequired[Length | LiteralLength]
 
 
 class PictureData(PictureProps):
