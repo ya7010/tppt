@@ -78,6 +78,10 @@ class Presentation(PptxConvertible[_PptxPresentation]):
     def slide_width(self, value: Length | LiteralLength) -> None:
         self._pptx.slide_width = to_pptx_length(value)
 
+    def set_slide_width(self, value: Length | LiteralLength) -> Self:
+        self.slide_width = value
+        return self
+
     @property
     def slide_height(self) -> Length | None:
         return to_tppt_length(self._pptx.slide_height)
@@ -85,6 +89,10 @@ class Presentation(PptxConvertible[_PptxPresentation]):
     @slide_height.setter
     def slide_height(self, value: Length | LiteralLength) -> None:
         self._pptx.slide_height = to_pptx_length(value)
+
+    def set_slide_height(self, value: Length | LiteralLength) -> Self:
+        self.slide_height = value
+        return self
 
     @property
     def tree(self) -> dict[str, Any]:

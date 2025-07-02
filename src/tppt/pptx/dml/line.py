@@ -26,6 +26,12 @@ class LineFormat(PptxConvertible[_PptxLineFormat]):
     ) -> None:
         self._pptx.dash_style = to_pptx_line_dash_style(value)
 
+    def set_dash_style(
+        self, value: MSO_LINE_DASH_STYLE | LiteralLineDashStyle | None
+    ) -> "LineFormat":
+        self.dash_style = value
+        return self
+
     @property
     def fill(self) -> FillFormat:
         return FillFormat(self._pptx.fill)
@@ -37,3 +43,7 @@ class LineFormat(PptxConvertible[_PptxLineFormat]):
     @width.setter
     def width(self, value: EnglishMetricUnits | _PptxEmu) -> None:
         self._pptx.width = to_english_metric_units(value)
+
+    def set_width(self, value: EnglishMetricUnits | _PptxEmu) -> "LineFormat":
+        self.width = value
+        return self

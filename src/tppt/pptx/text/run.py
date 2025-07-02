@@ -1,3 +1,5 @@
+from typing import Self
+
 from pptx.text.text import _Run as PptxRun
 
 from tppt.pptx.converter import PptxConvertible
@@ -21,3 +23,7 @@ class Run(PptxConvertible[PptxRun]):
     @text.setter
     def text(self, text: str) -> None:
         self._pptx.text = text
+
+    def set_text(self, text: str) -> Self:
+        self.text = text
+        return self
