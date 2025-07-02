@@ -2,10 +2,8 @@
 
 from pathlib import Path
 
-from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
-from pptx.util import Inches
-
 import tppt
+from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 
 
 def main():
@@ -19,10 +17,10 @@ def main():
                 shape.fill.solid().fore_color.set_rgb("#0066ff"),
                 shape.set_text("Sample Box with Text"),
             )[-1],
-            left=Inches(1),
-            top=Inches(1),
-            width=Inches(4),
-            height=Inches(2),
+            left=(1, "in"),
+            top=(1, "in"),
+            width=(4, "in"),
+            height=(2, "in"),
         )
         .add_shape(
             MSO_AUTO_SHAPE_TYPE.ROUNDED_RECTANGLE,
@@ -30,10 +28,10 @@ def main():
                 shape.fill.solid().fore_color.set_rgb("#ff6600"),
                 shape.set_text("Rounded Box"),
             )[-1],
-            left=Inches(6),
-            top=Inches(1),
-            width=Inches(3),
-            height=Inches(1.5),
+            left=(6, "in"),
+            top=(1, "in"),
+            width=(3, "in"),
+            height=(1.5, "in"),
         )
         .add_shape(
             MSO_AUTO_SHAPE_TYPE.OVAL,
@@ -41,10 +39,10 @@ def main():
                 shape.fill.solid().fore_color.set_rgb("#00ff00"),
                 shape.set_text("Circle"),
             )[-1],
-            left=Inches(1),
-            top=Inches(4),
-            width=Inches(2),
-            height=Inches(2),
+            left=(1, "in"),
+            top=(4, "in"),
+            width=(2, "in"),
+            height=(2, "in"),
         )
     ).save(Path(__file__).with_suffix(".pptx"))
 
