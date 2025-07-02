@@ -27,7 +27,7 @@ from tppt.pptx.shape.picture import (
 from tppt.types import FilePath
 
 from .converter import PptxConvertible, to_pptx_length
-from .shape import BaseShape, RangeProps
+from .shape import BaseShape, RangeProps, Shape
 from .shape.picture import Picture, PictureData, PictureProps
 from .shape.placeholder import SlidePlaceholder
 from .shape.text import Text, TextData, TextProps
@@ -35,6 +35,8 @@ from .slide_layout import SlideLayout
 from .table.table import DataFrame, Table, TableData, TableProps, dataframe2list
 
 if TYPE_CHECKING:
+    from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
+
     from tppt.pptx.shape.background import Background
 
     from .notes_slide import NotesSlide
@@ -353,6 +355,50 @@ class SlideBuilder:
 
         self._shape_registry.append(_register)
 
+        return self
+
+    @overload
+    def add_shape(
+        self,
+        shape_type: "MSO_AUTO_SHAPE_TYPE",
+        /,
+        **kwargs: Unpack[RangeProps],
+    ) -> Self: ...
+
+    @overload
+    def add_shape(
+        self,
+        shape_type: "MSO_AUTO_SHAPE_TYPE",
+        shape: Callable[[Shape], Shape],
+        /,
+        **kwargs: Unpack[RangeProps],
+    ) -> Self: ...
+
+    def add_shape(
+        self,
+        shape_type: "MSO_AUTO_SHAPE_TYPE",
+        shape: Callable[[Shape], Shape] | None = None,
+        /,
+        **kwargs: Unpack[RangeProps],
+    ) -> Self:
+        """Add a shape to the slide."""
+
+        def _register(slide: Slide) -> Shape:
+            shape_obj = Shape(
+                slide.to_pptx().shapes.add_shape(
+                    shape_type,
+                    to_pptx_length(kwargs["left"]),
+                    to_pptx_length(kwargs["top"]),
+                    to_pptx_length(kwargs["width"]),
+                    to_pptx_length(kwargs["height"]),
+                )
+            )
+            if shape is not None:
+                return shape(shape_obj)
+            else:
+                return shape_obj
+
+        self._shape_registry.append(_register)
         return self
 
     def _build(self, slide: PptxSlide) -> Slide:

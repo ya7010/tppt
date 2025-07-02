@@ -38,6 +38,11 @@ class FillFormat(PptxConvertible[PptxFillFormat]):
     def pattern(self, value: MSO_PATTERN_TYPE) -> None:
         self._pptx.pattern = value
 
+    def set_pattern(self, value: MSO_PATTERN_TYPE) -> "FillFormat":
+        """Set pattern."""
+        self.pattern = value
+        return self
+
     def patterned(self) -> "PattFill":
         """Set the fill type to patterned."""
         self._pptx.patterned()
@@ -78,6 +83,11 @@ class GradFill(Fill[PptxGradFill]):
     def gradient_angle(self, value: Angle) -> None:
         self._pptx.gradient_angle = to_pptx_angle(value)
 
+    def set_gradient_angle(self, value: Angle) -> "GradFill":
+        """Set gradient angle."""
+        self.gradient_angle = value
+        return self
+
     @property
     def gradient_stops(self) -> "GradientStops":
         """Gradient stops."""
@@ -109,6 +119,11 @@ class PattFill(Fill[PptxPattFill]):
     @pattern.setter
     def pattern(self, value: LiteralPatternType | MSO_PATTERN_TYPE) -> None:
         self._pptx.pattern = to_pptx_pattern_type(value)
+
+    def set_pattern(self, value: LiteralPatternType | MSO_PATTERN_TYPE) -> "PattFill":
+        """Set pattern."""
+        self.pattern = value
+        return self
 
 
 class SolidFill(Fill[PptxSolidFill]):
@@ -152,3 +167,8 @@ class GradientStop(PptxConvertible[PptxGradientStop]):
     @position.setter
     def position(self, value: float) -> None:
         self._pptx.position = value
+
+    def set_position(self, value: float) -> "GradientStop":
+        """Set position."""
+        self.position = value
+        return self

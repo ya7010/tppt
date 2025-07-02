@@ -1,6 +1,6 @@
 """Shape wrapper implementation."""
 
-from typing import TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING, Self, TypedDict
 
 from pptx.shapes import Subshape as PptxSubshape
 from pptx.shapes.autoshape import Shape as PptxShape
@@ -66,6 +66,11 @@ class BaseShape(PptxConvertible[GenericPptxBaseShape]):
     def height(self, value: Length | LiteralLength | PptxLength) -> None:
         self._pptx.height = to_pptx_length(value)
 
+    def set_height(self, value: Length | LiteralLength | PptxLength) -> Self:
+        """Set height value and return self for method chaining."""
+        self.height = value
+        return self
+
     @property
     def left(self) -> Length:
         return to_length(self._pptx.left)
@@ -74,6 +79,11 @@ class BaseShape(PptxConvertible[GenericPptxBaseShape]):
     def left(self, value: Length | LiteralLength | PptxLength) -> None:
         self._pptx.left = to_pptx_length(value)
 
+    def set_left(self, value: Length | LiteralLength | PptxLength) -> Self:
+        """Set left position value and return self for method chaining."""
+        self.left = value
+        return self
+
     @property
     def name(self) -> str:
         return self._pptx.name
@@ -81,6 +91,11 @@ class BaseShape(PptxConvertible[GenericPptxBaseShape]):
     @name.setter
     def name(self, value: str) -> None:
         self._pptx.name = value
+
+    def set_name(self, value: str) -> Self:
+        """Set name value and return self for method chaining."""
+        self.name = value
+        return self
 
     @property
     def part(self) -> "PptxBaseSlidePart":
@@ -97,6 +112,11 @@ class BaseShape(PptxConvertible[GenericPptxBaseShape]):
     @rotation.setter
     def rotation(self, value: float) -> None:
         self._pptx.rotation = value
+
+    def set_rotation(self, value: float) -> Self:
+        """Set rotation value and return self for method chaining."""
+        self.rotation = value
+        return self
 
     @property
     def shadow(self) -> "ShadowFormat":
@@ -120,6 +140,11 @@ class BaseShape(PptxConvertible[GenericPptxBaseShape]):
     def top(self, value: Length | LiteralLength | PptxLength) -> None:
         self._pptx.top = to_pptx_length(value)
 
+    def set_top(self, value: Length | LiteralLength | PptxLength) -> Self:
+        """Set top position value and return self for method chaining."""
+        self.top = value
+        return self
+
     @property
     def width(self) -> Length:
         return to_length(self._pptx.width)
@@ -127,6 +152,11 @@ class BaseShape(PptxConvertible[GenericPptxBaseShape]):
     @width.setter
     def width(self, value: Length | LiteralLength | PptxLength) -> None:
         self._pptx.width = to_pptx_length(value)
+
+    def set_width(self, value: Length | LiteralLength | PptxLength) -> Self:
+        """Set width value and return self for method chaining."""
+        self.width = value
+        return self
 
 
 class Shape(BaseShape[GenericPptxShape]):
@@ -157,6 +187,11 @@ class Shape(BaseShape[GenericPptxShape]):
     @text.setter
     def text(self, text: str) -> None:
         self._pptx.text = text
+
+    def set_text(self, text: str) -> Self:
+        """Set text value and return self for method chaining."""
+        self.text = text
+        return self
 
     @property
     def text_frame(self) -> "TextFrame":

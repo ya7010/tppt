@@ -1,4 +1,4 @@
-from typing import Literal, assert_never, cast
+from typing import Literal, Self, assert_never, cast
 
 from lxml.etree import _Element
 from pptx.dml.color import ColorFormat as PptxColorFormat
@@ -92,6 +92,11 @@ class ColorFormat(PptxConvertible[PptxColorFormat]):
     def brightness(self, value: float) -> None:
         self._pptx.brightness = value
 
+    def set_brightness(self, value: float) -> Self:
+        """Set brightness value and return self for method chaining."""
+        self.brightness = value
+        return self
+
     @property
     def rgb(self) -> Color:
         solid_fill = cast(
@@ -118,6 +123,11 @@ class ColorFormat(PptxConvertible[PptxColorFormat]):
             if alpha := srgbClr.find("a:alpha", namespace):
                 srgbClr.remove(alpha)
 
+    def set_rgb(self, color: Color | LiteralColor | PptxRGBColor) -> Self:
+        """Set RGB color value and return self for method chaining."""
+        self.rgb = color
+        return self
+
     @property
     def theme_color(self) -> MSO_THEME_COLOR | None:
         """Theme color value of this color.
@@ -133,3 +143,10 @@ class ColorFormat(PptxConvertible[PptxColorFormat]):
     @theme_color.setter
     def theme_color(self, value: LiteralThemeColor | MSO_THEME_COLOR | None) -> None:
         self._pptx.theme_color = to_pptx_theme_color(value)
+
+    def set_theme_color(
+        self, value: LiteralThemeColor | MSO_THEME_COLOR | None
+    ) -> Self:
+        """Set theme color value and return self for method chaining."""
+        self.theme_color = value
+        return self
