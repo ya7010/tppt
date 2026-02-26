@@ -120,11 +120,7 @@ def test_slide_builder_tap_with_raw_pptx(output) -> None:
 
     presentation = (
         tppt.Presentation.builder()
-        .slide(
-            lambda slide: slide.BlankLayout()
-            .builder()
-            .tap(add_raw_textbox)
-        )
+        .slide(lambda slide: slide.BlankLayout().builder().tap(add_raw_textbox))
         .build()
     )
 
