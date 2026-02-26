@@ -1,4 +1,4 @@
-from typing import IO, Literal, NotRequired, TypedDict, assert_never
+from typing import IO, TYPE_CHECKING, Literal, NotRequired, Self, TypedDict, assert_never
 
 from pptx.opc.constants import CONTENT_TYPE
 from pptx.shapes.picture import Movie as PptxMovie
@@ -7,6 +7,12 @@ from pptx.shapes.picture import Picture as PptxPicture
 from tppt.types import FilePath, Length, LiteralLength
 
 from . import BaseShape, RangeProps
+
+if TYPE_CHECKING:
+    from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
+    from pptx.image import Image
+
+    from tppt.pptx.dml.line import LineFormat
 
 
 class PictureProps(TypedDict):
@@ -36,6 +42,79 @@ class Picture(BaseShape[PptxPicture]):
         /,
     ) -> None:
         self._pptx = pptx_obj
+
+    @property
+    def auto_shape_type(self) -> "MSO_AUTO_SHAPE_TYPE | None":
+        """Auto shape type of the picture."""
+        return self._pptx.auto_shape_type
+
+    @property
+    def crop_bottom(self) -> float:
+        """Crop bottom of the picture as a float between 0.0 and 1.0."""
+        return self._pptx.crop_bottom
+
+    @crop_bottom.setter
+    def crop_bottom(self, value: float) -> None:
+        self._pptx.crop_bottom = value
+
+    def set_crop_bottom(self, value: float) -> Self:
+        """Set crop bottom and return self for method chaining."""
+        self.crop_bottom = value
+        return self
+
+    @property
+    def crop_left(self) -> float:
+        """Crop left of the picture as a float between 0.0 and 1.0."""
+        return self._pptx.crop_left
+
+    @crop_left.setter
+    def crop_left(self, value: float) -> None:
+        self._pptx.crop_left = value
+
+    def set_crop_left(self, value: float) -> Self:
+        """Set crop left and return self for method chaining."""
+        self.crop_left = value
+        return self
+
+    @property
+    def crop_right(self) -> float:
+        """Crop right of the picture as a float between 0.0 and 1.0."""
+        return self._pptx.crop_right
+
+    @crop_right.setter
+    def crop_right(self, value: float) -> None:
+        self._pptx.crop_right = value
+
+    def set_crop_right(self, value: float) -> Self:
+        """Set crop right and return self for method chaining."""
+        self.crop_right = value
+        return self
+
+    @property
+    def crop_top(self) -> float:
+        """Crop top of the picture as a float between 0.0 and 1.0."""
+        return self._pptx.crop_top
+
+    @crop_top.setter
+    def crop_top(self, value: float) -> None:
+        self._pptx.crop_top = value
+
+    def set_crop_top(self, value: float) -> Self:
+        """Set crop top and return self for method chaining."""
+        self.crop_top = value
+        return self
+
+    @property
+    def image(self) -> "Image":
+        """Image object for the picture."""
+        return self._pptx.image
+
+    @property
+    def line(self) -> "LineFormat":
+        """Line format of the picture."""
+        from tppt.pptx.dml.line import LineFormat
+
+        return LineFormat(self._pptx.line)
 
 
 MOVIE_MIME_TYPE = Literal[
@@ -104,3 +183,13 @@ class Movie(BaseShape[PptxMovie]):
         /,
     ) -> None:
         self._pptx = pptx_obj
+
+    @property
+    def poster_frame(self) -> "Image":
+        """Poster frame image for the movie."""
+        return self._pptx.poster_frame
+
+    @property
+    def media_type(self) -> str | None:
+        """Media type (MIME type) of the movie."""
+        return self._pptx.media_type

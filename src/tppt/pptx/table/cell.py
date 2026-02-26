@@ -1,3 +1,5 @@
+from typing import Self
+
 from pptx.enum.text import MSO_VERTICAL_ANCHOR
 from pptx.table import _Cell as PptxCell
 
@@ -34,6 +36,11 @@ class Cell(PptxConvertible[PptxCell]):
     def margin_left(self, value: Length) -> None:
         self._pptx.margin_left = to_pptx_length(value)
 
+    def set_margin_left(self, value: Length) -> Self:
+        """Set margin left and return self for method chaining."""
+        self.margin_left = value
+        return self
+
     @property
     def margin_right(self) -> Length:
         """Right margin of cell."""
@@ -42,6 +49,11 @@ class Cell(PptxConvertible[PptxCell]):
     @margin_right.setter
     def margin_right(self, value: Length) -> None:
         self._pptx.margin_right = to_pptx_length(value)
+
+    def set_margin_right(self, value: Length) -> Self:
+        """Set margin right and return self for method chaining."""
+        self.margin_right = value
+        return self
 
     @property
     def margin_top(self) -> Length:
@@ -52,6 +64,11 @@ class Cell(PptxConvertible[PptxCell]):
     def margin_top(self, value: Length) -> None:
         self._pptx.margin_top = to_pptx_length(value)
 
+    def set_margin_top(self, value: Length) -> Self:
+        """Set margin top and return self for method chaining."""
+        self.margin_top = value
+        return self
+
     @property
     def margin_bottom(self) -> Length:
         """Bottom margin of cell."""
@@ -60,6 +77,11 @@ class Cell(PptxConvertible[PptxCell]):
     @margin_bottom.setter
     def margin_bottom(self, value: Length) -> None:
         self._pptx.margin_bottom = to_pptx_length(value)
+
+    def set_margin_bottom(self, value: Length) -> Self:
+        """Set margin bottom and return self for method chaining."""
+        self.margin_bottom = value
+        return self
 
     def merge(self, other_cell: "Cell") -> None:
         """Create merged cell from this cell to `other_cell`."""
@@ -88,6 +110,11 @@ class Cell(PptxConvertible[PptxCell]):
     def text(self, value: str) -> None:
         self._pptx.text = value
 
+    def set_text(self, value: str) -> Self:
+        """Set text and return self for method chaining."""
+        self.text = value
+        return self
+
     @property
     def text_frame(self) -> TextFrame:
         """Text frame of cell."""
@@ -101,3 +128,8 @@ class Cell(PptxConvertible[PptxCell]):
     @vertical_anchor.setter
     def vertical_anchor(self, value: MSO_VERTICAL_ANCHOR | None) -> None:
         self._pptx.vertical_anchor = value
+
+    def set_vertical_anchor(self, value: MSO_VERTICAL_ANCHOR | None) -> Self:
+        """Set vertical anchor and return self for method chaining."""
+        self.vertical_anchor = value
+        return self

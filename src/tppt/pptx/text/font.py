@@ -1,3 +1,6 @@
+from typing import Self
+
+from pptx.enum.lang import MSO_LANGUAGE_ID
 from pptx.enum.text import MSO_TEXT_UNDERLINE_TYPE
 from pptx.text.text import Font as PptxFont
 
@@ -77,4 +80,18 @@ class Font(PptxConvertible[PptxFont]):
 
     def set_color(self, color: ColorFormat) -> "Font":
         self.color = color
+        return self
+
+    @property
+    def language_id(self) -> MSO_LANGUAGE_ID | None:
+        """Language ID for this font."""
+        return self._pptx.language_id
+
+    @language_id.setter
+    def language_id(self, value: MSO_LANGUAGE_ID | None) -> None:
+        self._pptx.language_id = value
+
+    def set_language_id(self, value: MSO_LANGUAGE_ID | None) -> Self:
+        """Set language ID and return self for method chaining."""
+        self.language_id = value
         return self

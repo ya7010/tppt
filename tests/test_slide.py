@@ -4,6 +4,8 @@ import pytest
 
 import tppt
 import tppt.pptx.slide
+from tppt.pptx.shape import BaseShape
+from tppt.pptx.shape.background import Background
 from tppt.pptx.shape.placeholder import LayoutPlaceholder, SlidePlaceholder
 from tppt.pptx.slide_layout import SlideLayout as PptxSlideLayout
 
@@ -132,3 +134,95 @@ def test_slide_builder_tap_with_raw_pptx(output) -> None:
     ]
     assert any("Added via tap()" in t for t in texts)
     presentation.save(output / "tap_raw_pptx_test.pptx")
+
+
+def test_background_fill(output) -> None:
+    """Test Background.fill property."""
+    from tppt.pptx.dml.fill import FillFormat
+
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(lambda slide: slide.BlankLayout())
+        .build()
+    )
+
+    slide = presentation.slides[0]
+    bg = slide.background
+    assert isinstance(bg, Background)
+
+    fill = bg.fill
+    assert isinstance(fill, FillFormat)
+
+
+def test_notes_slide_properties(output) -> None:
+    """Test NotesSlide properties."""
+    from tppt.pptx.notes_slide import NotesSlide
+    from tppt.pptx.text.text_frame import TextFrame
+
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(lambda slide: slide.BlankLayout())
+        .build()
+    )
+
+    # Access the pptx slide directly to create a notes slide
+    pptx_slide = presentation.to_pptx().slides[0]
+    pptx_notes = pptx_slide.notes_slide  # This creates the notes slide
+
+    notes = NotesSlide(pptx_notes)
+
+    # Test notes_text_frame
+    text_frame = notes.notes_text_frame
+    assert isinstance(text_frame, TextFrame)
+
+    # Test notes_placeholder
+    placeholder = notes.notes_placeholder
+    assert isinstance(placeholder, SlidePlaceholder)
+
+    # Test placeholders
+    placeholders = notes.placeholders
+    assert isinstance(placeholders, list)
+    assert len(placeholders) > 0
+
+    # Test shapes
+    shapes = notes.shapes
+    assert isinstance(shapes, list)
+    assert len(shapes) > 0
+    for shape in shapes:
+        assert isinstance(shape, BaseShape)
+
+
+def test_baseshape_boolean_properties(output) -> None:
+    """Test BaseShape boolean properties: has_chart, has_table, has_text_frame, is_placeholder."""
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(
+            lambda slide: slide.BlankLayout()
+            .builder()
+            .text(
+                "hello",
+                left=(100, "pt"),
+                top=(100, "pt"),
+                width=(200, "pt"),
+                height=(50, "pt"),
+            )
+        )
+        .build()
+    )
+
+    slide = presentation.slides[0]
+    shapes = slide.shapes
+    assert len(shapes) > 0
+
+    for shape in shapes:
+        # All boolean properties should be accessible
+        assert isinstance(shape.has_chart, bool)
+        assert isinstance(shape.has_table, bool)
+        assert isinstance(shape.has_text_frame, bool)
+        assert isinstance(shape.is_placeholder, bool)
+
+    # Text box should have text frame but not chart/table
+    text_shape = shapes[0]
+    assert text_shape.has_text_frame is True
+    assert text_shape.has_chart is False
+    assert text_shape.has_table is False

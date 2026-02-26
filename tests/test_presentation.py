@@ -149,3 +149,148 @@ def test_example_files(example_file: pathlib.Path) -> None:
     assert expected_pptx.exists(), (
         f"Expected output file {expected_pptx} was not created"
     )
+
+
+def test_picture_crop_properties(output: pathlib.Path) -> None:
+    """Test Picture crop properties and chaining."""
+    import io
+
+    from PIL import Image
+
+    from tppt.pptx.shape.picture import Picture
+
+    # Create a minimal test image in memory
+    img = Image.new("RGB", (100, 100), color="red")
+    img_bytes = io.BytesIO()
+    img.save(img_bytes, format="PNG")
+    img_bytes.seek(0)
+
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(
+            lambda slide: slide.BlankLayout()
+            .builder()
+            .picture(
+                img_bytes,
+                left=(100, "pt"),
+                top=(100, "pt"),
+                width=(200, "pt"),
+                height=(200, "pt"),
+            )
+        )
+        .build()
+    )
+
+    # Access the picture shape
+    pptx_slide = presentation.to_pptx().slides[0]
+    from pptx.shapes.picture import Picture as PptxPicture
+
+    pptx_shape = pptx_slide.shapes[0]
+    picture = Picture(pptx_shape)
+
+    # Test crop setters
+    picture.crop_bottom = 0.1
+    picture.crop_left = 0.2
+    picture.crop_right = 0.15
+    picture.crop_top = 0.05
+
+    assert abs(picture.crop_bottom - 0.1) < 0.001
+    assert abs(picture.crop_left - 0.2) < 0.001
+    assert abs(picture.crop_right - 0.15) < 0.001
+    assert abs(picture.crop_top - 0.05) < 0.001
+
+    # Test chaining
+    result = picture.set_crop_bottom(0.0).set_crop_left(0.0).set_crop_right(0.0).set_crop_top(0.0)
+    assert result is picture
+
+    # Test image property
+    image = picture.image
+    assert image is not None
+
+    # Test line property
+    line = picture.line
+    assert line is not None
+
+    presentation.save(output / "picture_crop.pptx")
+
+
+def test_chart_properties(output: pathlib.Path) -> None:
+    """Test Chart properties (chart_style, chart_type, has_legend, has_title, etc.)."""
+    from pptx.chart.data import CategoryChartData
+    from pptx.enum.chart import XL_CHART_TYPE
+
+    from tppt.pptx.chart.chart import Chart, ChartTitle, Legend
+
+    chart_data = CategoryChartData()
+    chart_data.categories = ["East", "West", "Midwest"]
+    chart_data.add_series("Sales", (19.2, 21.4, 16.7))
+
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(
+            lambda slide: slide.BlankLayout()
+            .builder()
+            .chart(
+                chart_type="Clustered Column",
+                x=(50, "pt"),
+                y=(50, "pt"),
+                cx=(400, "pt"),
+                cy=(300, "pt"),
+                chart_data=chart_data,
+            )
+        )
+        .build()
+    )
+
+    # Access the chart
+    pptx_slide = presentation.to_pptx().slides[0]
+    pptx_chart = pptx_slide.shapes[0].chart
+    chart = Chart(pptx_chart)
+
+    # Test chart_type
+    assert chart.chart_type == XL_CHART_TYPE.COLUMN_CLUSTERED
+
+    # Test chart_style
+    chart.chart_style = 2
+    assert chart.chart_style == 2
+    result = chart.set_chart_style(10)
+    assert result is chart
+    assert chart.chart_style == 10
+
+    # Test has_legend
+    chart.has_legend = True
+    assert chart.has_legend is True
+    result = chart.set_has_legend(False)
+    assert result is chart
+    assert chart.has_legend is False
+
+    # Test has_title
+    chart.has_title = True
+    assert chart.has_title is True
+    result = chart.set_has_title(False)
+    assert result is chart
+
+    # Test chart_title
+    chart.has_title = True
+    ct = chart.chart_title
+    assert isinstance(ct, ChartTitle)
+    assert isinstance(ct.has_text_frame, bool)
+
+    # Test font
+    font = chart.font
+    assert font is not None
+
+    # Test legend
+    chart.has_legend = True
+    legend = chart.legend
+    assert isinstance(legend, Legend)
+    legend_font = legend.font
+    assert legend_font is not None
+
+    # Test replace_data
+    new_data = CategoryChartData()
+    new_data.categories = ["North", "South"]
+    new_data.add_series("Revenue", (30.0, 25.0))
+    chart.replace_data(new_data)
+
+    presentation.save(output / "chart_props.pptx")

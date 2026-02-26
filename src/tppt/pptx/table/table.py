@@ -1,11 +1,13 @@
 """Table wrapper implementation."""
 
 import logging
+from collections.abc import Iterator
 from dataclasses import fields, is_dataclass
 from typing import (
     Any,
     Literal,
     NotRequired,
+    Self,
     TypeAlias,
     TypedDict,
     cast,
@@ -13,6 +15,11 @@ from typing import (
 
 from pptx.enum.text import MSO_VERTICAL_ANCHOR, PP_ALIGN
 from pptx.table import Table as PptxTable
+from pptx.table import _Cell as PptxCell
+from pptx.table import _Column as PptxColumn
+from pptx.table import _ColumnCollection as PptxColumnCollection
+from pptx.table import _Row as PptxRow
+from pptx.table import _RowCollection as PptxRowCollection
 
 from tppt._features import (
     USE_PANDAS,
@@ -24,9 +31,9 @@ from tppt._features import (
     PolarsLazyFrame,
     PydanticModel,
 )
-from tppt.types._length import LiteralPoints, Points
+from tppt.types._length import Length, LiteralPoints, Points
 
-from ..converter import PptxConvertible, to_pptx_length
+from ..converter import PptxConvertible, to_pptx_length, to_tppt_length
 from ..shape import RangeProps
 from .cell import Cell
 
@@ -68,6 +75,67 @@ class TableData(TableProps):
     type: Literal["table"]
 
     data: list[list[str]]
+
+
+class Row(PptxConvertible[PptxRow]):
+    """Row wrapper class."""
+
+    @property
+    def cells(self) -> list[Cell]:
+        """Get all cells in this row."""
+        return [Cell(cell) for cell in self._pptx.cells]
+
+    @property
+    def height(self) -> Length:
+        """Height of the row."""
+        return to_tppt_length(self._pptx.height)
+
+    @height.setter
+    def height(self, value: Length) -> None:
+        self._pptx.height = to_pptx_length(value)
+
+    def set_height(self, value: Length) -> Self:
+        """Set height and return self for method chaining."""
+        self.height = value
+        return self
+
+
+class Column(PptxConvertible[PptxColumn]):
+    """Column wrapper class."""
+
+    @property
+    def width(self) -> Length:
+        """Width of the column."""
+        return to_tppt_length(self._pptx.width)
+
+    @width.setter
+    def width(self, value: Length) -> None:
+        self._pptx.width = to_pptx_length(value)
+
+    def set_width(self, value: Length) -> Self:
+        """Set width and return self for method chaining."""
+        self.width = value
+        return self
+
+
+class RowCollection(PptxConvertible[PptxRowCollection]):
+    """Row collection wrapper class."""
+
+    def __getitem__(self, idx: int) -> Row:
+        return Row(self._pptx[idx])
+
+    def __len__(self) -> int:
+        return len(self._pptx)
+
+
+class ColumnCollection(PptxConvertible[PptxColumnCollection]):
+    """Column collection wrapper class."""
+
+    def __getitem__(self, idx: int) -> Column:
+        return Column(self._pptx[idx])
+
+    def __len__(self) -> int:
+        return len(self._pptx)
 
 
 class Table(PptxConvertible[PptxTable]):
@@ -158,6 +226,104 @@ class Table(PptxConvertible[PptxTable]):
     def cell(self, row_idx: int, col_idx: int) -> Cell:
         """Get cell at row_idx and col_idx."""
         return Cell(self._pptx.cell(row_idx, col_idx))
+
+    @property
+    def rows(self) -> RowCollection:
+        """Get row collection."""
+        return RowCollection(self._pptx.rows)
+
+    @property
+    def columns(self) -> ColumnCollection:
+        """Get column collection."""
+        return ColumnCollection(self._pptx.columns)
+
+    @property
+    def first_row(self) -> bool:
+        """Whether the first row is styled as a header."""
+        return self._pptx.first_row
+
+    @first_row.setter
+    def first_row(self, value: bool) -> None:
+        self._pptx.first_row = value
+
+    def set_first_row(self, value: bool) -> Self:
+        """Set first_row and return self for method chaining."""
+        self.first_row = value
+        return self
+
+    @property
+    def last_row(self) -> bool:
+        """Whether the last row is styled differently."""
+        return self._pptx.last_row
+
+    @last_row.setter
+    def last_row(self, value: bool) -> None:
+        self._pptx.last_row = value
+
+    def set_last_row(self, value: bool) -> Self:
+        """Set last_row and return self for method chaining."""
+        self.last_row = value
+        return self
+
+    @property
+    def first_col(self) -> bool:
+        """Whether the first column is styled differently."""
+        return self._pptx.first_col
+
+    @first_col.setter
+    def first_col(self, value: bool) -> None:
+        self._pptx.first_col = value
+
+    def set_first_col(self, value: bool) -> Self:
+        """Set first_col and return self for method chaining."""
+        self.first_col = value
+        return self
+
+    @property
+    def last_col(self) -> bool:
+        """Whether the last column is styled differently."""
+        return self._pptx.last_col
+
+    @last_col.setter
+    def last_col(self, value: bool) -> None:
+        self._pptx.last_col = value
+
+    def set_last_col(self, value: bool) -> Self:
+        """Set last_col and return self for method chaining."""
+        self.last_col = value
+        return self
+
+    @property
+    def horz_banding(self) -> bool:
+        """Whether horizontal banding is enabled."""
+        return self._pptx.horz_banding
+
+    @horz_banding.setter
+    def horz_banding(self, value: bool) -> None:
+        self._pptx.horz_banding = value
+
+    def set_horz_banding(self, value: bool) -> Self:
+        """Set horz_banding and return self for method chaining."""
+        self.horz_banding = value
+        return self
+
+    @property
+    def vert_banding(self) -> bool:
+        """Whether vertical banding is enabled."""
+        return self._pptx.vert_banding
+
+    @vert_banding.setter
+    def vert_banding(self, value: bool) -> None:
+        self._pptx.vert_banding = value
+
+    def set_vert_banding(self, value: bool) -> Self:
+        """Set vert_banding and return self for method chaining."""
+        self.vert_banding = value
+        return self
+
+    def iter_cells(self) -> Iterator[Cell]:
+        """Iterate over all cells in the table."""
+        return (Cell(cell) for cell in self._pptx.iter_cells())
 
 
 def dataframe2list(data: DataFrame) -> list[list[str]]:

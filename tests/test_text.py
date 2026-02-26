@@ -85,3 +85,49 @@ def test_text_default_options(output) -> None:
     # プレゼンテーションを保存
     pptx_path = output / "text_default_options.pptx"
     presentation.save(pptx_path)
+
+
+def test_font_language_id(output) -> None:
+    """Test Font.language_id get/set and chaining."""
+    from pptx.enum.lang import MSO_LANGUAGE_ID
+
+    from tppt.pptx.text.font import Font
+
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(
+            lambda slide: slide.BlankLayout()
+            .builder()
+            .text(
+                "Language test",
+                left=(100, "pt"),
+                top=(100, "pt"),
+                width=(300, "pt"),
+                height=(100, "pt"),
+            )
+        )
+        .build()
+    )
+
+    # Access the font from the presentation
+    pptx_slide = presentation.to_pptx().slides[0]
+    shape = pptx_slide.shapes[0]
+    pptx_font = shape.text_frame.paragraphs[0].runs[0].font
+
+    font = Font(pptx_font)
+
+    # Test setter
+    font.language_id = MSO_LANGUAGE_ID.JAPANESE
+    assert font.language_id == MSO_LANGUAGE_ID.JAPANESE
+
+    # Test chaining
+    result = font.set_language_id(MSO_LANGUAGE_ID.ENGLISH_US)
+    assert result is font
+    assert font.language_id == MSO_LANGUAGE_ID.ENGLISH_US
+
+    # Test setting to None (python-pptx maps None to MSO_LANGUAGE_ID.NONE)
+    font.language_id = None
+    assert font.language_id == MSO_LANGUAGE_ID.NONE
+
+    pptx_path = output / "font_language_id.pptx"
+    presentation.save(pptx_path)

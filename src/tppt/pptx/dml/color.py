@@ -4,7 +4,7 @@ from lxml.etree import _Element
 from pptx.dml.color import ColorFormat as PptxColorFormat
 from pptx.dml.color import RGBColor as PptxRGBColor
 from pptx.dml.color import _SRgbColor
-from pptx.enum.dml import MSO_THEME_COLOR
+from pptx.enum.dml import MSO_COLOR_TYPE, MSO_THEME_COLOR
 from pptx.oxml.ns import _nsmap as namespace
 from pptx.oxml.xmlchemy import OxmlElement
 
@@ -79,6 +79,11 @@ def to_pptx_theme_color(
 
 
 class ColorFormat(PptxConvertible[PptxColorFormat]):
+    @property
+    def type(self) -> MSO_COLOR_TYPE | None:
+        """Color type of this color, e.g. RGB, SCHEME, etc."""
+        return self._pptx.type
+
     @property
     def brightness(self) -> float:
         """

@@ -8,7 +8,7 @@ from pptx.dml.fill import _GradientStops as PptxGradientStops
 from pptx.dml.fill import _NoFill as PptxNoFill
 from pptx.dml.fill import _PattFill as PptxPattFill
 from pptx.dml.fill import _SolidFill as PptxSolidFill
-from pptx.enum.dml import MSO_PATTERN_TYPE
+from pptx.enum.dml import MSO_FILL_TYPE, MSO_PATTERN_TYPE
 
 from tppt.pptx.converter import PptxConvertible, to_pptx_angle, to_tppt_angle
 from tppt.pptx.dml.color import ColorFormat
@@ -18,6 +18,11 @@ from tppt.types._angle import Angle
 
 class FillFormat(PptxConvertible[PptxFillFormat]):
     """Fill format."""
+
+    @property
+    def type(self) -> MSO_FILL_TYPE | None:
+        """Fill type, e.g. solid, gradient, etc."""
+        return self._pptx.type
 
     @property
     def fore_color(self) -> ColorFormat:

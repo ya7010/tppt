@@ -59,6 +59,26 @@ class BaseShape(PptxConvertible[GenericPptxBaseShape]):
         return self._pptx.element
 
     @property
+    def has_chart(self) -> bool:
+        """True if this shape is a graphic frame containing a chart."""
+        return self._pptx.has_chart
+
+    @property
+    def has_table(self) -> bool:
+        """True if this shape is a graphic frame containing a table."""
+        return self._pptx.has_table
+
+    @property
+    def has_text_frame(self) -> bool:
+        """True if this shape can contain text."""
+        return self._pptx.has_text_frame
+
+    @property
+    def is_placeholder(self) -> bool:
+        """True if this shape is a placeholder."""
+        return self._pptx.is_placeholder
+
+    @property
     def height(self) -> Length:
         return to_length(self._pptx.height)
 

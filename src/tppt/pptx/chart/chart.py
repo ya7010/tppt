@@ -1,11 +1,18 @@
-from typing import Literal, TypedDict, assert_never
+from typing import TYPE_CHECKING, Literal, Self, TypedDict, assert_never
 
 from pptx.chart.chart import Chart as PptxChart
+from pptx.chart.chart import Legend as PptxLegend
 from pptx.chart.data import ChartData as PptxChartData
-from pptx.enum.chart import XL_CHART_TYPE
+from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
 
 from tppt.pptx.converter import PptxConvertible
 from tppt.types._length import Length, LiteralLength
+
+if TYPE_CHECKING:
+    from pptx.chart.chart import ChartTitle as PptxChartTitle
+
+    from tppt.pptx.text.font import Font
+    from tppt.pptx.text.text_frame import TextFrame
 
 LiteralChartType = Literal[
     "3D Area",
@@ -255,8 +262,145 @@ class ChartData(ChartProps):
     type: Literal["chart"]
 
 
+class ChartTitle(PptxConvertible["PptxChartTitle"]):
+    """Chart title wrapper class."""
+
+    @property
+    def has_text_frame(self) -> bool:
+        """True if this chart title has a text frame."""
+        return self._pptx.has_text_frame
+
+    @property
+    def text_frame(self) -> "TextFrame":
+        """Text frame of the chart title."""
+        from tppt.pptx.text.text_frame import TextFrame
+
+        return TextFrame(self._pptx.text_frame)
+
+
+class Legend(PptxConvertible[PptxLegend]):
+    """Legend wrapper class."""
+
+    @property
+    def font(self) -> "Font":
+        """Font of the legend."""
+        from tppt.pptx.text.font import Font
+
+        return Font(self._pptx.font)
+
+    @property
+    def horz_offset(self) -> float:
+        """Horizontal offset of the legend as a float between -1.0 and 1.0."""
+        return self._pptx.horz_offset
+
+    @horz_offset.setter
+    def horz_offset(self, value: float) -> None:
+        self._pptx.horz_offset = value
+
+    def set_horz_offset(self, value: float) -> Self:
+        """Set horizontal offset and return self for method chaining."""
+        self.horz_offset = value
+        return self
+
+    @property
+    def include_in_layout(self) -> bool:
+        """Whether the legend is included in the chart layout."""
+        return self._pptx.include_in_layout
+
+    @include_in_layout.setter
+    def include_in_layout(self, value: bool) -> None:
+        self._pptx.include_in_layout = value
+
+    def set_include_in_layout(self, value: bool) -> Self:
+        """Set include_in_layout and return self for method chaining."""
+        self.include_in_layout = value
+        return self
+
+    @property
+    def position(self) -> XL_LEGEND_POSITION:
+        """Position of the legend."""
+        return self._pptx.position
+
+    @position.setter
+    def position(self, value: XL_LEGEND_POSITION) -> None:
+        self._pptx.position = value
+
+    def set_position(self, value: XL_LEGEND_POSITION) -> Self:
+        """Set position and return self for method chaining."""
+        self.position = value
+        return self
+
+
 class Chart(PptxConvertible[PptxChart]):
     """Chart data class."""
 
     def __init__(self, pptx_obj: PptxChart, /) -> None:
         super().__init__(pptx_obj)
+
+    @property
+    def chart_style(self) -> int | None:
+        """Chart style index."""
+        return self._pptx.chart_style
+
+    @chart_style.setter
+    def chart_style(self, value: int | None) -> None:
+        self._pptx.chart_style = value
+
+    def set_chart_style(self, value: int | None) -> Self:
+        """Set chart style and return self for method chaining."""
+        self.chart_style = value
+        return self
+
+    @property
+    def chart_title(self) -> ChartTitle:
+        """Chart title object."""
+        return ChartTitle(self._pptx.chart_title)
+
+    @property
+    def chart_type(self) -> XL_CHART_TYPE:
+        """Chart type."""
+        return self._pptx.chart_type
+
+    @property
+    def font(self) -> "Font":
+        """Font of the chart."""
+        from tppt.pptx.text.font import Font
+
+        return Font(self._pptx.font)
+
+    @property
+    def has_legend(self) -> bool:
+        """Whether the chart has a legend."""
+        return self._pptx.has_legend
+
+    @has_legend.setter
+    def has_legend(self, value: bool) -> None:
+        self._pptx.has_legend = value
+
+    def set_has_legend(self, value: bool) -> Self:
+        """Set has_legend and return self for method chaining."""
+        self.has_legend = value
+        return self
+
+    @property
+    def has_title(self) -> bool:
+        """Whether the chart has a title."""
+        return self._pptx.has_title
+
+    @has_title.setter
+    def has_title(self, value: bool) -> None:
+        self._pptx.has_title = value
+
+    def set_has_title(self, value: bool) -> Self:
+        """Set has_title and return self for method chaining."""
+        self.has_title = value
+        return self
+
+    @property
+    def legend(self) -> Legend:
+        """Legend of the chart."""
+        return Legend(self._pptx.legend)
+
+    def replace_data(self, chart_data: PptxChartData) -> None:
+        """Replace chart data with new data."""
+        self._pptx.replace_data(chart_data)
