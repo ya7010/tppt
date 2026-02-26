@@ -2,7 +2,10 @@
   "scripts": {
     "format": "biome format --write",
     "lint": "biome lint --write",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "claude": "npx @anthropic-ai/claude-code@latest",
+    "codex": "npx @openai/codex@latest",
+    "gemini": "npx @google/gemini-cli@latest"
   },
   "packageManager": "pnpm@10.6.3",
   "devDependencies": {
