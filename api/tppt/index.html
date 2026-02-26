@@ -16719,7 +16719,12 @@ filled area.</p>
 <span class="normal"><a href="#__codelineno-0-412">412</a></span>
 <span class="normal"><a href="#__codelineno-0-413">413</a></span>
 <span class="normal"><a href="#__codelineno-0-414">414</a></span>
-<span class="normal"><a href="#__codelineno-0-415">415</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-111" name="__codelineno-0-111"></a><span class="k">class</span><span class="w"> </span><span class="nc">SlideBuilder</span><span class="p">:</span>
+<span class="normal"><a href="#__codelineno-0-415">415</a></span>
+<span class="normal"><a href="#__codelineno-0-416">416</a></span>
+<span class="normal"><a href="#__codelineno-0-417">417</a></span>
+<span class="normal"><a href="#__codelineno-0-418">418</a></span>
+<span class="normal"><a href="#__codelineno-0-419">419</a></span>
+<span class="normal"><a href="#__codelineno-0-420">420</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-111" name="__codelineno-0-111"></a><span class="k">class</span><span class="w"> </span><span class="nc">SlideBuilder</span><span class="p">:</span>
 <a id="__codelineno-0-112" name="__codelineno-0-112"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Slide builder.&quot;&quot;&quot;</span>
 <a id="__codelineno-0-113" name="__codelineno-0-113"></a>
 <a id="__codelineno-0-114" name="__codelineno-0-114"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -17016,14 +17021,19 @@ filled area.</p>
 <a id="__codelineno-0-405" name="__codelineno-0-405"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_shape_registry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_register</span><span class="p">)</span>
 <a id="__codelineno-0-406" name="__codelineno-0-406"></a>        <span class="k">return</span> <span class="bp">self</span>
 <a id="__codelineno-0-407" name="__codelineno-0-407"></a>
-<a id="__codelineno-0-408" name="__codelineno-0-408"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slide</span><span class="p">:</span> <span class="n">PptxSlide</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Slide</span><span class="p">:</span>
-<a id="__codelineno-0-409" name="__codelineno-0-409"></a>        <span class="n">tppt_slide</span> <span class="o">=</span> <span class="n">Slide</span><span class="p">(</span><span class="n">slide</span><span class="p">)</span>
-<a id="__codelineno-0-410" name="__codelineno-0-410"></a>
-<a id="__codelineno-0-411" name="__codelineno-0-411"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_placeholder_registry</span><span class="p">(</span><span class="n">tppt_slide</span><span class="p">)</span>
-<a id="__codelineno-0-412" name="__codelineno-0-412"></a>        <span class="k">for</span> <span class="n">register</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape_registry</span><span class="p">:</span>
-<a id="__codelineno-0-413" name="__codelineno-0-413"></a>            <span class="n">register</span><span class="p">(</span><span class="n">tppt_slide</span><span class="p">)</span>
-<a id="__codelineno-0-414" name="__codelineno-0-414"></a>
-<a id="__codelineno-0-415" name="__codelineno-0-415"></a>        <span class="k">return</span> <span class="n">tppt_slide</span>
+<a id="__codelineno-0-408" name="__codelineno-0-408"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">tap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Slide</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<a id="__codelineno-0-409" name="__codelineno-0-409"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a callback for direct slide access.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-410" name="__codelineno-0-410"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_shape_registry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+<a id="__codelineno-0-411" name="__codelineno-0-411"></a>        <span class="k">return</span> <span class="bp">self</span>
+<a id="__codelineno-0-412" name="__codelineno-0-412"></a>
+<a id="__codelineno-0-413" name="__codelineno-0-413"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slide</span><span class="p">:</span> <span class="n">PptxSlide</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Slide</span><span class="p">:</span>
+<a id="__codelineno-0-414" name="__codelineno-0-414"></a>        <span class="n">tppt_slide</span> <span class="o">=</span> <span class="n">Slide</span><span class="p">(</span><span class="n">slide</span><span class="p">)</span>
+<a id="__codelineno-0-415" name="__codelineno-0-415"></a>
+<a id="__codelineno-0-416" name="__codelineno-0-416"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_placeholder_registry</span><span class="p">(</span><span class="n">tppt_slide</span><span class="p">)</span>
+<a id="__codelineno-0-417" name="__codelineno-0-417"></a>        <span class="k">for</span> <span class="n">register</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape_registry</span><span class="p">:</span>
+<a id="__codelineno-0-418" name="__codelineno-0-418"></a>            <span class="n">register</span><span class="p">(</span><span class="n">tppt_slide</span><span class="p">)</span>
+<a id="__codelineno-0-419" name="__codelineno-0-419"></a>
+<a id="__codelineno-0-420" name="__codelineno-0-420"></a>        <span class="k">return</span> <span class="n">tppt_slide</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -17669,6 +17679,35 @@ filled area.</p>
 <a id="__codelineno-0-404" name="__codelineno-0-404"></a>
 <a id="__codelineno-0-405" name="__codelineno-0-405"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_shape_registry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_register</span><span class="p">)</span>
 <a id="__codelineno-0-406" name="__codelineno-0-406"></a>    <span class="k">return</span> <span class="bp">self</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h10 id="tppt.pptx.slide.SlideBuilder.tap" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">tap</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Slide</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Self</span></code>
+
+<a href="#tppt.pptx.slide.SlideBuilder.tap" class="headerlink" title="Permanent link">&para;</a></h10>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Register a callback for direct slide access.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/tppt/pptx/slide.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-408">408</a></span>
+<span class="normal"><a href="#__codelineno-0-409">409</a></span>
+<span class="normal"><a href="#__codelineno-0-410">410</a></span>
+<span class="normal"><a href="#__codelineno-0-411">411</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-408" name="__codelineno-0-408"></a><span class="k">def</span><span class="w"> </span><span class="nf">tap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Slide</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<a id="__codelineno-0-409" name="__codelineno-0-409"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a callback for direct slide access.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-410" name="__codelineno-0-410"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_shape_registry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+<a id="__codelineno-0-411" name="__codelineno-0-411"></a>    <span class="k">return</span> <span class="bp">self</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
