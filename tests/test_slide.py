@@ -66,3 +66,73 @@ def test_slide_layout_placeholders() -> None:
         # Check that we can convert it to pptx object
         pptx_placeholder = placeholder.to_pptx()
         assert pptx_placeholder is not None
+
+
+def test_slide_builder_tap(output) -> None:
+    """Test that tap() invokes the callback with a tppt Slide wrapper."""
+    callback_called = False
+
+    def my_callback(slide: tppt.pptx.slide.Slide) -> None:
+        nonlocal callback_called
+        callback_called = True
+        assert isinstance(slide, tppt.pptx.slide.Slide)
+        assert slide.to_pptx() is not None
+
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(
+            lambda slide: slide.BlankLayout()
+            .builder()
+            .text(
+                "Before tap",
+                left=(100, "pt"),
+                top=(100, "pt"),
+                width=(200, "pt"),
+                height=(50, "pt"),
+            )
+            .tap(my_callback)
+            .text(
+                "After tap",
+                left=(100, "pt"),
+                top=(200, "pt"),
+                width=(200, "pt"),
+                height=(50, "pt"),
+            )
+        )
+        .build()
+    )
+
+    assert callback_called
+    assert len(presentation.slides[0].shapes) >= 2
+    presentation.save(output / "tap_test.pptx")
+
+
+def test_slide_builder_tap_with_raw_pptx(output) -> None:
+    """Test that tap() can modify the slide via the raw python-pptx API."""
+    from pptx.util import Inches
+
+    def add_raw_textbox(slide: tppt.pptx.slide.Slide) -> None:
+        pptx_slide = slide.to_pptx()
+        txBox = pptx_slide.shapes.add_textbox(
+            Inches(1), Inches(1), Inches(3), Inches(1)
+        )
+        txBox.text_frame.text = "Added via tap()"
+
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(
+            lambda slide: slide.BlankLayout()
+            .builder()
+            .tap(add_raw_textbox)
+        )
+        .build()
+    )
+
+    slide = presentation.slides[0]
+    texts = [
+        shape.to_pptx().text
+        for shape in slide.shapes
+        if hasattr(shape.to_pptx(), "text")
+    ]
+    assert any("Added via tap()" in t for t in texts)
+    presentation.save(output / "tap_raw_pptx_test.pptx")

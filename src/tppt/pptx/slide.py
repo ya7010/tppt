@@ -405,6 +405,11 @@ class SlideBuilder:
         self._shape_registry.append(_register)
         return self
 
+    def tap(self, callback: Callable[[Slide], None]) -> Self:
+        """Register a callback for direct slide access."""
+        self._shape_registry.append(callback)
+        return self
+
     def _build(self, slide: PptxSlide) -> Slide:
         tppt_slide = Slide(slide)
 
