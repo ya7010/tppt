@@ -1,7 +1,8 @@
 """Tests for slide module."""
 
-from typing import Any, cast
+from typing import cast
 
+from pptx.slide import Slide as PptxSlide
 from pptx.shapes.autoshape import Shape as PptxShape
 from pptx.enum.dml import MSO_FILL_TYPE
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
@@ -146,7 +147,7 @@ def test_slide_builder_customize_with_raw_pptx(output) -> None:
     """Test that customize() invokes the callback with the raw python-pptx Slide."""
     from pptx.util import Inches
 
-    def add_raw_textbox(slide: Any) -> None:
+    def add_raw_textbox(slide: PptxSlide) -> None:
         tx_box = slide.shapes.add_textbox(Inches(1), Inches(1), Inches(3), Inches(1))
         tx_box.text_frame.text = "Added via customize()"
 

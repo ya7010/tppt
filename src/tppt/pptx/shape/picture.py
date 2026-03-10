@@ -1,5 +1,4 @@
 from typing import (
-    Any,
     IO,
     TYPE_CHECKING,
     Literal,
@@ -20,6 +19,7 @@ from . import BaseShape, RangeProps
 
 if TYPE_CHECKING:
     from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
+    from pptx.parts.image import Image
 
     from tppt.pptx.dml.line import LineFormat
 
@@ -114,7 +114,7 @@ class Picture(BaseShape[PptxPicture]):
         return self
 
     @property
-    def image(self) -> Any:
+    def image(self) -> "Image":
         """Image object for the picture."""
         return self._pptx.image
 
@@ -194,7 +194,7 @@ class Movie(BaseShape[PptxMovie]):
         self._pptx = pptx_obj
 
     @property
-    def poster_frame(self) -> Any:
+    def poster_frame(self) -> "Image | None":
         """Poster frame image for the movie."""
         return self._pptx.poster_frame
 
