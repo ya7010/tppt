@@ -1,4 +1,12 @@
-from typing import IO, TYPE_CHECKING, Literal, NotRequired, Self, TypedDict, assert_never
+from typing import (
+    IO,
+    TYPE_CHECKING,
+    Literal,
+    NotRequired,
+    Self,
+    TypedDict,
+    assert_never,
+)
 
 from pptx.opc.constants import CONTENT_TYPE
 from pptx.shapes.picture import Movie as PptxMovie

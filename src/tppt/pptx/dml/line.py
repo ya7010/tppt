@@ -42,7 +42,7 @@ class LineFormat(PptxConvertible[_PptxLineFormat]):
 
     @width.setter
     def width(self, value: EnglishMetricUnits | _PptxEmu) -> None:
-        self._pptx.width = to_english_metric_units(value)
+        self._pptx.width = to_english_metric_units(value).value
 
     def set_width(self, value: EnglishMetricUnits | _PptxEmu) -> "LineFormat":
         self.width = value

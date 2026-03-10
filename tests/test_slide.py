@@ -1,5 +1,7 @@
 """Tests for slide module."""
 
+from pptx.enum.dml import MSO_FILL_TYPE
+from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 import pytest
 
 import tppt
@@ -8,6 +10,7 @@ from tppt.pptx.shape import BaseShape
 from tppt.pptx.shape.background import Background
 from tppt.pptx.shape.placeholder import LayoutPlaceholder, SlidePlaceholder
 from tppt.pptx.slide_layout import SlideLayout as PptxSlideLayout
+from tppt.types import Color
 
 
 @pytest.mark.skip(reason="This test is not implemented yet.")
@@ -136,14 +139,75 @@ def test_slide_builder_tap_with_raw_pptx(output) -> None:
     presentation.save(output / "tap_raw_pptx_test.pptx")
 
 
+def test_slide_builder_customize_with_raw_pptx(output) -> None:
+    """Test that customize() invokes the callback with the raw python-pptx Slide."""
+    from pptx.util import Inches
+
+    def add_raw_textbox(slide) -> None:
+        tx_box = slide.shapes.add_textbox(Inches(1), Inches(1), Inches(3), Inches(1))
+        tx_box.text_frame.text = "Added via customize()"
+
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(lambda slide: slide.BlankLayout().builder().customize(add_raw_textbox))
+        .build()
+    )
+
+    texts = [
+        shape.text
+        for shape in presentation.to_pptx().slides[0].shapes
+        if hasattr(shape, "text")
+    ]
+    assert any("Added via customize()" in text for text in texts)
+    presentation.save(output / "customize_raw_pptx_test.pptx")
+
+
+def test_add_shape_with_styling_options(output) -> None:
+    """Test add_shape() styling helpers for fill, line, and text."""
+    presentation = (
+        tppt.Presentation.builder()
+        .slide(
+            lambda slide: slide.BlankLayout()
+            .builder()
+            .add_shape(
+                MSO_AUTO_SHAPE_TYPE.RECTANGLE,
+                left=(100, "pt"),
+                top=(100, "pt"),
+                width=(200, "pt"),
+                height=(100, "pt"),
+                fill_color="#112233",
+                fill_alpha=0.5,
+                line_color="#445566",
+                line_width=(2, "pt"),
+                text="Styled shape",
+                font_size=(18, "pt"),
+                font_color="#778899",
+            )
+        )
+        .build()
+    )
+
+    shape = tppt.pptx.shape.Shape(presentation.to_pptx().slides[0].shapes[0])
+    paragraph = shape.text_frame.paragraphs[0]
+    run = paragraph.runs[0]
+
+    assert shape.fill.type == MSO_FILL_TYPE.SOLID
+    assert shape.fill.fore_color.rgb == Color(0x11, 0x22, 0x33, 128)
+    assert shape.line.fill.fore_color.rgb == Color(0x44, 0x55, 0x66)
+    assert shape.line.width == (2, "pt")
+    assert shape.text == "Styled shape"
+    assert run.font.size == (18, "pt")
+    assert run.font.color.rgb == Color(0x77, 0x88, 0x99)
+
+    presentation.save(output / "styled_shape.pptx")
+
+
 def test_background_fill(output) -> None:
     """Test Background.fill property."""
     from tppt.pptx.dml.fill import FillFormat
 
     presentation = (
-        tppt.Presentation.builder()
-        .slide(lambda slide: slide.BlankLayout())
-        .build()
+        tppt.Presentation.builder().slide(lambda slide: slide.BlankLayout()).build()
     )
 
     slide = presentation.slides[0]
@@ -160,9 +224,7 @@ def test_notes_slide_properties(output) -> None:
     from tppt.pptx.text.text_frame import TextFrame
 
     presentation = (
-        tppt.Presentation.builder()
-        .slide(lambda slide: slide.BlankLayout())
-        .build()
+        tppt.Presentation.builder().slide(lambda slide: slide.BlankLayout()).build()
     )
 
     # Access the pptx slide directly to create a notes slide

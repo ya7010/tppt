@@ -26,7 +26,7 @@ from tppt.pptx.shape.picture import (
 )
 from tppt.types import FilePath
 
-from .converter import PptxConvertible, to_pptx_length
+from .converter import PptxConvertible, to_pptx_length, to_pptx_rgb_color
 from .shape import BaseShape, RangeProps, Shape
 from .shape.picture import Picture, PictureData, PictureProps
 from .shape.placeholder import SlidePlaceholder
@@ -38,6 +38,8 @@ if TYPE_CHECKING:
     from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 
     from tppt.pptx.shape.background import Background
+    from tppt.types._color import Color, LiteralColor
+    from tppt.types._length import Length, LiteralLength
 
     from .notes_slide import NotesSlide
 
@@ -383,6 +385,13 @@ class SlideBuilder:
         shape_type: "MSO_AUTO_SHAPE_TYPE",
         shape: Callable[[Shape], Shape] | None = None,
         /,
+        fill_color: "Color | LiteralColor | None" = None,
+        fill_alpha: float | None = None,
+        line_color: "Color | LiteralColor | None" = None,
+        line_width: "Length | LiteralLength | None" = None,
+        text: str | None = None,
+        font_size: "Length | LiteralLength | None" = None,
+        font_color: "Color | LiteralColor | None" = None,
         **kwargs: Unpack[RangeProps],
     ) -> Self:
         """Add a shape to the slide."""
@@ -397,10 +406,69 @@ class SlideBuilder:
                     to_pptx_length(kwargs["height"]),
                 )
             )
+
+            if fill_color is not None:
+                rgb, alpha = to_pptx_rgb_color(fill_color)
+                shape_obj.fill.solid().fore_color.set_rgb(fill_color)
+
+            if fill_alpha is not None:
+                from lxml.etree import _Element
+
+                from pptx.oxml.ns import _nsmap as namespace
+                from pptx.oxml.xmlchemy import OxmlElement
+
+                pptx_shape = shape_obj.to_pptx()
+                solid_fill = cast(
+                    _Element,
+                    pptx_shape.fill._xPr.solidFill,  # type: ignore[union-attr]
+                )
+                # Remove existing alpha element if any
+                existing_alpha = solid_fill.find("a:alpha", namespace)
+                if existing_alpha is not None:
+                    solid_fill.remove(existing_alpha)
+                alpha_elem = OxmlElement("a:alpha")
+                alpha_elem.attrib["val"] = str(int(fill_alpha * 100000))
+                # Find srgbClr or other color child to append alpha to
+                for child in solid_fill:
+                    child.append(alpha_elem)
+                    break
+
+            if line_color is not None:
+                shape_obj.line.fill.solid().fore_color.set_rgb(line_color)
+
+            if line_width is not None:
+                from tppt.types._length import EnglishMetricUnits
+
+                pptx_len = to_pptx_length(line_width)
+                shape_obj.line.set_width(EnglishMetricUnits(int(pptx_len)))
+
+            if text is not None:
+                shape_obj.text = text
+
+            if font_size is not None or font_color is not None:
+                tf = shape_obj.to_pptx().text_frame
+                if tf.paragraphs:
+                    paragraph = tf.paragraphs[0]
+                    run = paragraph.runs[0] if paragraph.runs else paragraph.add_run()
+                    if font_size is not None:
+                        run.font.size = to_pptx_length(font_size)
+                    if font_color is not None:
+                        rgb_val, _ = to_pptx_rgb_color(font_color)
+                        run.font.color.rgb = rgb_val
+
             if shape is not None:
                 return shape(shape_obj)
             else:
                 return shape_obj
+
+        self._shape_registry.append(_register)
+        return self
+
+    def customize(self, callback: Callable[[PptxSlide], None]) -> Self:
+        """Register a callback for direct access to the python-pptx Slide object."""
+
+        def _register(slide: Slide) -> None:
+            callback(slide.to_pptx())
 
         self._shape_registry.append(_register)
         return self

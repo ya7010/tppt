@@ -200,7 +200,12 @@ def test_picture_crop_properties(output: pathlib.Path) -> None:
     assert abs(picture.crop_top - 0.05) < 0.001
 
     # Test chaining
-    result = picture.set_crop_bottom(0.0).set_crop_left(0.0).set_crop_right(0.0).set_crop_top(0.0)
+    result = (
+        picture.set_crop_bottom(0.0)
+        .set_crop_left(0.0)
+        .set_crop_right(0.0)
+        .set_crop_top(0.0)
+    )
     assert result is picture
 
     # Test image property

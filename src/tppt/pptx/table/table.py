@@ -31,9 +31,15 @@ from tppt._features import (
     PolarsLazyFrame,
     PydanticModel,
 )
-from tppt.types._length import Length, LiteralPoints, Points
+from tppt.types._color import Color, LiteralColor
+from tppt.types._length import Length, LiteralLength, LiteralPoints, Points
 
-from ..converter import PptxConvertible, to_pptx_length, to_tppt_length
+from ..converter import (
+    PptxConvertible,
+    to_pptx_length,
+    to_pptx_rgb_color,
+    to_tppt_length,
+)
 from ..shape import RangeProps
 from .cell import Cell
 
@@ -51,14 +57,24 @@ DataFrame: TypeAlias = (
 )
 
 
+class TableBorderStyle(TypedDict):
+    """Table border style properties."""
+
+    color: NotRequired[Color | LiteralColor]
+    width: NotRequired[Length | LiteralLength]
+
+
 class TableCellStyle(TypedDict):
     """Table cell style properties."""
 
+    fill_color: NotRequired[Color | LiteralColor]
+    border: NotRequired[TableBorderStyle]
     text_align: NotRequired[Literal["left", "center", "right", "justify"]]
     vertical_align: NotRequired[Literal["top", "middle", "bottom"]]
     bold: NotRequired[bool]
     italic: NotRequired[bool]
     font_size: NotRequired[Points | LiteralPoints]
+    font_color: NotRequired[Color | LiteralColor]
     font_name: NotRequired[str]
 
 
@@ -175,6 +191,16 @@ class Table(PptxConvertible[PptxTable]):
                         if j < len(table.columns):
                             cell = table.cell(i, j)
 
+                            # Apply fill color
+                            if (fill_color := cell_style.get("fill_color")) is not None:
+                                rgb, _ = to_pptx_rgb_color(fill_color)
+                                cell.fill.solid()
+                                cell.fill.fore_color.rgb = rgb
+
+                            # Apply border
+                            if (border := cell_style.get("border")) is not None:
+                                _apply_cell_border(cell, border)
+
                             if (text_align := cell_style.get("text_align")) is not None:
                                 align_map = {
                                     "left": PP_ALIGN.LEFT,
@@ -200,7 +226,13 @@ class Table(PptxConvertible[PptxTable]):
                             # Apply text formatting
                             if any(
                                 key in cell_style
-                                for key in ["bold", "italic", "font_size", "font_name"]
+                                for key in [
+                                    "bold",
+                                    "italic",
+                                    "font_size",
+                                    "font_color",
+                                    "font_name",
+                                ]
                             ):
                                 paragraph = cell.text_frame.paragraphs[0]
                                 run = (
@@ -219,6 +251,12 @@ class Table(PptxConvertible[PptxTable]):
                                     run.font.size = to_pptx_length(
                                         cell_style["font_size"]
                                     )
+
+                                if (
+                                    font_color := cell_style.get("font_color")
+                                ) is not None:
+                                    rgb, _ = to_pptx_rgb_color(font_color)
+                                    run.font.color.rgb = rgb
 
                                 if "font_name" in cell_style:
                                     run.font.name = cell_style["font_name"]
@@ -324,6 +362,48 @@ class Table(PptxConvertible[PptxTable]):
     def iter_cells(self) -> Iterator[Cell]:
         """Iterate over all cells in the table."""
         return (Cell(cell) for cell in self._pptx.iter_cells())
+
+
+def _apply_cell_border(cell: PptxCell, border: TableBorderStyle) -> None:
+    """Apply border style to a table cell using OOXML XML manipulation."""
+    from lxml.etree import _Element
+
+    from pptx.oxml.ns import _nsmap as namespace
+    from pptx.oxml.xmlchemy import OxmlElement
+
+    tc = cast(_Element, cell._tc)
+    tcPr = tc.find("a:tcPr", namespace)
+    if tcPr is None:
+        tcPr = OxmlElement("a:tcPr")
+        tc.insert(0, tcPr)
+
+    border_color = border.get("color")
+    border_width = border.get("width")
+
+    rgb = None
+    if border_color is not None:
+        rgb, _ = to_pptx_rgb_color(border_color)
+
+    width_emu = None
+    if border_width is not None:
+        width_emu = to_pptx_length(border_width)
+
+    for side in ("lnL", "lnR", "lnT", "lnB"):
+        ln = OxmlElement(f"a:{side}")
+        if width_emu is not None:
+            ln.attrib["w"] = str(int(width_emu))
+        if rgb is not None:
+            solid_fill = OxmlElement("a:solidFill")
+            srgb_clr = OxmlElement("a:srgbClr")
+            srgb_clr.attrib["val"] = str(rgb)
+            solid_fill.append(srgb_clr)
+            ln.append(solid_fill)
+
+        # Remove existing border element for this side
+        existing = tcPr.find(f"a:{side}", namespace)
+        if existing is not None:
+            tcPr.remove(existing)
+        tcPr.append(ln)
 
 
 def dataframe2list(data: DataFrame) -> list[list[str]]:

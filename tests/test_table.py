@@ -341,11 +341,15 @@ def test_table_rows_columns_banding(output) -> None:
                 width=(400, "pt"),
                 height=(200, "pt"),
             )
-            .tap(lambda slide: customize_table(
-                tppt.pptx.table.Table(slide.to_pptx().slides[0].shapes[0].table)
-                if hasattr(slide.to_pptx(), "slides")
+            .tap(
+                lambda slide: customize_table(
+                    tppt.pptx.table.Table(slide.to_pptx().slides[0].shapes[0].table)
+                    if hasattr(slide.to_pptx(), "slides")
+                    else None
+                )
+                if False
                 else None
-            ) if False else None)
+            )
         )
         .build()
     )
