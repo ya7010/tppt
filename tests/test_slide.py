@@ -137,10 +137,7 @@ def test_slide_builder_tap_with_raw_pptx(output) -> None:
     )
 
     slide = presentation.slides[0]
-    texts = [
-        getattr(shape.to_pptx(), "text", "")
-        for shape in slide.shapes
-    ]
+    texts = [getattr(shape.to_pptx(), "text", "") for shape in slide.shapes]
     assert any("Added via tap()" in t for t in texts)
     presentation.save(output / "tap_raw_pptx_test.pptx")
 
@@ -160,8 +157,7 @@ def test_slide_builder_customize_with_raw_pptx(output) -> None:
     )
 
     texts = [
-        getattr(shape, "text", "")
-        for shape in presentation.to_pptx().slides[0].shapes
+        getattr(shape, "text", "") for shape in presentation.to_pptx().slides[0].shapes
     ]
     assert any("Added via customize()" in text for text in texts)
     presentation.save(output / "customize_raw_pptx_test.pptx")
