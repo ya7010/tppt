@@ -11,4 +11,5 @@ from .shape.picture import Picture as Picture
 from .shape.text import Text as Text
 from .slide import Slide as Slide
 from .table import Table as Table
+from .table import TableBorderStyle as TableBorderStyle
 from .table import TableCellStyle as TableCellStyle

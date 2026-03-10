@@ -104,14 +104,13 @@ class ColorFormat(PptxConvertible[PptxColorFormat]):
 
     @property
     def rgb(self) -> Color:
-        solid_fill = cast(
-            _Element, self._pptx._xFill.solidFill.get_or_change_to_srgbClr()
+        srgb_clr = cast(_Element, cast(_SRgbColor, self._pptx._color)._srgbClr)
+        alpha_elem = srgb_clr.find("a:alpha", namespace)
+        alpha = (
+            round(int(alpha_elem.attrib["val"]) * 255 / 100000)
+            if alpha_elem is not None
+            else None
         )
-
-        if alpha := solid_fill.find("a:alpha", namespace):
-            alpha = alpha.attrib["val"]
-        else:
-            alpha = None
 
         return to_tppt_rgb_color(cast(PptxRGBColor, self._pptx.rgb), alpha=alpha)
 

@@ -17,6 +17,7 @@ class TextProps(RangeProps):
     bold: NotRequired[bool]
     italic: NotRequired[bool]
     color: NotRequired[Color | LiteralColor]
+    font_name: NotRequired[str]
     margin_bottom: NotRequired[Length | LiteralLength]
     margin_left: NotRequired[Length | LiteralLength]
     vertical_anchor: NotRequired[MSO_ANCHOR]
@@ -52,6 +53,8 @@ class Text(Shape):
                 font.italic = italic
             if (color := data.get("color")) is not None:
                 font.color.rgb = to_color(color)
+            if (font_name := data.get("font_name")) is not None:
+                font.name = font_name
             if (margin_bottom := data.get("margin_bottom")) is not None:
                 p.space_after = to_length(margin_bottom)
             if (margin_left := data.get("margin_left")) is not None:

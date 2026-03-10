@@ -1,5 +1,8 @@
 """Tests for text module."""
 
+from typing import cast
+
+from pptx.shapes.autoshape import Shape as PptxShape
 from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 
 import tppt
@@ -111,7 +114,7 @@ def test_font_language_id(output) -> None:
 
     # Access the font from the presentation
     pptx_slide = presentation.to_pptx().slides[0]
-    shape = pptx_slide.shapes[0]
+    shape = cast(PptxShape, pptx_slide.shapes[0])
     pptx_font = shape.text_frame.paragraphs[0].runs[0].font
 
     font = Font(pptx_font)

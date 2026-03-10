@@ -2,8 +2,10 @@
 
 import pathlib
 from dataclasses import dataclass
+from typing import cast
 
 import pytest
+from pptx.shapes.graphfrm import GraphicFrame as PptxGraphicFrame
 
 import tppt
 import tppt.pptx.table
@@ -341,18 +343,22 @@ def test_table_rows_columns_banding(output) -> None:
                 width=(400, "pt"),
                 height=(200, "pt"),
             )
-            .tap(lambda slide: customize_table(
-                tppt.pptx.table.Table(slide.to_pptx().slides[0].shapes[0].table)
-                if hasattr(slide.to_pptx(), "slides")
+            .tap(
+                lambda slide: customize_table(
+                    tppt.pptx.table.Table(slide.to_pptx().slides[0].shapes[0].table)
+                    if hasattr(slide.to_pptx(), "slides")
+                    else None
+                )
+                if False
                 else None
-            ) if False else None)
+            )
         )
         .build()
     )
 
     # Access table from the built presentation and test
     pptx_pres = presentation.to_pptx()
-    pptx_table = pptx_pres.slides[0].shapes[0].table
+    pptx_table = cast(PptxGraphicFrame, pptx_pres.slides[0].shapes[0]).table
     table = tppt.pptx.table.Table(pptx_table)
 
     rows = table.rows
