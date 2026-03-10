@@ -1,5 +1,7 @@
 # 🎨 tppt
 
+[![PyPI version](https://img.shields.io/pypi/v/tppt.svg)](https://pypi.org/project/tppt/)
+
 ✨ **tppt** is a type-safe PowerPoint presentation builder that lets you create stunning presentations with Python code! 🐍
 
 This library is a wrapper around the [python-pptx](https://github.com/scanny/python-pptx) library,
