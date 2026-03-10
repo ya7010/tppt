@@ -9,8 +9,6 @@ from tppt.pptx.converter import PptxConvertible
 from tppt.types._length import Length, LiteralLength
 
 if TYPE_CHECKING:
-    from pptx.chart.chart import ChartTitle as PptxChartTitle
-
     from tppt.pptx.text.font import Font
     from tppt.pptx.text.text_frame import TextFrame
 

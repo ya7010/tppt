@@ -183,7 +183,6 @@ def test_picture_crop_properties(output: pathlib.Path) -> None:
 
     # Access the picture shape
     pptx_slide = presentation.to_pptx().slides[0]
-    from pptx.shapes.picture import Picture as PptxPicture
 
     pptx_shape = pptx_slide.shapes[0]
     picture = Picture(pptx_shape)
