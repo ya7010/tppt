@@ -2,6 +2,7 @@
 
 import pathlib
 from dataclasses import dataclass
+from typing import Any, cast
 
 import pytest
 
@@ -356,7 +357,7 @@ def test_table_rows_columns_banding(output) -> None:
 
     # Access table from the built presentation and test
     pptx_pres = presentation.to_pptx()
-    pptx_table = pptx_pres.slides[0].shapes[0].table
+    pptx_table = cast(Any, pptx_pres.slides[0].shapes[0]).table
     table = tppt.pptx.table.Table(pptx_table)
 
     rows = table.rows

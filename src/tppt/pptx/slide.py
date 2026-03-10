@@ -13,6 +13,7 @@ from typing import (
     overload,
 )
 
+from pptx.chart.data import ChartData as PptxChartData
 from pptx.slide import Slide as PptxSlide
 from pptx.slide import _BaseSlide as _PptxBaseSlide
 
@@ -24,7 +25,7 @@ from tppt.pptx.shape.picture import (
     PptxMovie,
     to_pptx_movie_mime_type,
 )
-from tppt.types import FilePath
+from tppt.types import Color, FilePath, Length, LiteralColor, LiteralLength
 
 from .converter import PptxConvertible, to_pptx_length, to_pptx_rgb_color
 from .shape import BaseShape, RangeProps, Shape
@@ -38,8 +39,6 @@ if TYPE_CHECKING:
     from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 
     from tppt.pptx.shape.background import Background
-    from tppt.types._color import Color, LiteralColor
-    from tppt.types._length import Length, LiteralLength
 
     from .notes_slide import NotesSlide
 
@@ -112,6 +111,15 @@ class Slide(_BaseSlide[PptxSlide]):
 
 class SlideBuilder:
     """Slide builder."""
+
+    class AddShapeProps(RangeProps, total=False):
+        fill_color: Color | LiteralColor
+        fill_alpha: float
+        line_color: Color | LiteralColor
+        line_width: Length | LiteralLength
+        text: str
+        font_size: Length | LiteralLength
+        font_color: Color | LiteralColor
 
     def __init__(
         self,
@@ -351,7 +359,7 @@ class SlideBuilder:
                     y=to_pptx_length(data["y"]),
                     cx=to_pptx_length(data["cx"]),
                     cy=to_pptx_length(data["cy"]),
-                    chart_data=data["chart_data"],
+                    chart_data=cast(PptxChartData, data["chart_data"]),
                 )
             )
             if isinstance(data, Callable):
@@ -368,7 +376,7 @@ class SlideBuilder:
         self,
         shape_type: "MSO_AUTO_SHAPE_TYPE",
         /,
-        **kwargs: Unpack[RangeProps],
+        **kwargs: Unpack[AddShapeProps],
     ) -> Self: ...
 
     @overload
@@ -377,7 +385,7 @@ class SlideBuilder:
         shape_type: "MSO_AUTO_SHAPE_TYPE",
         shape: Callable[[Shape], Shape],
         /,
-        **kwargs: Unpack[RangeProps],
+        **kwargs: Unpack[AddShapeProps],
     ) -> Self: ...
 
     def add_shape(

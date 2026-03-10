@@ -1,8 +1,12 @@
 from typing import TYPE_CHECKING, Literal, Self, TypedDict, assert_never
 
 from pptx.chart.chart import Chart as PptxChart
-from pptx.chart.chart import Legend as PptxLegend
+from pptx.chart.chart import ChartTitle as PptxChartTitle
+from pptx.chart.data import BubbleChartData as PptxBubbleChartData
+from pptx.chart.data import CategoryChartData as PptxCategoryChartData
 from pptx.chart.data import ChartData as PptxChartData
+from pptx.chart.data import XyChartData as PptxXyChartData
+from pptx.chart.legend import Legend as PptxLegend
 from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
 
 from tppt.pptx.converter import PptxConvertible
@@ -11,6 +15,10 @@ from tppt.types._length import Length, LiteralLength
 if TYPE_CHECKING:
     from tppt.pptx.text.font import Font
     from tppt.pptx.text.text_frame import TextFrame
+
+PptxChartDataLike = (
+    PptxChartData | PptxCategoryChartData | PptxXyChartData | PptxBubbleChartData
+)
 
 LiteralChartType = Literal[
     "3D Area",
@@ -251,7 +259,7 @@ class ChartProps(TypedDict):
     y: Length | LiteralLength
     cx: Length | LiteralLength
     cy: Length | LiteralLength
-    chart_data: PptxChartData
+    chart_data: PptxChartDataLike
 
 
 class ChartData(ChartProps):
@@ -260,7 +268,7 @@ class ChartData(ChartProps):
     type: Literal["chart"]
 
 
-class ChartTitle(PptxConvertible["PptxChartTitle"]):
+class ChartTitle(PptxConvertible[PptxChartTitle]):
     """Chart title wrapper class."""
 
     @property
@@ -397,8 +405,10 @@ class Chart(PptxConvertible[PptxChart]):
     @property
     def legend(self) -> Legend:
         """Legend of the chart."""
-        return Legend(self._pptx.legend)
+        legend = self._pptx.legend
+        assert legend is not None
+        return Legend(legend)
 
-    def replace_data(self, chart_data: PptxChartData) -> None:
+    def replace_data(self, chart_data: PptxChartDataLike) -> None:
         """Replace chart data with new data."""
         self._pptx.replace_data(chart_data)

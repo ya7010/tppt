@@ -6,7 +6,7 @@ from tppt.pptx.converter import PptxConvertible
 
 if TYPE_CHECKING:
     from tppt.pptx.shape import BaseShape
-    from tppt.pptx.shape.placeholder import SlidePlaceholder
+    from tppt.pptx.shape.placeholder import NotesSlidePlaceholder, SlidePlaceholder
     from tppt.pptx.text.text_frame import TextFrame
 
 
@@ -18,14 +18,18 @@ class NotesSlide(PptxConvertible[PptxNotesSlide]):
         """Text frame of the notes body placeholder."""
         from tppt.pptx.text.text_frame import TextFrame
 
-        return TextFrame(self._pptx.notes_text_frame)
+        text_frame = self._pptx.notes_text_frame
+        assert text_frame is not None
+        return TextFrame(text_frame)
 
     @property
-    def notes_placeholder(self) -> "SlidePlaceholder":
+    def notes_placeholder(self) -> "NotesSlidePlaceholder":
         """Notes body placeholder shape."""
-        from tppt.pptx.shape.placeholder import SlidePlaceholder
+        from tppt.pptx.shape.placeholder import NotesSlidePlaceholder
 
-        return SlidePlaceholder(self._pptx.notes_placeholder)
+        placeholder = self._pptx.notes_placeholder
+        assert placeholder is not None
+        return NotesSlidePlaceholder(placeholder)
 
     @property
     def placeholders(self) -> "list[SlidePlaceholder]":

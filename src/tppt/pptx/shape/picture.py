@@ -1,4 +1,5 @@
 from typing import (
+    Any,
     IO,
     TYPE_CHECKING,
     Literal,
@@ -6,6 +7,7 @@ from typing import (
     Self,
     TypedDict,
     assert_never,
+    cast,
 )
 
 from pptx.opc.constants import CONTENT_TYPE
@@ -18,7 +20,6 @@ from . import BaseShape, RangeProps
 
 if TYPE_CHECKING:
     from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
-    from pptx.image import Image
 
     from tppt.pptx.dml.line import LineFormat
 
@@ -113,7 +114,7 @@ class Picture(BaseShape[PptxPicture]):
         return self
 
     @property
-    def image(self) -> "Image":
+    def image(self) -> Any:
         """Image object for the picture."""
         return self._pptx.image
 
@@ -193,11 +194,11 @@ class Movie(BaseShape[PptxMovie]):
         self._pptx = pptx_obj
 
     @property
-    def poster_frame(self) -> "Image":
+    def poster_frame(self) -> Any:
         """Poster frame image for the movie."""
         return self._pptx.poster_frame
 
     @property
     def media_type(self) -> str | None:
         """Media type (MIME type) of the movie."""
-        return self._pptx.media_type
+        return cast(str | None, self._pptx.media_type)

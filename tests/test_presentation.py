@@ -3,6 +3,7 @@
 import pathlib
 import subprocess
 import sys
+from typing import cast
 
 import pytest
 
@@ -157,6 +158,8 @@ def test_picture_crop_properties(output: pathlib.Path) -> None:
 
     from PIL import Image
 
+    from pptx.shapes.picture import Picture as PptxPicture
+
     from tppt.pptx.shape.picture import Picture
 
     # Create a minimal test image in memory
@@ -184,7 +187,7 @@ def test_picture_crop_properties(output: pathlib.Path) -> None:
     # Access the picture shape
     pptx_slide = presentation.to_pptx().slides[0]
 
-    pptx_shape = pptx_slide.shapes[0]
+    pptx_shape = cast(PptxPicture, pptx_slide.shapes[0])
     picture = Picture(pptx_shape)
 
     # Test crop setters
@@ -222,6 +225,7 @@ def test_chart_properties(output: pathlib.Path) -> None:
     """Test Chart properties (chart_style, chart_type, has_legend, has_title, etc.)."""
     from pptx.chart.data import CategoryChartData
     from pptx.enum.chart import XL_CHART_TYPE
+    from pptx.shapes.graphfrm import GraphicFrame as PptxGraphicFrame
 
     from tppt.pptx.chart.chart import Chart, ChartTitle, Legend
 
@@ -248,7 +252,7 @@ def test_chart_properties(output: pathlib.Path) -> None:
 
     # Access the chart
     pptx_slide = presentation.to_pptx().slides[0]
-    pptx_chart = pptx_slide.shapes[0].chart
+    pptx_chart = cast(PptxGraphicFrame, pptx_slide.shapes[0]).chart
     chart = Chart(pptx_chart)
 
     # Test chart_type

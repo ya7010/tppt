@@ -1,14 +1,21 @@
 """Tests for slide module."""
 
+from typing import Any, cast
+
+from pptx.shapes.autoshape import Shape as PptxShape
 from pptx.enum.dml import MSO_FILL_TYPE
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 import pytest
 
 import tppt
 import tppt.pptx.slide
-from tppt.pptx.shape import BaseShape
+from tppt.pptx.shape import BaseShape, Shape
 from tppt.pptx.shape.background import Background
-from tppt.pptx.shape.placeholder import LayoutPlaceholder, SlidePlaceholder
+from tppt.pptx.shape.placeholder import (
+    LayoutPlaceholder,
+    NotesSlidePlaceholder,
+    SlidePlaceholder,
+)
 from tppt.pptx.slide_layout import SlideLayout as PptxSlideLayout
 from tppt.types import Color
 
@@ -131,9 +138,8 @@ def test_slide_builder_tap_with_raw_pptx(output) -> None:
 
     slide = presentation.slides[0]
     texts = [
-        shape.to_pptx().text
+        getattr(shape.to_pptx(), "text", "")
         for shape in slide.shapes
-        if hasattr(shape.to_pptx(), "text")
     ]
     assert any("Added via tap()" in t for t in texts)
     presentation.save(output / "tap_raw_pptx_test.pptx")
@@ -143,7 +149,7 @@ def test_slide_builder_customize_with_raw_pptx(output) -> None:
     """Test that customize() invokes the callback with the raw python-pptx Slide."""
     from pptx.util import Inches
 
-    def add_raw_textbox(slide) -> None:
+    def add_raw_textbox(slide: Any) -> None:
         tx_box = slide.shapes.add_textbox(Inches(1), Inches(1), Inches(3), Inches(1))
         tx_box.text_frame.text = "Added via customize()"
 
@@ -154,9 +160,8 @@ def test_slide_builder_customize_with_raw_pptx(output) -> None:
     )
 
     texts = [
-        shape.text
+        getattr(shape, "text", "")
         for shape in presentation.to_pptx().slides[0].shapes
-        if hasattr(shape, "text")
     ]
     assert any("Added via customize()" in text for text in texts)
     presentation.save(output / "customize_raw_pptx_test.pptx")
@@ -187,7 +192,7 @@ def test_add_shape_with_styling_options(output) -> None:
         .build()
     )
 
-    shape = tppt.pptx.shape.Shape(presentation.to_pptx().slides[0].shapes[0])
+    shape = Shape(cast(PptxShape, presentation.to_pptx().slides[0].shapes[0]))
     paragraph = shape.text_frame.paragraphs[0]
     run = paragraph.runs[0]
 
@@ -239,7 +244,7 @@ def test_notes_slide_properties(output) -> None:
 
     # Test notes_placeholder
     placeholder = notes.notes_placeholder
-    assert isinstance(placeholder, SlidePlaceholder)
+    assert isinstance(placeholder, NotesSlidePlaceholder)
 
     # Test placeholders
     placeholders = notes.placeholders
