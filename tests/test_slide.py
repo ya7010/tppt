@@ -2,7 +2,6 @@
 
 from typing import cast
 
-from pptx.slide import Slide as PptxSlide
 from pptx.shapes.autoshape import Shape as PptxShape
 from pptx.enum.dml import MSO_FILL_TYPE
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
@@ -81,14 +80,15 @@ def test_slide_layout_placeholders() -> None:
         assert pptx_placeholder is not None
 
 
-def test_slide_builder_customize(output) -> None:
-    """Test that customize() invokes the callback with the raw slide in chain."""
+def test_slide_builder_tap(output) -> None:
+    """Test that tap() invokes the callback with a tppt Slide wrapper."""
     callback_called = False
 
-    def my_callback(slide: PptxSlide) -> None:
+    def my_callback(slide: tppt.pptx.slide.Slide) -> None:
         nonlocal callback_called
         callback_called = True
-        assert isinstance(slide, PptxSlide)
+        assert isinstance(slide, tppt.pptx.slide.Slide)
+        assert slide.to_pptx() is not None
 
     presentation = (
         tppt.Presentation.builder()
@@ -96,15 +96,15 @@ def test_slide_builder_customize(output) -> None:
             lambda slide: slide.BlankLayout()
             .builder()
             .text(
-                "Before customize",
+                "Before tap",
                 left=(100, "pt"),
                 top=(100, "pt"),
                 width=(200, "pt"),
                 height=(50, "pt"),
             )
-            .customize(my_callback)
+            .tap(my_callback)
             .text(
-                "After customize",
+                "After tap",
                 left=(100, "pt"),
                 top=(200, "pt"),
                 width=(200, "pt"),
@@ -116,28 +116,30 @@ def test_slide_builder_customize(output) -> None:
 
     assert callback_called
     assert len(presentation.slides[0].shapes) >= 2
-    presentation.save(output / "customize_test.pptx")
+    presentation.save(output / "tap_test.pptx")
 
 
-def test_slide_builder_customize_with_raw_pptx(output) -> None:
-    """Test that customize() invokes the callback with the raw python-pptx Slide."""
+def test_slide_builder_tap_with_raw_pptx(output) -> None:
+    """Test that tap() can modify the slide via the raw python-pptx API."""
     from pptx.util import Inches
 
-    def add_raw_textbox(slide: PptxSlide) -> None:
-        tx_box = slide.shapes.add_textbox(Inches(1), Inches(1), Inches(3), Inches(1))
-        tx_box.text_frame.text = "Added via customize()"
+    def add_raw_textbox(slide: tppt.pptx.slide.Slide) -> None:
+        pptx_slide = slide.to_pptx()
+        tx_box = pptx_slide.shapes.add_textbox(
+            Inches(1), Inches(1), Inches(3), Inches(1)
+        )
+        tx_box.text_frame.text = "Added via tap()"
 
     presentation = (
         tppt.Presentation.builder()
-        .slide(lambda slide: slide.BlankLayout().builder().customize(add_raw_textbox))
+        .slide(lambda slide: slide.BlankLayout().builder().tap(add_raw_textbox))
         .build()
     )
 
-    texts = [
-        getattr(shape, "text", "") for shape in presentation.to_pptx().slides[0].shapes
-    ]
-    assert any("Added via customize()" in text for text in texts)
-    presentation.save(output / "customize_raw_pptx_test.pptx")
+    slide = presentation.slides[0]
+    texts = [getattr(shape.to_pptx(), "text", "") for shape in slide.shapes]
+    assert any("Added via tap()" in text for text in texts)
+    presentation.save(output / "tap_raw_pptx_test.pptx")
 
 
 def test_add_shape_with_styling_options(output) -> None:
