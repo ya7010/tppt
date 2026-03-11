@@ -81,15 +81,14 @@ def test_slide_layout_placeholders() -> None:
         assert pptx_placeholder is not None
 
 
-def test_slide_builder_tap(output) -> None:
-    """Test that tap() invokes the callback with a tppt Slide wrapper."""
+def test_slide_builder_customize(output) -> None:
+    """Test that customize() invokes the callback with the raw slide in chain."""
     callback_called = False
 
-    def my_callback(slide: tppt.pptx.slide.Slide) -> None:
+    def my_callback(slide: PptxSlide) -> None:
         nonlocal callback_called
         callback_called = True
-        assert isinstance(slide, tppt.pptx.slide.Slide)
-        assert slide.to_pptx() is not None
+        assert isinstance(slide, PptxSlide)
 
     presentation = (
         tppt.Presentation.builder()
@@ -97,15 +96,15 @@ def test_slide_builder_tap(output) -> None:
             lambda slide: slide.BlankLayout()
             .builder()
             .text(
-                "Before tap",
+                "Before customize",
                 left=(100, "pt"),
                 top=(100, "pt"),
                 width=(200, "pt"),
                 height=(50, "pt"),
             )
-            .tap(my_callback)
+            .customize(my_callback)
             .text(
-                "After tap",
+                "After customize",
                 left=(100, "pt"),
                 top=(200, "pt"),
                 width=(200, "pt"),
@@ -117,30 +116,7 @@ def test_slide_builder_tap(output) -> None:
 
     assert callback_called
     assert len(presentation.slides[0].shapes) >= 2
-    presentation.save(output / "tap_test.pptx")
-
-
-def test_slide_builder_tap_with_raw_pptx(output) -> None:
-    """Test that tap() can modify the slide via the raw python-pptx API."""
-    from pptx.util import Inches
-
-    def add_raw_textbox(slide: tppt.pptx.slide.Slide) -> None:
-        pptx_slide = slide.to_pptx()
-        txBox = pptx_slide.shapes.add_textbox(
-            Inches(1), Inches(1), Inches(3), Inches(1)
-        )
-        txBox.text_frame.text = "Added via tap()"
-
-    presentation = (
-        tppt.Presentation.builder()
-        .slide(lambda slide: slide.BlankLayout().builder().tap(add_raw_textbox))
-        .build()
-    )
-
-    slide = presentation.slides[0]
-    texts = [getattr(shape.to_pptx(), "text", "") for shape in slide.shapes]
-    assert any("Added via tap()" in t for t in texts)
-    presentation.save(output / "tap_raw_pptx_test.pptx")
+    presentation.save(output / "customize_test.pptx")
 
 
 def test_slide_builder_customize_with_raw_pptx(output) -> None:

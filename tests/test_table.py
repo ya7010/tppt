@@ -16,7 +16,7 @@ from tppt._features import (
     Dataclass,
     PydanticModel,
 )
-from tppt.pptx.table.table import Column, ColumnCollection, Row, RowCollection
+from tppt.pptx.table.table import ColumnCollection, RowCollection
 
 
 def test_create_table_with_list_data(output: pathlib.Path) -> None:
@@ -289,48 +289,6 @@ def test_table_rows_columns_banding(output) -> None:
         ["4", "5", "6"],
     ]
 
-    def customize_table(
-        table: tppt.pptx.table.Table,
-    ) -> tppt.pptx.table.Table:
-        # Test rows
-        rows = table.rows
-        assert isinstance(rows, RowCollection)
-        assert len(rows) == 3
-        row = rows[0]
-        assert isinstance(row, Row)
-        cells = row.cells
-        assert len(cells) == 3
-
-        # Test columns
-        columns = table.columns
-        assert isinstance(columns, ColumnCollection)
-        assert len(columns) == 3
-        col = columns[0]
-        assert isinstance(col, Column)
-
-        # Test banding properties with chaining
-        result = (
-            table.set_first_row(True)
-            .set_last_row(False)
-            .set_first_col(True)
-            .set_last_col(False)
-            .set_horz_banding(True)
-            .set_vert_banding(False)
-        )
-        assert result is table
-        assert table.first_row is True
-        assert table.last_row is False
-        assert table.first_col is True
-        assert table.last_col is False
-        assert table.horz_banding is True
-        assert table.vert_banding is False
-
-        # Test iter_cells
-        cell_count = sum(1 for _ in table.iter_cells())
-        assert cell_count == 9  # 3x3
-
-        return table
-
     presentation = (
         tppt.Presentation.builder()
         .slide(
@@ -342,15 +300,6 @@ def test_table_rows_columns_banding(output) -> None:
                 top=(100, "pt"),
                 width=(400, "pt"),
                 height=(200, "pt"),
-            )
-            .tap(
-                lambda slide: customize_table(
-                    tppt.pptx.table.Table(slide.to_pptx().slides[0].shapes[0].table)
-                    if hasattr(slide.to_pptx(), "slides")
-                    else None
-                )
-                if False
-                else None
             )
         )
         .build()
