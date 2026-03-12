@@ -16,7 +16,7 @@ from tppt._features import (
     Dataclass,
     PydanticModel,
 )
-from tppt.pptx.table.table import Column, ColumnCollection, Row, RowCollection
+from tppt.pptx.table.table import ColumnCollection, RowCollection
 
 
 def test_create_table_with_list_data(output: pathlib.Path) -> None:
@@ -288,27 +288,23 @@ def test_table_rows_columns_banding(output) -> None:
         ["1", "2", "3"],
         ["4", "5", "6"],
     ]
+    callback_called = False
 
-    def customize_table(
-        table: tppt.pptx.table.Table,
-    ) -> tppt.pptx.table.Table:
-        # Test rows
+    def inspect_table(slide) -> None:
+        nonlocal callback_called
+        callback_called = True
+
+        pptx_table = cast(PptxGraphicFrame, slide.to_pptx().shapes[0]).table
+        table = tppt.pptx.table.Table(pptx_table)
+
         rows = table.rows
         assert isinstance(rows, RowCollection)
         assert len(rows) == 3
-        row = rows[0]
-        assert isinstance(row, Row)
-        cells = row.cells
-        assert len(cells) == 3
 
-        # Test columns
         columns = table.columns
         assert isinstance(columns, ColumnCollection)
         assert len(columns) == 3
-        col = columns[0]
-        assert isinstance(col, Column)
 
-        # Test banding properties with chaining
         result = (
             table.set_first_row(True)
             .set_last_row(False)
@@ -325,11 +321,8 @@ def test_table_rows_columns_banding(output) -> None:
         assert table.horz_banding is True
         assert table.vert_banding is False
 
-        # Test iter_cells
         cell_count = sum(1 for _ in table.iter_cells())
-        assert cell_count == 9  # 3x3
-
-        return table
+        assert cell_count == 9
 
     presentation = (
         tppt.Presentation.builder()
@@ -343,18 +336,12 @@ def test_table_rows_columns_banding(output) -> None:
                 width=(400, "pt"),
                 height=(200, "pt"),
             )
-            .tap(
-                lambda slide: customize_table(
-                    tppt.pptx.table.Table(slide.to_pptx().slides[0].shapes[0].table)
-                    if hasattr(slide.to_pptx(), "slides")
-                    else None
-                )
-                if False
-                else None
-            )
+            .tap(inspect_table)
         )
         .build()
     )
+
+    assert callback_called
 
     # Access table from the built presentation and test
     pptx_pres = presentation.to_pptx()
@@ -369,9 +356,12 @@ def test_table_rows_columns_banding(output) -> None:
     assert isinstance(columns, ColumnCollection)
     assert len(columns) == 3
 
-    table.set_first_row(True).set_horz_banding(True)
     assert table.first_row is True
+    assert table.last_row is False
+    assert table.first_col is True
+    assert table.last_col is False
     assert table.horz_banding is True
+    assert table.vert_banding is False
 
     cell_count = sum(1 for _ in table.iter_cells())
     assert cell_count == 9
