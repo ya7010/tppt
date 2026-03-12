@@ -288,6 +288,41 @@ def test_table_rows_columns_banding(output) -> None:
         ["1", "2", "3"],
         ["4", "5", "6"],
     ]
+    callback_called = False
+
+    def inspect_table(slide) -> None:
+        nonlocal callback_called
+        callback_called = True
+
+        pptx_table = cast(PptxGraphicFrame, slide.to_pptx().shapes[0]).table
+        table = tppt.pptx.table.Table(pptx_table)
+
+        rows = table.rows
+        assert isinstance(rows, RowCollection)
+        assert len(rows) == 3
+
+        columns = table.columns
+        assert isinstance(columns, ColumnCollection)
+        assert len(columns) == 3
+
+        result = (
+            table.set_first_row(True)
+            .set_last_row(False)
+            .set_first_col(True)
+            .set_last_col(False)
+            .set_horz_banding(True)
+            .set_vert_banding(False)
+        )
+        assert result is table
+        assert table.first_row is True
+        assert table.last_row is False
+        assert table.first_col is True
+        assert table.last_col is False
+        assert table.horz_banding is True
+        assert table.vert_banding is False
+
+        cell_count = sum(1 for _ in table.iter_cells())
+        assert cell_count == 9
 
     presentation = (
         tppt.Presentation.builder()
@@ -301,9 +336,12 @@ def test_table_rows_columns_banding(output) -> None:
                 width=(400, "pt"),
                 height=(200, "pt"),
             )
+            .tap(inspect_table)
         )
         .build()
     )
+
+    assert callback_called
 
     # Access table from the built presentation and test
     pptx_pres = presentation.to_pptx()
@@ -318,9 +356,12 @@ def test_table_rows_columns_banding(output) -> None:
     assert isinstance(columns, ColumnCollection)
     assert len(columns) == 3
 
-    table.set_first_row(True).set_horz_banding(True)
     assert table.first_row is True
+    assert table.last_row is False
+    assert table.first_col is True
+    assert table.last_col is False
     assert table.horz_banding is True
+    assert table.vert_banding is False
 
     cell_count = sum(1 for _ in table.iter_cells())
     assert cell_count == 9
